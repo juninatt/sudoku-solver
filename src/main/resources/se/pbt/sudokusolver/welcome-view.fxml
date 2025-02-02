@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.WelcomeController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+
+    <!-- Welcome Text -->
+    <Label text="Welcome to Sudoku Solver" style="-fx-font-size: 20; -fx-font-weight: bold;" />
+
+    <!-- Dropdown for board size -->
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Board size:" />
+        <ComboBox fx:id="sizeDropdown" />
+    </HBox>
+
+    <!-- Dropdown for difficulty -->
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Difficulty:" />
+        <ComboBox fx:id="difficultyDropdown" />
+    </HBox>
+
+    <!-- Buttons -->
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Play" fx:id="playButton" />
+        <Button text="Rules" fx:id="rulesButton" />
+    </HBox>
+</VBox>
