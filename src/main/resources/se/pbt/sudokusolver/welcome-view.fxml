@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.WelcomeController"
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.controllers.WelcomeController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
 
     <!-- Welcome Text -->
