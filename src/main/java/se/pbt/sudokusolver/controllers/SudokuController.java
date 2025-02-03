@@ -3,32 +3,29 @@ package se.pbt.sudokusolver.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import se.pbt.sudokusolver.models.SudokuBoard;
+import se.pbt.sudokusolver.services.SudokuService;
 
 public class SudokuController {
-
     @FXML
     private GridPane gridPane;
 
-    private SudokuBoard board;
-    private TextField[][] cells;
+    private final SudokuService sudokuService;
+
+    public SudokuController() {
+        sudokuService = new SudokuService();
+    }
 
 
     public void initBoard(int size) {
-        board = new SudokuBoard(size);
-
-        // Clear previous board if any
+        sudokuService.createBoard(size);
         gridPane.getChildren().clear();
-        gridPane.setGridLinesVisible(false);
 
         int subgridSize = (int) Math.sqrt(size);
-        cells = new TextField[size][size];
 
-        // Create sub-grids
         for (int subgridRow = 0; subgridRow < subgridSize; subgridRow++) {
             for (int subgridCol = 0; subgridCol < subgridSize; subgridCol++) {
                 GridPane subgrid = new GridPane();
-                subgrid.setGridLinesVisible(true); // Show lines for sub-grids
+                subgrid.setGridLinesVisible(true);
                 subgrid.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
                 for (int row = 0; row < subgridSize; row++) {
@@ -41,24 +38,24 @@ public class SudokuController {
                         cell.setStyle("-fx-font-size: 16;");
                         cell.setAlignment(javafx.geometry.Pos.CENTER);
 
-                        // Restrict input to valid Sudoku values
+                        // Bind cell updates to SudokuService
                         cell.textProperty().addListener((observable, oldValue, newValue) -> {
                             if (!newValue.matches("[1-9]?")) {
                                 cell.setText(oldValue);
                             } else if (!newValue.isEmpty()) {
-                                int value = Integer.parseInt(newValue);
-                                board.setValue(globalRow, globalCol, value);
+                                sudokuService.setValue(globalRow, globalCol, Integer.parseInt(newValue));
                             } else {
-                                board.setValue(globalRow, globalCol, 0);
+                                sudokuService.setValue(globalRow, globalCol, 0);
                             }
                         });
 
+                        TextField[][] cells = new TextField[size][size];
                         cells[globalRow][globalCol] = cell;
-                        subgrid.add(cell, col, row); // Add cell to subgrid
+                        subgrid.add(cell, col, row);
                     }
                 }
 
-                gridPane.add(subgrid, subgridCol, subgridRow); // Add subgrid to main grid
+                gridPane.add(subgrid, subgridCol, subgridRow);
             }
         }
     }

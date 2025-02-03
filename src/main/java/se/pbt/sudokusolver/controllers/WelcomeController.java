@@ -30,11 +30,10 @@ public class WelcomeController {
         int size = Integer.parseInt(selectedSize.split("x")[0]); // Extract size number
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("sudoku-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/se/pbt/sudokusolver/sudoku-view.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(loader.load());
 
-            // Pass board size to the new controller
             SudokuController controller = loader.getController();
             controller.initBoard(size);
 
