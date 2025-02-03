@@ -1,24 +1,24 @@
 package se.pbt.sudokusolver.controllers;
 
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import se.pbt.sudokusolver.services.SudokuService;
+import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 public class SudokuController {
+
     @FXML
     private GridPane gridPane;
 
-    private final SudokuService sudokuService;
-
-    public SudokuController() {
-        sudokuService = new SudokuService();
-    }
+    private SudokuViewModel viewModel;
 
 
     public void initBoard(int size) {
-        sudokuService.createBoard(size);
+        viewModel = new SudokuViewModel(size);
         gridPane.getChildren().clear();
+
+        StringProperty[][] cells = viewModel.getCells();
 
         int subgridSize = (int) Math.sqrt(size);
 
@@ -38,19 +38,8 @@ public class SudokuController {
                         cell.setStyle("-fx-font-size: 16;");
                         cell.setAlignment(javafx.geometry.Pos.CENTER);
 
-                        // Bind cell updates to SudokuService
-                        cell.textProperty().addListener((observable, oldValue, newValue) -> {
-                            if (!newValue.matches("[1-9]?")) {
-                                cell.setText(oldValue);
-                            } else if (!newValue.isEmpty()) {
-                                sudokuService.setValue(globalRow, globalCol, Integer.parseInt(newValue));
-                            } else {
-                                sudokuService.setValue(globalRow, globalCol, 0);
-                            }
-                        });
+                        cell.textProperty().bindBidirectional(cells[globalRow][globalCol]);
 
-                        TextField[][] cells = new TextField[size][size];
-                        cells[globalRow][globalCol] = cell;
                         subgrid.add(cell, col, row);
                     }
                 }
