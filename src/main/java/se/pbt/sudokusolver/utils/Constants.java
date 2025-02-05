@@ -2,8 +2,6 @@ package se.pbt.sudokusolver.utils;
 
 public class Constants {
 
-    public static final String APP_NAME = "Sudoku Solver";
-
     public static class ErrorMessages {
 
         public static final String BOARD_NOT_CREATED = "No board has been created yet!";
