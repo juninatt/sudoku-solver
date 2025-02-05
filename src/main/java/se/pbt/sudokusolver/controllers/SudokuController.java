@@ -4,6 +4,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 public class SudokuController {
@@ -11,11 +12,9 @@ public class SudokuController {
     @FXML
     private GridPane gridPane;
 
-    private SudokuViewModel viewModel;
-
 
     public void initBoard(int size) {
-        viewModel = new SudokuViewModel(size);
+        SudokuViewModel viewModel = new SudokuViewModel(size);
         gridPane.getChildren().clear();
 
         StringProperty[][] cells = viewModel.getCells();
@@ -26,7 +25,7 @@ public class SudokuController {
             for (int subgridCol = 0; subgridCol < subgridSize; subgridCol++) {
                 GridPane subgrid = new GridPane();
                 subgrid.setGridLinesVisible(true);
-                subgrid.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                subgrid.setStyle(Constants.CSS.STYLE_SUBGRID);
 
                 for (int row = 0; row < subgridSize; row++) {
                     for (int col = 0; col < subgridSize; col++) {
@@ -35,7 +34,7 @@ public class SudokuController {
 
                         TextField cell = new TextField();
                         cell.setPrefSize(40, 40);
-                        cell.setStyle("-fx-font-size: 16;");
+                        cell.setStyle(Constants.CSS.STYLE_CELL);
                         cell.setAlignment(javafx.geometry.Pos.CENTER);
 
                         cell.textProperty().bindBidirectional(cells[globalRow][globalCol]);

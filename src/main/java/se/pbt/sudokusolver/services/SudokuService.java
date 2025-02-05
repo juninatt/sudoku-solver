@@ -1,6 +1,7 @@
 package se.pbt.sudokusolver.services;
 
 import se.pbt.sudokusolver.models.SudokuBoard;
+import se.pbt.sudokusolver.utils.Constants;
 
 public class SudokuService {
     private SudokuBoard board;
@@ -19,14 +20,14 @@ public class SudokuService {
 
     public void setValue(int row, int col, int value) {
         if (board == null) {
-            throw new IllegalStateException("No board has been created yet!");
+            throw new IllegalStateException(Constants.ErrorMessages.BOARD_NOT_CREATED);
         }
         board.setValue(row, col, value);
     }
 
     public int getValue(int row, int col) {
         if (board == null) {
-            throw new IllegalStateException("No board has been created yet!");
+            throw new IllegalStateException(Constants.ErrorMessages.BOARD_NOT_CREATED);
         }
         return board.getValue(row, col);
     }

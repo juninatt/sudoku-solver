@@ -4,15 +4,17 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import se.pbt.sudokusolver.utils.Constants;
+
 import java.io.IOException;
 
 public class SudokuApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/se/pbt/sudokusolver/welcome-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FilePaths.WELCOME_VIEW));
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle("Sudoku Solver");
+        primaryStage.setTitle(Constants.APP_NAME);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
