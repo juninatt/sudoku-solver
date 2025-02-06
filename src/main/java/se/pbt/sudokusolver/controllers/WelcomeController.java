@@ -35,7 +35,7 @@ public class WelcomeController {
         playButton.setText(Localization.get("ui.button.play"));
         rulesButton.setText(Localization.get("ui.button.rules"));
 
-        sizeDropdown.getItems().addAll(Constants.SudokuBoard.ALL_SIZES);
+        sizeDropdown.getItems().addAll(Constants.SudokuBoard.SIZE_OPTIONS);
         sizeDropdown.getSelectionModel().select(Constants.SudokuBoard.DEFAULT_SIZE);
 
         playButton.setOnAction(event -> loadGameBoard());

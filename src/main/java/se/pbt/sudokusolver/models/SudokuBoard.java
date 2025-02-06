@@ -2,6 +2,7 @@ package se.pbt.sudokusolver.models;
 
 import se.pbt.sudokusolver.utils.Constants;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 public class SudokuBoard {
@@ -10,7 +11,7 @@ public class SudokuBoard {
 
     public SudokuBoard(int size) {
         if (size <= 0 || Math.sqrt(size) % 1 != 0) {
-            throw new IllegalArgumentException(Constants.ErrorMessages.VALUE_MUST_BE + Arrays.toString(Constants.SudokuBoard.ALL_SIZES));
+            throw new IllegalArgumentException(MessageFormat.format(Constants.ErrorMessages.INVALID_BOARD_SIZE, size));
         }
         this.size = size;
         this.board = new int[size][size];
@@ -49,4 +50,14 @@ public class SudokuBoard {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int[] row : board) {
+            sb.append(Arrays.toString(row)).append("\n");
+        }
+        return sb.toString();
+    }
+
 }
