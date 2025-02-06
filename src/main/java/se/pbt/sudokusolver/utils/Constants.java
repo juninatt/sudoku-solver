@@ -15,9 +15,11 @@ public class Constants {
 
     public static class FilePaths {
 
-        public static final String WELCOME_VIEW = "/se/pbt/sudokusolver/fxml/welcome-view.fxml";
-        public static final String SUDOKU_VIEW = "/se/pbt/sudokusolver/fxml/sudoku-view.fxml";
-        public static final String MESSAGE_BUNDLE_SV = "se.pbt.sudokusolver.i18n.messages_sv";
+        public static final String WELCOME_VIEW = "/fxml/welcome-view.fxml";
+        public static final String SUDOKU_VIEW = "/fxml/sudoku-view.fxml";
+        public static final String MESSAGE_BUNDLE_SV = "i18n.messages_sv";
+        public static final String MESSAGE_BUNDLE_EN = "i18n.messages_en";
+        public static final String MESSAGE_BUNDLE_ES = "i18n.messages_es";
     }
 
     public static class CSS {
