@@ -35,7 +35,4 @@ public class SudokuViewModel {
         return cells;
     }
 
-    public boolean isSolved() {
-        return sudokuService.isSolved();
-    }
 }

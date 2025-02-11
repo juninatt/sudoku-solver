@@ -2,6 +2,7 @@ module se.pbt.sudokusolver {
     // --- Required JavaFX Modules ---
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.xml;
 
     // --- Exports for External Access ---
     exports se.pbt.sudokusolver.controllers;

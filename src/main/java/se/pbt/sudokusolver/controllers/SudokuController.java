@@ -17,29 +17,34 @@ public class SudokuController {
     @FXML
     private GridPane gridPane;
 
-    public void initBoard(int size) {
-        SudokuViewModel viewModel = new SudokuViewModel(size);
-        gridPane.getChildren().clear();
-        StringProperty[][] cells = viewModel.getCells();
-        int subgridSize = (int) Math.sqrt(size);
+    SudokuViewModel viewModel;
+    int subgridSize;
+    int subgridRow;
+    int subgridCol;
+    StringProperty[][] cells;
 
-        for (int subgridRow = 0; subgridRow < subgridSize; subgridRow++) {
-            for (int subgridCol = 0; subgridCol < subgridSize; subgridCol++) {
-                GridPane subgrid = createSubgrid(subgridSize);
-                addCellsToSubgrid(subgrid, cells, subgridRow, subgridCol, subgridSize, size);
+    public void initBoard(int size) {
+        viewModel = new SudokuViewModel(size);
+        subgridSize = (int) Math.sqrt(size);
+        cells = viewModel.getCells();
+
+        for (subgridRow = 0; subgridRow < subgridSize; subgridRow++) {
+            for (subgridCol = 0; subgridCol < subgridSize; subgridCol++) {
+                GridPane subgrid = createSubgrid();
+                addCellsToSubgrid(subgrid, size);
                 gridPane.add(subgrid, subgridCol, subgridRow);
             }
         }
     }
 
-    private GridPane createSubgrid(int subgridSize) {
+    private GridPane createSubgrid() {
         GridPane subgrid = new GridPane();
         subgrid.setGridLinesVisible(true);
         subgrid.setStyle(Constants.CSS.STYLE_SUBGRID);
         return subgrid;
     }
 
-    private void addCellsToSubgrid(GridPane subgrid, StringProperty[][] cells, int subgridRow, int subgridCol, int subgridSize, int size) {
+    private void addCellsToSubgrid(GridPane subgrid, int size) {
         for (int row = 0; row < subgridSize; row++) {
             for (int col = 0; col < subgridSize; col++) {
                 int globalRow = subgridRow * subgridSize + row;
@@ -53,13 +58,24 @@ public class SudokuController {
     private TextField createCell(StringProperty cellProperty, int size) {
         TextField cell = new TextField();
         cell.setPrefSize(40, 40);
-        cell.setStyle(Constants.CSS.STYLE_CELL);
         cell.setAlignment(javafx.geometry.Pos.CENTER);
         TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0, createFilter(size));
         cell.setTextFormatter(formatter);
         cell.textProperty().bindBidirectional(cellProperty);
+
+        cellProperty.addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty() && !cell.getStyleClass().contains("filled-cell")) {
+                cell.getStyleClass().add("filled-cell");
+                cell.setEditable(false);
+            } else if (newVal.isEmpty() && cell.getStyleClass().contains("filled-cell")) {
+                cell.getStyleClass().remove("filled-cell");
+                cell.setEditable(true);
+            }
+        });
+
         return cell;
     }
+
 
     private UnaryOperator<Change> createFilter(int size) {
         return change -> {

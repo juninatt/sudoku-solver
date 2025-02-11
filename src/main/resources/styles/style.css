@@ -1,0 +1,4 @@
+.filled-cell {
+    -fx-background-color: #E0E0E0; /* Grey shading */
+    -fx-font-weight: bold;
+}

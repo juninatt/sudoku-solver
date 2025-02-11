@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.GridPane?>
 <GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.controllers.SudokuController"
           alignment="CENTER" hgap="5" vgap="5"
-          style="-fx-padding: 20; -fx-background-color: #f9f9f9;">
+          style="-fx-padding: 20; -fx-background-color: #f9f9f9;"
+          stylesheets="@../styles/style.css">
      <!-- Sudoku cells will be dynamically loaded here -->
 </GridPane>
