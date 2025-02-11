@@ -14,15 +14,21 @@ public class SudokuService {
         return board;
     }
 
-    public boolean isSolved() {
-        return board != null && board.isSolved();
-    }
-
     public void setValue(int row, int col, int value) {
         if (board == null) {
             throw new IllegalStateException(Constants.ErrorMessages.BOARD_NOT_CREATED);
+        } else if (!positionIsValid(row, col)) {
+            throw new IllegalArgumentException(Constants.ErrorMessages.INVALID_POSITION);
         }
         board.setValue(row, col, value);
+
+    }
+
+    private boolean positionIsValid(int row, int col) {
+        if (row < 0 || row >= board.getSize() || col < 0 || col >= board.getSize()) {
+            throw new IllegalArgumentException(Constants.ErrorMessages.INVALID_POSITION);
+        }
+        return true;
     }
 
     public int getValue(int row, int col) {
