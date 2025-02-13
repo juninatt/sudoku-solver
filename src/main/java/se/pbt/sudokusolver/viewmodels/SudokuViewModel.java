@@ -16,19 +16,37 @@ public class SudokuViewModel {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 cells[row][col] = new SimpleStringProperty();
-                int finalRow = row;
-                int finalCol = col;
-
-                cells[row][col].addListener((observable, oldValue, newValue) -> {
-                    if (newValue.matches("[1-9]?")) {
-                        int value = newValue.isEmpty() ? 0 : Integer.parseInt(newValue);
-                        sudokuService.setValue(finalRow, finalCol, value);
-                    } else {
-                        cells[finalRow][finalCol].set(oldValue);
-                    }
-                });
             }
         }
+    }
+    
+    // Validates and commits a number to the board when the user confirms input with Enter or Tab.
+    public void validateAndSetValue(TextField cell, int row, int col) {
+        String input = cell.getText().trim();
+
+        if (input.isEmpty()) {
+            cells[row][col].set("");
+            return;
+        }
+
+        try {
+            int value = Integer.parseInt(input);
+
+            if (isValidMove(value)) {
+                cells[row][col].set(String.valueOf(value));
+                sudokuService.setValue(row, col, value);
+                cell.setEditable(false);
+                cell.getStyleClass().add("filled-cell");
+            } else {
+                cell.clear();
+            }
+        } catch (NumberFormatException e) {
+            cell.clear();
+        }
+    }
+
+    public boolean isValidMove(int value) {
+        return value >= 1 && value <= size;
     }
 
     public StringProperty[][] getCells() {
