@@ -5,18 +5,24 @@ import java.util.stream.IntStream;
 
 public class SudokuValidator {
 
-    public static boolean validateBoard(SudokuBoard board) {
-        int size = board.getSize();
+    private final SudokuBoard sudokuBoard;
+
+    public SudokuValidator(SudokuBoard sudokuBoard) {
+        this.sudokuBoard = sudokuBoard;
+    }
+
+    public boolean validateBoard() {
+        int size = sudokuBoard.getSize();
         int sectionSize = (int) Math.sqrt(size);
 
         boolean rowsAndColumnsValid = IntStream.range(0, size)
-                .allMatch(i -> isValidRow(board, i) && isValidColumn(board, i));
+                .allMatch(i -> isValidRow(sudokuBoard, i) && isValidColumn(sudokuBoard, i));
 
         boolean sectionsValid = IntStream.range(0, size)
                 .boxed()
                 .flatMap(row -> IntStream.range(0, size)
                         .filter(col -> row % sectionSize == 0 && col % sectionSize == 0)
-                        .mapToObj(col -> isValidSection(board, row, col, sectionSize)))
+                        .mapToObj(col -> isValidSection(sudokuBoard, row, col, sectionSize)))
                 .allMatch(Boolean::booleanValue);
 
         if (rowsAndColumnsValid && sectionsValid) {

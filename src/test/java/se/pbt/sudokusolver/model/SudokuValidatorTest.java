@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SudokuValidatorTest {
 
+    private final SudokuValidator sudokuValidator;
+
+    public SudokuValidatorTest(SudokuValidator sudokuValidator) {
+        this.sudokuValidator = sudokuValidator;
+    }
+
     @Test
     void testValidBoard() {
         int[][] validBoard = {
@@ -26,7 +32,7 @@ public class SudokuValidatorTest {
         SudokuBoard board = new SudokuBoard(9);
         fillBoard(board, validBoard);
 
-        assertTrue(SudokuValidator.validateBoard(board), "Should be a correct board");
+        assertTrue(sudokuValidator.validateBoard(), "Should be a correct board");
     }
 
     @Test
@@ -46,7 +52,7 @@ public class SudokuValidatorTest {
         SudokuBoard board = new SudokuBoard(9);
         fillBoard(board, invalidBoard);
 
-        assertFalse(SudokuValidator.validateBoard(board), "Should be a incorrect board");
+        assertFalse(sudokuValidator.validateBoard(), "Should be a incorrect board");
     }
 
     private void fillBoard(SudokuBoard board, int[][] data) {

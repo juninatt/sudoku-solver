@@ -18,10 +18,10 @@ public class SudokuController {
     private GridPane gridPane;
 
     SudokuViewModel viewModel;
+    StringProperty[][] cells;
     int subgridSize;
     int subgridRow;
     int subgridCol;
-    StringProperty[][] cells;
 
     public void initBoard(int size) {
         viewModel = new SudokuViewModel(size);

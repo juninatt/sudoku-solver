@@ -24,8 +24,10 @@ public class SudokuBoard {
     public void setValue(int row, int col, int value) {
         board[row][col] = value;
         filledCells++;
-        if (filledCells == size * size)
-            SudokuValidator.validateBoard(this);
+        if (filledCells == size * size) {
+            SudokuValidator sudokuValidator = new SudokuValidator(this);
+            sudokuValidator.validateBoard();
+        }
     }
 
 
