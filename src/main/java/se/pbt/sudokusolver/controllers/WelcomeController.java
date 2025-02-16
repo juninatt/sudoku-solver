@@ -64,7 +64,7 @@ public class WelcomeController {
             Scene scene = new Scene(loader.load());
 
             SudokuController controller = loader.getController();
-            controller.initialize(size);
+            controller.initializeBoard(size);
 
             stage.setTitle(Localization.get("ui.title.board", size));
             stage.setScene(scene);

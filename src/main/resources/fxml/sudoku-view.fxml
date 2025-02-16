@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.GridPane?>
-<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.controllers.SudokuController"
-          alignment="CENTER" hgap="5" vgap="5"
-          style="-fx-padding: 20; -fx-background-color: #f9f9f9;"
-          stylesheets="@../styles/style.css">
-     <!-- Sudoku cells will be dynamically loaded here -->
-</GridPane>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.controllers.SudokuController"
+      style="-fx-padding: 20; -fx-background-color: #f9f9f9;"
+      stylesheets="@../styles/style.css">
+
+     <!-- Toolbar Section -->
+     <HBox spacing="10" alignment="CENTER_LEFT">
+          <Button fx:id="homeButton">
+               <graphic>
+                    <ImageView fitHeight="20" fitWidth="20"/>
+               </graphic>
+          </Button>
+     </HBox>
+
+     <!-- Sudoku Grid Section -->
+     <GridPane fx:id="gridPane" alignment="CENTER" hgap="5" vgap="5"/>
+</VBox>

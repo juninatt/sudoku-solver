@@ -18,6 +18,7 @@
 
   <!-- Dependencies -->
   <dependencies>
+
     <!-- JavaFX -->
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -57,6 +58,11 @@
       <artifactId>bootstrapfx-core</artifactId>
       <version>0.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.kordamp.ikonli</groupId>
+      <artifactId>ikonli-fontawesome5-pack</artifactId>
+      <version>12.3.1</version>
+    </dependency>
 
     <!-- Testing -->
     <dependency>
@@ -71,6 +77,7 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <!-- Build Configuration -->
