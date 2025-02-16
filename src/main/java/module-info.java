@@ -7,7 +7,6 @@ module se.pbt.sudokusolver {
     // --- Exports for External Access ---
     exports se.pbt.sudokusolver.controllers;
     exports se.pbt.sudokusolver.models;
-    exports se.pbt.sudokusolver.services;
     exports se.pbt.sudokusolver.app;
 
     // --- Opens for Reflection (JavaFX FXML) ---

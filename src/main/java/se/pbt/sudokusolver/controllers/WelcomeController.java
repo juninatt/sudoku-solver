@@ -12,6 +12,10 @@ import se.pbt.sudokusolver.utils.Localization;
 
 import java.io.IOException;
 
+/**
+ * Controls the welcome screen where the user selects game settings before starting a new Sudoku game.
+ * Manages UI text localization, dropdown selections, and transitions to the game board.
+ */
 public class WelcomeController {
 
     @FXML
@@ -27,6 +31,10 @@ public class WelcomeController {
     @FXML
     private Button rulesButton;
 
+    /**
+     * Initializes the welcome screen by setting localized text,
+     * populating the board size selection dropdown, and configuring button actions.
+     */
     @FXML
     public void initialize() {
         welcomeLabel.setText(Localization.get("ui.welcome"));
@@ -41,6 +49,11 @@ public class WelcomeController {
         playButton.setOnAction(event -> loadGameBoard());
     }
 
+    /**
+     * Loads the Sudoku game board with the selected settings.
+     * Retrieves the chosen board size from the dropdown, initializes the game controller,
+     * and replaces the current window with the game board.
+     */
     private void loadGameBoard() {
         String selectedSize = sizeDropdown.getValue();
         int size = Integer.parseInt(selectedSize.split("x")[0]); // Extract size number
@@ -51,7 +64,7 @@ public class WelcomeController {
             Scene scene = new Scene(loader.load());
 
             SudokuController controller = loader.getController();
-            controller.initBoard(size);
+            controller.initialize(size);
 
             stage.setTitle(Localization.get("ui.title.board", size));
             stage.setScene(scene);

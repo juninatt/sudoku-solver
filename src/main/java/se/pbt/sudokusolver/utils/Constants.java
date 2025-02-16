@@ -10,7 +10,7 @@ public class Constants {
         public static final String INVALID_POSITION = "Row and column must be within board size";
         public static final String VALUE_MUST_BE = "Value must be between 0 and ";
         public static final String INVALID_BOARD_SIZE = "Invalid board size: {0}. Supported sizes: " + Constants.SudokuBoard.SUPPORTED_SIZES;
-
+        public static final String INVALID_VALUE = "Value is not valid";
     }
 
     public static class FilePaths {
@@ -24,8 +24,9 @@ public class Constants {
 
     public static class CSS {
 
-        public static final String STYLE_SUBGRID = "-fx-border-color: black; -fx-border-width: 2;";
-        public static final String STYLE_CELL = "-fx-font-size: 16;";
+        public static final String SUBGRID = "subgrid";
+        public static final String FILLED_CELL = "filled-cell";
+        public static final String TEXT_FIELD = "text-field";
     }
 
     public static class SudokuBoard {

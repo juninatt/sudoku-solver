@@ -5,14 +5,8 @@ import java.util.stream.IntStream;
 
 public class SudokuValidator {
 
-    private final SudokuBoard sudokuBoard;
-
-    public SudokuValidator(SudokuBoard sudokuBoard) {
-        this.sudokuBoard = sudokuBoard;
-    }
-
-    public boolean validateBoard() {
-        int size = sudokuBoard.getSize();
+    public boolean validateBoard(SudokuBoard sudokuBoard) {
+        int size = sudokuBoard.getBoardSize();
         int sectionSize = (int) Math.sqrt(size);
 
         boolean rowsAndColumnsValid = IntStream.range(0, size)
@@ -35,15 +29,15 @@ public class SudokuValidator {
     }
 
     private static boolean isValidRow(SudokuBoard board, int row) {
-        return IntStream.range(0, board.getSize())
-                .map(col -> board.getValue(row, col))
+        return IntStream.range(0, board.getBoardSize())
+                .map(col -> board.getValueAt(row, col))
                 .filter(num -> num != 0)
                 .allMatch(new HashSet<>()::add);
     }
 
     private static boolean isValidColumn(SudokuBoard board, int col) {
-        return IntStream.range(0, board.getSize())
-                .map(row -> board.getValue(row, col))
+        return IntStream.range(0, board.getBoardSize())
+                .map(row -> board.getValueAt(row, col))
                 .filter(num -> num != 0)
                 .allMatch(new HashSet<>()::add);
     }
@@ -52,7 +46,7 @@ public class SudokuValidator {
         return IntStream.range(0, sectionSize)
                 .boxed()
                 .flatMap(row -> IntStream.range(0, sectionSize)
-                        .mapToObj(col -> board.getValue(startRow + row, startCol + col)))
+                        .mapToObj(col -> board.getValueAt(startRow + row, startCol + col)))
                 .filter(num -> num != 0)
                 .allMatch(new HashSet<>()::add);
     }
