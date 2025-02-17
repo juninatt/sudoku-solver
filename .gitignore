@@ -42,3 +42,6 @@ build/
 
 # System files
 Thumbs.db
+
+# Ignore internal development notes
+NOTES.md
