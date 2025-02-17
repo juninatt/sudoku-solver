@@ -38,7 +38,10 @@ public class SudokuController {
      */
     @FXML
     public void initialize() {
-        homeButton.setGraphic(new FontIcon(FontAwesomeSolid.HOME));
+        FontIcon homeIcon = new FontIcon(FontAwesomeSolid.HOME);
+        homeIcon.setIconSize(20);
+        homeButton.setGraphic(homeIcon);
+
         homeButton.setOnAction(event -> returnToMainMenu());
     }
 

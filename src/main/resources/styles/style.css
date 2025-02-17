@@ -1,15 +1,42 @@
-.text-field {
-    -fx-font-size: 18px;
-    -fx-alignment: center;
+/* ====== SUDOKU GRID STYLING ====== */
+
+/* Outlines the entire Sudoku grid  */
+#gridPane {
+    -fx-border-color: darkblue;
+    -fx-border-width: 3px;
+    -fx-background-insets: 0; /* Ensures the border applies directly to the grid */
 }
 
+/* Subgrid borders, differentiating Sudoku sections */
+.subgrid {
+    -fx-border-color: darkgrey;
+    -fx-border-width: 1px;
+}
+
+/* ====== SUDOKU CELL STYLING ====== */
+
+/* General styling for each Sudoku cell */
+.text-field {
+    -fx-border-color: black;
+    -fx-font-size: 20px;
+    -fx-font-family: "Arial", "Verdana", "Tahoma";
+    -fx-alignment: center;
+    -fx-padding: 0; /* Ensures no unwanted spacing */
+}
+
+/* Highlights numbers that are pre-filled or confirmed */
 .filled-cell {
     -fx-background-color: lightblue;
     -fx-text-fill: black;
     -fx-font-weight: bold;
 }
 
-.subgrid {
-    -fx-border-color: black;
-    -fx-border-width: 2px;
+/* ====== TOOLBAR & BUTTON STYLING ====== */
+
+/* Home button styling */
+#homeButton {
+    -fx-pref-width: 40px;
+    -fx-pref-height: 40px;
+    -fx-background-radius: 5px;
 }
+

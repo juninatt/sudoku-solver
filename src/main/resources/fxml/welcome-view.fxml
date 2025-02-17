@@ -3,27 +3,39 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.sudokusolver.controllers.WelcomeController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+<VBox fx:id="rootVBox"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="se.pbt.sudokusolver.controllers.WelcomeController"
+      spacing="10"
+      alignment="CENTER"
+      stylesheets="@../styles/style.css"
+      style="-fx-padding: 20;">
 
     <!-- Welcome Text -->
     <Label fx:id="welcomeLabel" style="-fx-font-size: 20; -fx-font-weight: bold;" />
 
     <!-- Dropdown for board size -->
-    <HBox spacing="10" alignment="CENTER">
+    <HBox spacing="10"
+          alignment="CENTER">
+
         <Label fx:id="boardSizeLabel" />
         <ComboBox fx:id="sizeDropdown" />
     </HBox>
 
     <!-- Dropdown for difficulty -->
-    <HBox spacing="10" alignment="CENTER">
+    <HBox spacing="10"
+          alignment="CENTER">
+
         <Label fx:id="difficultyLabel" />
         <ComboBox fx:id="difficultyDropdown" />
     </HBox>
 
     <!-- Buttons -->
-    <HBox spacing="20" alignment="CENTER">
+    <HBox spacing="20"
+          alignment="CENTER">
+
         <Button fx:id="playButton" />
         <Button fx:id="rulesButton" />
     </HBox>
 </VBox>
+
