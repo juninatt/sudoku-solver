@@ -91,6 +91,7 @@ public class SudokuGrid {
         /**
          * Creates a Sudoku cell and binds it to the ViewModel.
          * The cell listens for user input and updates the game state accordingly.
+         * If the user presses ENTER, TAB, or leaves the cell, the value is updated.
          */
         private TextField createCell(int row, int col) {
             TextField cell = new TextField();
@@ -101,32 +102,41 @@ public class SudokuGrid {
             int value = viewModel.getCellValue(row, col);
             cell.setText(value == 0 ? "" : String.valueOf(value));
 
+            // Common method to handle input validation
+            Runnable updateCell = () -> {
+                try {
+                    int newValue = Integer.parseInt(cell.getText().trim());
+                    boolean success = viewModel.setValue(row, col, newValue);
 
-             // Handles user input for the cell by validating and updating the game state.
-             // If the input is valid, the cell becomes non-editable and is styled; otherwise, it is cleared.
+                    if (success) {
+                        cell.setEditable(false);
+                        cell.getStyleClass().add(Constants.CSS.FILLED_CELL);
+                    } else {
+                        cell.clear();
+                    }
+                } catch (NumberFormatException e) {
+                    cell.clear();
+                }
+            };
+
+            // Handles user input for the cell by validating and updating the game state.
             cell.setOnKeyPressed(event -> {
                 switch (event.getCode()) {
-                    case ENTER, TAB -> {
-                        try {
-                            int newValue = Integer.parseInt(cell.getText());
-                            boolean success = viewModel.setValue(row, col, newValue);
-
-                            if (success) {
-                                cell.setEditable(false);
-                                cell.getStyleClass().add(Constants.CSS.FILLED_CELL);
-                            } else {
-                                cell.clear();
-                            }
-                        } catch (NumberFormatException e) {
-                            cell.clear();
-                        }
-                    }
+                    case ENTER, TAB -> updateCell.run();
                     default -> {} // Ignore other key presses
+                }
+            });
+
+            // Ensure the value is set when the user leaves the cell (clicks elsewhere)
+            cell.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) { // If the focus is lost
+                    updateCell.run();
                 }
             });
 
             return cell;
         }
+
 
         public GridPane getGridPane() {
             return subgridPane;
