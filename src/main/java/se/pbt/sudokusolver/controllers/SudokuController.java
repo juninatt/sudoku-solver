@@ -33,8 +33,9 @@ public class SudokuController {
     private SudokuGrid sudokuGrid;
 
     /**
-     * Called automatically after FXML components are loaded.
-     * Sets up event handlers for UI elements.
+     * Initializes UI components after FXML is loaded.
+     * Adds an icon to the home button and sets up its event handler
+     * to allow users to navigate back to the main menu.
      */
     @FXML
     public void initialize() {
@@ -53,8 +54,9 @@ public class SudokuController {
      * @param size The dimension of the Sudoku board (e.g., 9 for a 9x9 grid).
      */
     public void initializeBoard(int size) {
-        SudokuBoard sudokuBoard = new SudokuBoard(size, new SudokuValidator());
-        viewModel = new SudokuViewModel(sudokuBoard);
+        SudokuBoard board = new SudokuBoard(size);
+        SudokuValidator validator = new SudokuValidator(board);
+        viewModel = new SudokuViewModel(board, validator);
         sudokuGrid = new SudokuGrid(viewModel);
 
         gridPane.getChildren().clear();
@@ -72,7 +74,6 @@ public class SudokuController {
             stage.setTitle(Localization.get("ui.welcome"));
             stage.show();
 
-            // Close the current Sudoku window
             ((Stage) homeButton.getScene().getWindow()).close();
 
         } catch (IOException e) {

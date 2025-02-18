@@ -1,37 +1,39 @@
 package se.pbt.sudokusolver.viewmodels;
 
 import se.pbt.sudokusolver.models.SudokuBoard;
-import se.pbt.sudokusolver.utils.Constants;
+import se.pbt.sudokusolver.models.SudokuValidator;
 
 /**
- * Acts as a link between the Sudoku board data and the UI, ensuring that board updates
- * are controlled and that the UI does not modify the {@link SudokuBoard} directly.
- * The ViewModel keeps a local copy of the board to allow safe updates and efficient UI synchronization.
+ * Manages the interaction between the Sudoku board data and the UI.
+ * Ensures that board updates are controlled and prevents direct UI modification of the {@link SudokuBoard}.
+ * The ViewModel maintains a local copy of the board state to enable safe UI updates
+ * and optimize performance by reducing direct calls to the game model.
  */
 public class SudokuViewModel {
     private final SudokuBoard sudokuBoard;
     private final int[][] boardValues;
     private final int boardSize;
-    private final int subgridSize;
+
+    private final SudokuValidator validator;
 
     /**
-     * Creates a ViewModel that prepares the Sudoku board for use in the UI.
-     * It copies the board's current values and calculates necessary grid properties,
-     * ensuring the UI can retrieve and modify data without directly interacting with the {@link SudokuBoard}.
+     * Creates a ViewModel that serves as an intermediary between the UI and game logic.
+     * It retrieves the board's initial values and calculates necessary grid properties,
+     * ensuring that the UI can retrieve and modify data without directly affecting the {@link SudokuBoard}.
      */
-    public SudokuViewModel(SudokuBoard sudokuBoard) {
+    public SudokuViewModel(SudokuBoard sudokuBoard, SudokuValidator validator) {
         this.sudokuBoard = sudokuBoard;
         this.boardSize = sudokuBoard.getBoardSize();
-        this.subgridSize = calculateSubgridSize(boardSize);
         this.boardValues = new int[boardSize][boardSize];
+        this.validator = validator;
 
         initializeBoard();
     }
 
     /**
-     * Initializes the board by copying values from {@link SudokuBoard}.
-     * If the game starts with a predefined puzzle, those values will be loaded here.
-     * Otherwise, all cells remain set to 0, indicating an empty board.
+     * Loads the current board state from the {@link SudokuBoard} into the local copy.
+     * This ensures that the UI interacts with a cached version of the board,
+     * preventing unintended modifications to the actual game state.
      */
     private void initializeBoard() {
         for (int row = 0; row < boardSize; row++) {
@@ -42,41 +44,25 @@ public class SudokuViewModel {
     }
 
     /**
-     * Attempts to set a value in a specific cell on the board.
-     * If the number is within the allowed range, the ViewModel updates its local copy
-     * of the board before applying the change to the {@link SudokuBoard}, which manages the game state.
+     * Attempts to place a value in a specific cell on the board.
+     * Ensures the move is valid before updating both the local UI copy and the actual game model.
+     * If the board becomes fully filled, it triggers validation to check if the solution is correct.
+     *
+     * @return {@code true} if the move is valid and applied, {@code false} if it violates Sudoku rules.
      */
     public boolean setValue(int row, int col, int value) {
-        if (!isWithinBounds(value)) {
+        if (validator.isOutOfBounds(row, col) || validator.isOutOfBounds(value)) {
             return false;
         }
 
         sudokuBoard.setValue(row, col, value);
         boardValues[row][col] = value;
-        return true;
-    }
 
-    /**
-     * Checks whether a given number falls within the valid range for the board.
-     * The valid range is from 1 to the board size (inclusive).
-     */
-    public boolean isWithinBounds(int value) {
-        return value >= 1 && value <= boardSize;
-    }
-
-    /**
-     * Calculates the size of subgrids based on the total board size.
-     * Standard Sudoku sizes (e.g., 9x9) have subgrids of equal size, but exceptions like 12x12 are handled separately.
-     */
-    private int calculateSubgridSize(int boardSize) {
-        double sqrt = Math.sqrt(boardSize);
-        if (sqrt % 1 == 0) {
-            return (int) sqrt;
-        } else if (boardSize == 12) {
-            return 4;
-        } else {
-            throw new IllegalArgumentException(Constants.ErrorMessages.INVALID_BOARD_SIZE);
+        if (sudokuBoard.isBoardFull()) {
+            return validator.validateBoard();
         }
+
+        return true;
     }
 
     /**
@@ -95,9 +81,10 @@ public class SudokuViewModel {
     }
 
     /**
-     * Retrieves the width and height of a single subgrid.
+     * Returns the width and height of a single subgrid.
+     * Used to correctly format the UI representation of the board.
      */
     public int getSubgridSize() {
-        return subgridSize;
+        return sudokuBoard.getSubgridSize();
     }
 }
