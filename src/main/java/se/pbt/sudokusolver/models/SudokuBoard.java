@@ -85,25 +85,6 @@ public class SudokuBoard {
     }
 
 
-    /**
-     * Private method used only for testing.
-     * Allows setting a predefined board state in test cases.
-     */
-    private void setBoard(int[][] board) {
-        if (board.length != boardSize || board[0].length != boardSize) {
-            throw new IllegalArgumentException("Invalid board size");
-        }
-        this.filledCells = 0;
-        for (int row = 0; row < boardSize; row++) {
-            for (int col = 0; col < boardSize; col++) {
-                this.board[row][col] = board[row][col];
-                if (board[row][col] != 0) {
-                    filledCells++;
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
