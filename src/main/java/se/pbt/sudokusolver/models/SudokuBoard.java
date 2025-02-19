@@ -39,8 +39,9 @@ public class SudokuBoard {
                     String.format(Constants.ErrorMessages.INVALID_BOARD_SIZE, boardSize)
             );
         }
-        return Constants.SudokuBoard.getBlockLayout(boardSize)[0]; // Returns the row size of the subgrid
+        return Constants.SudokuBoard.getSubgridSize(boardSize);
     }
+
 
 
 
