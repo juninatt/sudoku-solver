@@ -29,22 +29,20 @@ public class SudokuBoard {
     }
 
     /**
-     * Calculates the size of subgrids based on the total board size.
-     * Standard Sudoku grids (e.g., 9x9) have subgrids of equal size (3x3).
-     * Special cases like 12x12 are handled separately.
-     *
-     * @return The size of each subgrid (e.g., 3 for a 9x9 board).
+     * Determines the size of subgrids based on the board's total dimensions.
+     * Uses predefined configurations from {@link Constants.SudokuBoard} to support various board sizes.
+     * Ensures that only valid Sudoku board sizes are used.
      */
     private int calculateSubgridSize() {
-        double sqrt = Math.sqrt(boardSize);
-        if (sqrt % 1 == 0) {
-            return (int) sqrt;
-        } else if (boardSize == 12) {
-            return 4;
-        } else {
-            throw new IllegalArgumentException(Constants.ErrorMessages.INVALID_BOARD_SIZE);
+        if (!Constants.SudokuBoard.SUPPORTED_SIZES.contains(boardSize)) {
+            throw new IllegalArgumentException(
+                    String.format(Constants.ErrorMessages.INVALID_BOARD_SIZE, boardSize)
+            );
         }
+        return Constants.SudokuBoard.getBlockLayout(boardSize)[0]; // Returns the row size of the subgrid
     }
+
+
 
     /**
      * Places a value in the specified cell and tracks the number of filled cells.
@@ -86,6 +84,25 @@ public class SudokuBoard {
         return subgridSize;
     }
 
+
+    /**
+     * Private method used only for testing.
+     * Allows setting a predefined board state in test cases.
+     */
+    private void setBoard(int[][] board) {
+        if (board.length != boardSize || board[0].length != boardSize) {
+            throw new IllegalArgumentException("Invalid board size");
+        }
+        this.filledCells = 0;
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                this.board[row][col] = board[row][col];
+                if (board[row][col] != 0) {
+                    filledCells++;
+                }
+            }
+        }
+    }
 
     @Override
     public String toString() {
