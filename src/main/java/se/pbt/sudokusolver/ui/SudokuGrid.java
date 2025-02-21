@@ -14,7 +14,7 @@ import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
  */
 public class SudokuGrid {
     private final GridPane gridPane;
-    private final int subgridSize;
+    private final int[] subgridDimensions;
     private final SudokuViewModel viewModel;
 
     /**
@@ -22,11 +22,11 @@ public class SudokuGrid {
      * This includes setting up a grid structure with subgrids and binding
      * each cell to the ViewModel to ensure reactive updates.
      *
-     * @param viewModel  The {@link SudokuViewModel} managing game state and UI synchronization.
+     * @param viewModel The {@link SudokuViewModel} managing game state and UI synchronization.
      */
     public SudokuGrid(SudokuViewModel viewModel) {
         this.viewModel = viewModel;
-        this.subgridSize = viewModel.getSubgridSize();
+        this.subgridDimensions = viewModel.getSubgridDimensions();
         this.gridPane = new GridPane();
 
         setupGrid();
@@ -37,109 +37,93 @@ public class SudokuGrid {
      * The grid is dynamically adjusted based on the selected board size.
      */
     private void setupGrid() {
-        for (int subgridRow = 0; subgridRow < subgridSize; subgridRow++) {
-            for (int subgridCol = 0; subgridCol < subgridSize; subgridCol++) {
-                SubGrid subgrid = new SubGrid(subgridRow, subgridCol);
-                gridPane.add(subgrid.getGridPane(), subgridCol, subgridRow);
+        int subgridRows = subgridDimensions[0];
+        int subgridCols = subgridDimensions[1];
+        int boardSize = viewModel.getBoardSize();
+
+        for (int subgridRow = 0; subgridRow < boardSize / subgridRows; subgridRow++) {
+            for (int subgridCol = 0; subgridCol < boardSize / subgridCols; subgridCol++) {
+                GridPane subgridPane = new GridPane();
+                subgridPane.setGridLinesVisible(true);
+                subgridPane.getStyleClass().add(Constants.CSS.SUBGRID);
+
+                addCells(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
+
+                gridPane.add(subgridPane, subgridCol, subgridRow);
             }
         }
-    }
-
-
-    public GridPane getGridPane() {
-        return gridPane;
     }
 
     /**
-     * Represents the UI of an individual subgrid within the Sudoku board.
-     * Handles its own cells and data binding with the ViewModel.
+     * Populates the subgrid with individual cells, ensuring proper placement
+     * within the larger Sudoku board. Each cell is linked to the ViewModel.
      */
-    private class SubGrid {
-        private final GridPane subgridPane;
+    private void addCells(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
+        int boardSize = viewModel.getBoardSize();
 
-        /**
-         * Constructs a subgrid and initializes its cells.
-         * Each subgrid visually represents a section of the full Sudoku board.
-         */
-        public SubGrid(int subgridRow, int subgridCol) {
-            this.subgridPane = new GridPane();
-            this.subgridPane.setGridLinesVisible(true);
-            this.subgridPane.getStyleClass().add(Constants.CSS.SUBGRID);
+        for (int row = 0; row < subgridRows; row++) {
+            for (int col = 0; col < subgridCols; col++) {
+                int globalRow = subgridRow * subgridRows + row;
+                int globalCol = subgridCol * subgridCols + col;
 
-            addCells(subgridRow, subgridCol);
-        }
-
-        /**
-         * Populates the subgrid with individual cells, ensuring proper placement
-         * within the larger Sudoku board. Each cell is linked to the ViewModel.
-         */
-        private void addCells(int subgridRow, int subgridCol) {
-            int size = viewModel.getBoardSize();
-            for (int row = 0; row < subgridSize; row++) {
-                for (int col = 0; col < subgridSize; col++) {
-                    int globalRow = subgridRow * subgridSize + row;
-                    int globalCol = subgridCol * subgridSize + col;
-
-                    if (globalRow < size && globalCol < size) {
-                        TextField cell = createCell(globalRow, globalCol);
-                        subgridPane.add(cell, col, row);
-                    }
+                if (globalRow < boardSize && globalCol < boardSize) {
+                    TextField cell = createCell(globalRow, globalCol);
+                    subgridPane.add(cell, col, row);
                 }
             }
         }
+    }
 
-        /**
-         * Creates a Sudoku cell and binds it to the ViewModel.
-         * The cell listens for user input and updates the game state accordingly.
-         * If the user presses ENTER, TAB, or leaves the cell, the value is updated.
-         */
-        private TextField createCell(int row, int col) {
-            TextField cell = new TextField();
-            cell.setPrefSize(40, 40);
-            cell.setAlignment(javafx.geometry.Pos.CENTER);
+    /**
+     * Creates a Sudoku cell and binds it to the ViewModel.
+     * The cell listens for user input and updates the game state accordingly.
+     * If the user presses ENTER, TAB, or leaves the cell, the value is updated.
+     */
+    private TextField createCell(int row, int col) {
+        TextField cell = new TextField();
+        cell.setPrefSize(40, 40);
+        cell.setAlignment(javafx.geometry.Pos.CENTER);
 
-            // Set the initial value from the ViewModel
-            int value = viewModel.getCellValue(row, col);
-            cell.setText(value == 0 ? "" : String.valueOf(value));
+        // Set the initial value from the ViewModel
+        int value = viewModel.getCellValue(row, col);
+        cell.setText(value == 0 ? "" : String.valueOf(value));
 
-            // Common method to handle input validation
-            Runnable updateCell = () -> {
-                try {
-                    int newValue = Integer.parseInt(cell.getText().trim());
-                    boolean success = viewModel.setValue(row, col, newValue);
+        // Common method to handle input validation
+        Runnable updateCell = () -> {
+            try {
+                int newValue = Integer.parseInt(cell.getText().trim());
+                boolean success = viewModel.setValue(row, col, newValue);
 
-                    if (success) {
-                        cell.setEditable(false);
-                        cell.getStyleClass().add(Constants.CSS.FILLED_CELL);
-                    } else {
-                        cell.clear();
-                    }
-                } catch (NumberFormatException e) {
+                if (success) {
+                    cell.setEditable(false);
+                    cell.getStyleClass().add(Constants.CSS.FILLED_CELL);
+                } else {
                     cell.clear();
                 }
-            };
+            } catch (NumberFormatException e) {
+                cell.clear();
+            }
+        };
 
-            // Handles user input for the cell by validating and updating the game state.
-            cell.setOnKeyPressed(event -> {
-                switch (event.getCode()) {
-                    case ENTER, TAB -> updateCell.run();
-                    default -> {} // Ignore other key presses
-                }
-            });
+        // Handles user input for the cell by validating and updating the game state.
+        cell.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ENTER, TAB -> updateCell.run();
+                default -> {} // Ignore other key presses
+            }
+        });
 
-            // Ensure the value is set when the user leaves the cell (clicks elsewhere)
-            cell.focusedProperty().addListener((obs, oldVal, newVal) -> {
-                if (!newVal) { // If the focus is lost
-                    updateCell.run();
-                }
-            });
+        // Ensure the value is set when the user leaves the cell (clicks elsewhere)
+        cell.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) { // If the focus is lost
+                updateCell.run();
+            }
+        });
 
-            return cell;
-        }
+        return cell;
+    }
 
-
-        public GridPane getGridPane() {
-            return subgridPane;
-        }
+    public GridPane getGridPane() {
+        return gridPane;
     }
 }

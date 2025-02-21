@@ -84,7 +84,7 @@ public class SudokuViewModel {
      * Returns the width and height of a single subgrid.
      * Used to correctly format the UI representation of the board.
      */
-    public int getSubgridSize() {
-        return sudokuBoard.getSubgridSize();
+    public int[] getSubgridDimensions() {
+        return sudokuBoard.getSubgridDimensions();
     }
 }

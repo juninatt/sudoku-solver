@@ -35,17 +35,16 @@ public class Constants {
         public static final String[] SIZE_OPTIONS = {"4x4", "6x6", "9x9", "12x12", "16x16", "25x25"};
         public static final String DEFAULT_SIZE = "9x9";
 
-        public static int getSubgridSize(int size) {
+        public static int[] getBlockLayout(int size) {
             return switch (size) {
-                case 4 -> 2;
-                case 6 -> 3;
-                case 9 -> 3;
-                case 12 -> 4;
-                case 16 -> 4;
-                case 25 -> 5;
+                case 4 -> new int[]{2, 2};   // 4x4 -> 2x2 subgrids (4 st)
+                case 6 -> new int[]{2, 3};   // 6x6 -> 2x3 subgrids (6 st)
+                case 9 -> new int[]{3, 3};   // 9x9 -> 3x3 subgrids (9 st)
+                case 12 -> new int[]{3, 4};  // 12x12 -> 3x4 subgrids (12 st)
+                case 16 -> new int[]{4, 4};  // 16x16 -> 4x4 subgrids (16 st)
+                case 25 -> new int[]{5, 5};  // 25x25 -> 5x5 subgrids (25 st)
                 default -> throw new IllegalArgumentException("Unsupported board size: " + size);
             };
         }
-
     }
 }

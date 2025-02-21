@@ -11,7 +11,7 @@ public class SudokuValidator {
 
     private final SudokuBoard board;
     private final int boardSize;
-    private final int subgridSize;
+    private final int[] subgridDimensions;
 
     /**
      * Initializes the validator with a reference to a Sudoku board.
@@ -22,7 +22,7 @@ public class SudokuValidator {
     public SudokuValidator(SudokuBoard board) {
         this.board = board;
         this.boardSize = board.getBoardSize();
-        this.subgridSize = board.getSubgridSize();
+        this.subgridDimensions = board.getSubgridDimensions();
     }
 
     /**
@@ -64,15 +64,30 @@ public class SudokuValidator {
      * Validates all subgrids to ensure each contains unique numbers.
      */
     private boolean validateSubgrids() {
-        for (int row = 0; row < boardSize; row += subgridSize) {
-            for (int col = 0; col < boardSize; col += subgridSize) {
-                if (!isValidSubgrid(row, col)) {
+        int subgridRows = subgridDimensions[0];
+        int subgridCols = subgridDimensions[1];
+
+        for (int row = 0; row < boardSize; row += subgridRows) {
+            for (int col = 0; col < boardSize; col += subgridCols) {
+                if (!isValidSubgrid(row, col, subgridRows, subgridCols)) {
                     return false;
                 }
             }
         }
         return true;
     }
+
+    /**
+     * Checks if a given subgrid contains unique numbers.
+     */
+    private boolean isValidSubgrid(int startRow, int startCol, int subgridRows, int subgridCols) {
+        return hasUniqueNumbers(
+                IntStream.range(0, subgridRows)
+                        .flatMap(row -> IntStream.range(0, subgridCols)
+                                .map(col -> board.getValueAt(startRow + row, startCol + col)))
+        );
+    }
+
 
     /**
      * Checks if a given row contains unique numbers.
@@ -88,17 +103,6 @@ public class SudokuValidator {
     private boolean isValidColumn(int col) {
         return hasUniqueNumbers(IntStream.range(0, boardSize)
                 .map(row -> board.getValueAt(row, col)));
-    }
-
-    /**
-     * Checks if a given subgrid contains unique numbers.
-     */
-    private boolean isValidSubgrid(int startRow, int startCol) {
-        return hasUniqueNumbers(
-                IntStream.range(0, subgridSize)
-                        .flatMap(row -> IntStream.range(0, subgridSize)
-                                .map(col -> board.getValueAt(startRow + row, startCol + col)))
-        );
     }
 
     /**

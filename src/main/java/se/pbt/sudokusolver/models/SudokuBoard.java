@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class SudokuBoard {
     private final int boardSize;
-    private final int subgridSize;
+    private final int[] subgridDimensions;
     private int filledCells;
     private final int[][] board;
 
@@ -24,7 +24,7 @@ public class SudokuBoard {
      */
     public SudokuBoard(int boardSize) {
         this.boardSize = boardSize;
-        this.subgridSize = calculateSubgridSize();
+        this.subgridDimensions = calculateSubgridSize();
         this.board = new int[boardSize][boardSize];
     }
 
@@ -33,17 +33,14 @@ public class SudokuBoard {
      * Uses predefined configurations from {@link Constants.SudokuBoard} to support various board sizes.
      * Ensures that only valid Sudoku board sizes are used.
      */
-    private int calculateSubgridSize() {
+    private int[] calculateSubgridSize() {
         if (!Constants.SudokuBoard.SUPPORTED_SIZES.contains(boardSize)) {
             throw new IllegalArgumentException(
                     String.format(Constants.ErrorMessages.INVALID_BOARD_SIZE, boardSize)
             );
         }
-        return Constants.SudokuBoard.getSubgridSize(boardSize);
+        return Constants.SudokuBoard.getBlockLayout(boardSize);
     }
-
-
-
 
     /**
      * Places a value in the specified cell and tracks the number of filled cells.
@@ -78,11 +75,9 @@ public class SudokuBoard {
         return boardSize;
     }
 
-    /**
-     * Returns the size of a single subgrid (e.g., 3 for a 9x9 board).
-     */
-    public int getSubgridSize() {
-        return subgridSize;
+
+    public int[] getSubgridDimensions() {
+        return subgridDimensions;
     }
 
 
