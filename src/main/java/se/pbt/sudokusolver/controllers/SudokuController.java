@@ -71,7 +71,7 @@ public class SudokuController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FilePaths.WELCOME_VIEW));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
-            stage.setTitle(Localization.get("ui.welcome"));
+            stage.setTitle(Constants.UI.Texts.Titles.MAIN);
             stage.show();
 
             ((Stage) homeButton.getScene().getWindow()).close();

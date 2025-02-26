@@ -15,7 +15,7 @@ public class SudokuApp extends Application {
     public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FilePaths.WELCOME_VIEW));
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle(Localization.get("ui.title.main"));
+        primaryStage.setTitle(Localization.get(Constants.UI.Texts.Titles.MAIN));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

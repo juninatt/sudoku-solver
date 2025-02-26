@@ -22,13 +22,6 @@ public class Constants {
         public static final String MESSAGE_BUNDLE_ES = "i18n.messages_es";
     }
 
-    public static class CSS {
-
-        public static final String SUBGRID = "subgrid";
-        public static final String FILLED_CELL = "filled-cell";
-        public static final String TEXT_FIELD = "text-field";
-    }
-
     public static class SudokuBoard {
 
         public static final Set<Integer> SUPPORTED_SIZES = Set.of(4, 6, 9, 12, 16, 25);
@@ -45,6 +38,45 @@ public class Constants {
                 case 25 -> new int[]{5, 5};  // 25x25 -> 5x5 subgrids (25 st)
                 default -> throw new IllegalArgumentException("Unsupported board size: " + size);
             };
+        }
+    }
+
+    public static class UI {
+
+        public static class Texts {
+
+            public static class Titles {
+                public static final String MAIN = "ui.title.main";
+                public static final String BOARD = "ui.title.board";
+            }
+
+            public static class Labels {
+                public static final String WELCOME = "ui.welcome";
+                public static final String BOARD_SIZE = "ui.label.boardSize";
+                public static final String DIFFICULTY = "ui.label.difficulty";
+            }
+
+            public static class Buttons {
+                public static final String PLAY = "ui.button.play";
+                public static final String RULES = "ui.button.rules";
+            }
+
+            public static class Rules {
+                public static final String TEXT = "ui.rules.text";
+            }
+
+            public static class Difficulty {
+                public static final String EASY = "ui.label.difficulty.easy";
+                public static final String MEDIUM = "ui.label.difficulty.medium";
+                public static final String HARD = "ui.label.difficulty.hard";
+            }
+        }
+
+
+        public static class CSS {
+            public static final String SUBGRID = "subgrid";
+            public static final String FILLED_CELL = "filled-cell";
+            public static final String TEXT_FIELD = "text-field";
         }
     }
 }

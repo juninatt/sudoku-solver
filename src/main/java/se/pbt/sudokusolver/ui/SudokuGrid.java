@@ -45,7 +45,7 @@ public class SudokuGrid {
             for (int subgridCol = 0; subgridCol < boardSize / subgridCols; subgridCol++) {
                 GridPane subgridPane = new GridPane();
                 subgridPane.setGridLinesVisible(true);
-                subgridPane.getStyleClass().add(Constants.CSS.SUBGRID);
+                subgridPane.getStyleClass().add(Constants.UI.CSS.SUBGRID);
 
                 addCells(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
 
@@ -96,7 +96,7 @@ public class SudokuGrid {
 
                 if (success) {
                     cell.setEditable(false);
-                    cell.getStyleClass().add(Constants.CSS.FILLED_CELL);
+                    cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
                 } else {
                     cell.clear();
                 }
