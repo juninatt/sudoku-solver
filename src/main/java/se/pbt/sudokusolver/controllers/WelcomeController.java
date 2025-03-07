@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import se.pbt.sudokusolver.models.Difficulty;
 import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.utils.Localization;
 
@@ -25,6 +26,8 @@ public class WelcomeController {
     private Label boardSizeLabel;
     @FXML
     private Label difficultyLabel;
+    @FXML
+    private ComboBox<Difficulty> difficultyDropdown;
     @FXML
     private ComboBox<String> sizeDropdown;
     @FXML
@@ -53,17 +56,22 @@ public class WelcomeController {
         sizeDropdown.getItems().addAll(Constants.SudokuBoard.SIZE_OPTIONS);
         sizeDropdown.getSelectionModel().select(Constants.SudokuBoard.DEFAULT_SIZE);
 
+        difficultyDropdown.getItems().setAll(Difficulty.values());
+        difficultyDropdown.setValue(Difficulty.MEDIUM);
+
+
         playButton.setOnAction(event -> loadGameBoard());
     }
 
     /**
      * Loads the Sudoku game board with the selected settings.
-     * Retrieves the chosen board size from the dropdown, initializes the game controller,
+     * Retrieves the chosen board size and difficulty from the dropdowns, initializes the game controller,
      * and replaces the current window with the game board.
      */
     private void loadGameBoard() {
         String selectedSize = sizeDropdown.getValue();
         int size = Integer.parseInt(selectedSize.split("x")[0]);
+        Difficulty difficulty = difficultyDropdown.getValue();
 
         String viewFilePath = Constants.FilePaths.SUDOKU_VIEW;
         String title = Constants.UI.Texts.Titles.BOARD;
@@ -74,7 +82,7 @@ public class WelcomeController {
             Scene scene = new Scene(loader.load());
 
             SudokuController controller = loader.getController();
-            controller.initializeBoard(size);
+            controller.initializeBoard(size, difficulty);
 
             stage.setTitle(Localization.get(title, size));
             stage.setScene(scene);
