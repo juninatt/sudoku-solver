@@ -8,7 +8,6 @@ import java.util.stream.IntStream;
 /**
  * Validates a {@link SudokuBoard} by ensuring that all rows, columns, and subgrids
  * contain only unique non-zero values according to standard Sudoku rules.
- * <p>
  * This class operates in a read-only manner and does not modify the board.
  */
 public class SudokuValidator {
@@ -118,34 +117,5 @@ public class SudokuValidator {
         return numberStream
                 .filter(num -> num != 0)
                 .allMatch(seenNumbers::add);
-    }
-
-    // ---------- Static Rule Validation ----------
-
-    /**
-     * Checks if a specific number can legally be placed in the given cell without violating Sudoku rules.
-     */
-    public static boolean isValidPlacement(SudokuBoard board, int row, int col, int num) {
-        for (int i = 0; i < board.getSize(); i++) {
-            if (board.getValueAt(row, i) == num || board.getValueAt(i, col) == num) {
-                return false;
-            }
-        }
-
-        int[] subgrid = board.getSubgridDimensions();
-        int subgridRows = subgrid[0];
-        int subgridCols = subgrid[1];
-        int startRow = row - row % subgridRows;
-        int startCol = col - col % subgridCols;
-
-        for (int r = 0; r < subgridRows; r++) {
-            for (int c = 0; c < subgridCols; c++) {
-                if (board.getValueAt(startRow + r, startCol + c) == num) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 }

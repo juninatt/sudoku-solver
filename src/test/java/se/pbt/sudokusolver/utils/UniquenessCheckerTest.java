@@ -3,6 +3,7 @@ package se.pbt.sudokusolver.utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import se.pbt.sudokusolver.builders.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.models.SudokuBoard;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

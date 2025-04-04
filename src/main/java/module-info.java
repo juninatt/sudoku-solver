@@ -18,4 +18,5 @@ module se.pbt.sudokusolver {
     opens se.pbt.sudokusolver.controllers to javafx.fxml;
     opens se.pbt.sudokusolver.builders to javafx.fxml;
     opens se.pbt.sudokusolver.app to javafx.fxml;
+    exports se.pbt.sudokusolver.builders.helpers;
 }
