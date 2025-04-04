@@ -8,11 +8,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import se.pbt.sudokusolver.builders.SudokuBuilder;
+import se.pbt.sudokusolver.builders.helpers.SolutionGenerator;
+import se.pbt.sudokusolver.builders.helpers.UniquenessChecker;
+import se.pbt.sudokusolver.models.Difficulty;
 import se.pbt.sudokusolver.models.SudokuBoard;
-import se.pbt.sudokusolver.models.SudokuValidator;
 import se.pbt.sudokusolver.ui.SudokuGrid;
 import se.pbt.sudokusolver.utils.Constants;
-import se.pbt.sudokusolver.utils.Localization;
+import se.pbt.sudokusolver.utils.SudokuValidator;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 import java.io.IOException;
@@ -53,9 +56,16 @@ public class SudokuController {
      *
      * @param size The dimension of the Sudoku board (e.g., 9 for a 9x9 grid).
      */
-    public void initializeBoard(int size) {
-        SudokuBoard board = new SudokuBoard(size);
+    public void initializeBoard(int size, Difficulty difficulty) {
+        SudokuBuilder sudokuBuilder = new SudokuBuilder(
+                size,
+                difficulty,
+                new UniquenessChecker(),
+                new SolutionGenerator());
+
+        SudokuBoard board = sudokuBuilder.buildSudokuPuzzle();
         SudokuValidator validator = new SudokuValidator(board);
+
         viewModel = new SudokuViewModel(board, validator);
         sudokuGrid = new SudokuGrid(viewModel);
 

@@ -26,8 +26,14 @@ public enum Difficulty {
         this.i18nKey = i18nKey;
     }
 
-    public double getClueFraction() {
-        return clueFraction;
+    /**
+     * Calculates how many values to remove from the board
+     * based on the difficulty's clue fraction.
+     */
+    public int calculateValuesToRemove(int boardSize) {
+        int totalCells = boardSize * boardSize;
+        int cluesToKeep = (int) (clueFraction * totalCells);
+        return totalCells - cluesToKeep;
     }
 
 
