@@ -88,6 +88,12 @@ public class SudokuGrid {
         int value = viewModel.getCellValue(row, col);
         cell.setText(value == 0 ? "" : String.valueOf(value));
 
+        if (value != 0) {
+            cell.setEditable(false);
+            cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
+            return cell;
+        }
+
         // Common method to handle input validation
         Runnable updateCell = () -> {
             try {
@@ -98,7 +104,8 @@ public class SudokuGrid {
                     cell.setEditable(false);
                     cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
                 } else {
-                    cell.clear();
+                    int actualValue = viewModel.getCellValue(row, col);
+                    cell.setText(actualValue == 0 ? "" : String.valueOf(actualValue));
                 }
             } catch (NumberFormatException e) {
                 cell.clear();

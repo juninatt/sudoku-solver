@@ -32,7 +32,7 @@ public class SudokuViewModel {
      * Triggers validation once the board is fully filled.
      */
     public boolean setValue(int row, int col, int value) {
-        if (isOutOfBounds(row, col, value)) {
+        if (isOutOfBounds(row, col, value) || sudokuBoard.hasValueAt(row, col)) {
             return false;
         }
 
