@@ -18,7 +18,7 @@ import java.io.IOException;
  * Manages UI text localization (via {@link Localization} and message bundles in the resource package),
  * dropdown selections, and transitions to the game board.
  */
-public class WelcomeController {
+public class MainMenuController {
 
     @FXML
     private Label welcomeLabel;
@@ -81,7 +81,7 @@ public class WelcomeController {
             Stage stage = new Stage();
             Scene scene = new Scene(loader.load());
 
-            SudokuController controller = loader.getController();
+            SudokuGameController controller = loader.getController();
             controller.initializeBoard(size, difficulty);
 
             stage.setTitle(Localization.get(title, size));

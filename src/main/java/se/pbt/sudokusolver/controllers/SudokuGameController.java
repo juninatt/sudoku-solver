@@ -25,7 +25,7 @@ import java.io.IOException;
  * to the underlying game logic through the ViewModel.
  * Ensures that the game board is correctly instantiated and displayed.
  */
-public class SudokuController {
+public class SudokuGameController {
 
     @FXML
     private GridPane gridPane;

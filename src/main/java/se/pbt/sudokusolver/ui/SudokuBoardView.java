@@ -47,7 +47,7 @@ public class SudokuBoardView {
                 subgridPane.setGridLinesVisible(true);
                 subgridPane.getStyleClass().add(Constants.UI.CSS.SUBGRID);
 
-                addCells(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
+                addCellsToSubgrid(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
 
                 gridPane.add(subgridPane, subgridCol, subgridRow);
             }
@@ -58,7 +58,7 @@ public class SudokuBoardView {
      * Populates the subgrid with individual cells, ensuring proper placement
      * within the larger Sudoku board. Each cell is linked to the ViewModel.
      */
-    private void addCells(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
+    private void addCellsToSubgrid(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
         int boardSize = viewModel.getBoardSize();
 
         for (int row = 0; row < subgridRows; row++) {

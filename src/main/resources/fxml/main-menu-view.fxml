@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox fx:id="rootVBox"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="se.pbt.sudokusolver.controllers.WelcomeController"
+      fx:controller="se.pbt.sudokusolver.controllers.MainMenuController"
       spacing="10"
       alignment="CENTER"
       stylesheets="@../styles/style.css"
