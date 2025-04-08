@@ -2,6 +2,7 @@ package se.pbt.sudokusolver.models;
 
 import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.utils.SudokuValidator;
+import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 import java.util.Arrays;
 
@@ -59,7 +60,9 @@ public class SudokuBoard {
 
     /**
      * Places a value in the specified cell and tracks the number of filled cells.
-     * This method does not enforce Sudoku rules; validation is handled separately.
+     * This method is intended for use during the board construction phase only.
+     * During gameplay, all value updates must go through the {@link SudokuViewModel},
+     * which internally delegates to this method.
      */
     public void setValue(int row, int col, int value) {
         int oldValue = board[row][col];
