@@ -13,7 +13,7 @@ import se.pbt.sudokusolver.builders.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.builders.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.models.Difficulty;
 import se.pbt.sudokusolver.models.SudokuBoard;
-import se.pbt.sudokusolver.ui.SudokuGrid;
+import se.pbt.sudokusolver.ui.SudokuBoardView;
 import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.utils.SudokuValidator;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
@@ -33,7 +33,7 @@ public class SudokuController {
     private Button homeButton;
 
     private SudokuViewModel viewModel;
-    private SudokuGrid sudokuGrid;
+    private SudokuBoardView sudokuBoardView;
 
     /**
      * Initializes UI components after FXML is loaded.
@@ -67,10 +67,10 @@ public class SudokuController {
         SudokuValidator validator = new SudokuValidator(board);
 
         viewModel = new SudokuViewModel(board, validator);
-        sudokuGrid = new SudokuGrid(viewModel);
+        sudokuBoardView = new SudokuBoardView(viewModel);
 
         gridPane.getChildren().clear();
-        gridPane.getChildren().add(sudokuGrid.getGridPane());
+        gridPane.getChildren().add(sudokuBoardView.getGridPane());
     }
 
     /**

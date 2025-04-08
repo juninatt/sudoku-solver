@@ -12,7 +12,7 @@ import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
  *
  * @see SudokuViewModel
  */
-public class SudokuGrid {
+public class SudokuBoardView {
     private final GridPane gridPane;
     private final int[] subgridDimensions;
     private final SudokuViewModel viewModel;
@@ -24,7 +24,7 @@ public class SudokuGrid {
      *
      * @param viewModel The {@link SudokuViewModel} managing game state and UI synchronization.
      */
-    public SudokuGrid(SudokuViewModel viewModel) {
+    public SudokuBoardView(SudokuViewModel viewModel) {
         this.viewModel = viewModel;
         this.subgridDimensions = viewModel.getSubgridDimensions();
         this.gridPane = new GridPane();
@@ -67,67 +67,11 @@ public class SudokuGrid {
                 int globalCol = subgridCol * subgridCols + col;
 
                 if (globalRow < boardSize && globalCol < boardSize) {
-                    TextField cell = createCell(globalRow, globalCol);
+                    TextField cell = SudokuCellFactory.create(globalRow, globalCol, viewModel);
                     subgridPane.add(cell, col, row);
                 }
             }
         }
-    }
-
-    /**
-     * Creates a Sudoku cell and binds it to the ViewModel.
-     * The cell listens for user input and updates the game state accordingly.
-     * If the user presses ENTER, TAB, or leaves the cell, the value is updated.
-     */
-    private TextField createCell(int row, int col) {
-        TextField cell = new TextField();
-        cell.setPrefSize(40, 40);
-        cell.setAlignment(javafx.geometry.Pos.CENTER);
-
-        // Set the initial value from the ViewModel
-        int value = viewModel.getCellValue(row, col);
-        cell.setText(value == 0 ? "" : String.valueOf(value));
-
-        if (value != 0) {
-            cell.setEditable(false);
-            cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
-            return cell;
-        }
-
-        // Common method to handle input validation
-        Runnable updateCell = () -> {
-            try {
-                int newValue = Integer.parseInt(cell.getText().trim());
-                boolean success = viewModel.setValue(row, col, newValue);
-
-                if (success) {
-                    cell.setEditable(false);
-                    cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
-                } else {
-                    int actualValue = viewModel.getCellValue(row, col);
-                    cell.setText(actualValue == 0 ? "" : String.valueOf(actualValue));
-                }
-            } catch (NumberFormatException e) {
-                cell.clear();
-            }
-        };
-
-        // Handles user input for the cell by validating and updating the game state.
-        cell.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case ENTER, TAB -> updateCell.run();
-                default -> {} // Ignore other key presses
-            }
-        });
-
-        // Ensure the value is set when the user leaves the cell (clicks elsewhere)
-        cell.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) { // If the focus is lost
-                updateCell.run();
-            }
-        });
-
-        return cell;
     }
 
     public GridPane getGridPane() {
