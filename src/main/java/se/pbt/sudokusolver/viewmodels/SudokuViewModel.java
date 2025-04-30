@@ -3,6 +3,8 @@ package se.pbt.sudokusolver.viewmodels;
 import se.pbt.sudokusolver.models.SudokuBoard;
 import se.pbt.sudokusolver.utils.SudokuValidator;
 
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.MIN_CELL_VALUE;
+
 /**
  * Acts as the intermediary between the UI and the underlying {@link SudokuBoard} model.
  * Provides safe access to board data and enables controlled modifications during gameplay.
@@ -49,7 +51,12 @@ public class SudokuViewModel {
      * Validates that the specified row, column, and value are within the board's allowed range.
      */
     public boolean isOutOfBounds(int row, int col, int value) {
-        return row < 0 || row >= boardSize || col < 0 || col >= boardSize || value < 1 || value > boardSize;
+        return row < 0
+                || row >= boardSize
+                || col < 0
+                || col >= boardSize
+                || value < MIN_CELL_VALUE
+                || value > boardSize;
     }
 
     /**
@@ -73,5 +80,9 @@ public class SudokuViewModel {
      */
     public int[] getSubgridDimensions() {
         return sudokuBoard.getSubgridDimensions();
+    }
+
+    public SudokuValidator getValidator() {
+        return validator;
     }
 }

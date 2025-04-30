@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.*;
+
 /**
  * Abstract superclass providing shared logic for Sudoku puzzle generation and validation.
  * Designed to be extended by classes such as {@link SolutionGenerator} and {@link UniquenessChecker},
@@ -28,7 +30,7 @@ public abstract class SudokuBuilderHelper {
      */
     protected final int[] getNextCell(int row, int col, int boardSize) {
         int nextRow = (col == boardSize - 1) ? row + 1 : row;
-        int nextCol = (col == boardSize - 1) ? 0 : col + 1;
+        int nextCol = (col == boardSize - 1) ? FIRST_INDEX : col + 1;
         return new int[]{nextRow, nextCol};
     }
 
@@ -46,7 +48,7 @@ public abstract class SudokuBuilderHelper {
                     return true;
                 }
 
-                board.setValue(row, col, 0); // Backtrack
+                board.setValue(row, col, EMPTY_CELL); // Backtrack
             }
         }
         return false;
@@ -57,7 +59,7 @@ public abstract class SudokuBuilderHelper {
      * Used during backtracking to try possible numbers in a cell.
      */
     private List<Integer> getShuffledNumbers(int boardSize) {
-        List<Integer> numbers = IntStream.rangeClosed(1, boardSize)
+        List<Integer> numbers = IntStream.rangeClosed(MIN_VALID_CELL_VALUE, boardSize)
                 .boxed()
                 .collect(Collectors.toList());
         Collections.shuffle(numbers);

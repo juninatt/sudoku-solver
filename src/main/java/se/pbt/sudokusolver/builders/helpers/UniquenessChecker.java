@@ -4,6 +4,8 @@ import se.pbt.sudokusolver.models.SudokuBoard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.*;
+
 /**
  * Core component used during puzzle generation to verify that a {@link SudokuBoard} has exactly one solution.
  * This class uses recursive backtracking to count all valid solutions for a given board,
@@ -16,7 +18,7 @@ public class UniquenessChecker extends SudokuBuilderHelper {
      * Makes a defensive copy of the board to avoid modifying the original.
      */
     public boolean hasUniqueSolution(SudokuBoard board) {
-        return isSolutionUnique(board.copy(), 0, 0, new AtomicInteger(0));
+        return isSolutionUnique(board.copy(), FIRST_ROW_INDEX, FIRST_COLUMN_INDEX, new AtomicInteger(0));
     }
 
     /**
@@ -25,11 +27,11 @@ public class UniquenessChecker extends SudokuBuilderHelper {
      * Returns {@code true} if only one solution is found; otherwise, stops early and returns {@code false}.
      */
     private boolean isSolutionUnique(SudokuBoard board, int row, int col, AtomicInteger solutionCount) {
-        if (solutionCount.get() > 1) return false;
+        if (solutionCount.get() > MAX_ALLOWED_SOLUTIONS) return false;
 
         if (isBoardFull(row, board.getSize())) {
             solutionCount.incrementAndGet();
-            return solutionCount.get() == 1;
+            return solutionCount.get() == MAX_ALLOWED_SOLUTIONS;
         }
 
         int[] next = getNextCell(row, col, board.getSize());
@@ -42,7 +44,7 @@ public class UniquenessChecker extends SudokuBuilderHelper {
 
         return !tryNumbersInCell(board, row, col, num -> {
             isSolutionUnique(board, nextRow, nextCol, solutionCount);
-            return solutionCount.get() > 1;
+            return solutionCount.get() > MAX_ALLOWED_SOLUTIONS;
         });
     }
 }

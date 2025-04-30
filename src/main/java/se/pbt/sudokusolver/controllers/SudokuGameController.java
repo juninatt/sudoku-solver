@@ -14,11 +14,13 @@ import se.pbt.sudokusolver.builders.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.models.Difficulty;
 import se.pbt.sudokusolver.models.SudokuBoard;
 import se.pbt.sudokusolver.ui.SudokuBoardView;
-import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.utils.SudokuValidator;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 import java.io.IOException;
+
+import static se.pbt.sudokusolver.utils.Constants.PathConstants.MAIN_MENU_VIEW;
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.I18N_TITLE_MAIN;
 
 /**
  * Manages the initialization of the Sudoku board and links the UI components
@@ -78,10 +80,10 @@ public class SudokuGameController {
      */
     private void returnToMainMenu() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FilePaths.WELCOME_VIEW));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(MAIN_MENU_VIEW));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
-            stage.setTitle(Constants.UI.Texts.Titles.MAIN);
+            stage.setTitle(I18N_TITLE_MAIN);
             stage.show();
 
             ((Stage) homeButton.getScene().getWindow()).close();

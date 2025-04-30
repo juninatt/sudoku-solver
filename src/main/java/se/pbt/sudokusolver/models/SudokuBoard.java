@@ -6,6 +6,8 @@ import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
 import java.util.Arrays;
 
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.*;
+
 /**
  * Represents the internal structure of a Sudoku board.
  * Stores and manages cell values, tracks progress, and provides access to board dimensions.
@@ -67,9 +69,9 @@ public class SudokuBoard {
     public void setValue(int row, int col, int value) {
         int oldValue = board[row][col];
         board[row][col] = value;
-        if (oldValue == 0 && value != 0) {
+        if (oldValue == EMPTY_CELL && value != EMPTY_CELL) {
             filledCells++;
-        } else if (oldValue != 0 && value == 0) {
+        } else if (oldValue != EMPTY_CELL && value == EMPTY_CELL) {
             filledCells--;
         }
     }
@@ -103,7 +105,7 @@ public class SudokuBoard {
      * Checks if a specific cell is currently filled (non-zero).
      */
     public boolean hasValueAt(int row, int col) {
-        return getValueAt(row, col) != 0;
+        return getValueAt(row, col) != EMPTY_CELL;
     }
 
     /**
@@ -119,12 +121,12 @@ public class SudokuBoard {
      * Calculates subgrid dimensions based on the board size.
      */
     private int[] calculateSubgridSize() {
-        if (!Constants.SudokuBoard.SUPPORTED_SIZES.contains(size)) {
+        if (!SUPPORTED_BOARD_SIZES.contains(size)) {
             throw new IllegalArgumentException(
-                    String.format(Constants.ErrorMessages.INVALID_BOARD_SIZE, size)
+                    String.format(ERROR_INVALID_BOARD_SIZE, size)
             );
         }
-        return Constants.SudokuBoard.getBlockLayout(size);
+        return Constants.GameConstants.getBlockLayout(size);
     }
 
     // Overrides

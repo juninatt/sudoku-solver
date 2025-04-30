@@ -3,15 +3,17 @@ package se.pbt.sudokusolver.utils;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import static se.pbt.sudokusolver.utils.Constants.PathConstants.BUNDLE_SV;
+
 /**
  * Manages all user-facing text for the application by loading messages from ResourceBundle files.
  * These files are located in the 'resources/i18n' directory, and their file paths are defined in the
- * {@link Constants.FilePaths} class.
+ * {@link Constants.PathConstants} class.
  * This class handles only the text displayed to the user and enables easy language
  * switching without modifying the underlying code.
  */
 public class Localization {
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Constants.FilePaths.MESSAGE_BUNDLE_SV);
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_SV);
 
     /**
      * Retrieves the text for the given key from the ResourceBundle.

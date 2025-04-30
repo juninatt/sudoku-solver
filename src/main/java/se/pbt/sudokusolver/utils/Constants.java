@@ -2,81 +2,120 @@ package se.pbt.sudokusolver.utils;
 
 import java.util.Set;
 
+/**
+ * Central container class for shared constants across the application.
+ * Divided into logical categories to improve readability and maintainability.
+ */
 public class Constants {
 
-    public static class ErrorMessages {
 
-        public static final String BOARD_NOT_CREATED = "No board has been created yet!";
-        public static final String INVALID_POSITION = "Row and column must be within board size";
-        public static final String VALUE_MUST_BE = "Value must be between 0 and ";
-        public static final String INVALID_BOARD_SIZE = "Invalid board size: {0}. Supported sizes: " + Constants.SudokuBoard.SUPPORTED_SIZES;
-        public static final String INVALID_VALUE = "Value is not valid";
-    }
+    /**
+     * Contains core logic constants related to the Sudoku board, such as supported sizes,
+     * value limits, and layout calculation logic.
+     */
+    public static final class GameConstants {
 
-    public static class FilePaths {
+        // Board Size Definitions
+        public static final Set<Integer> SUPPORTED_BOARD_SIZES = Set.of(4, 6, 9, 12, 16, 25);
+        public static final String[] BOARD_SIZE_OPTIONS = {"4x4", "6x6", "9x9", "12x12", "16x16", "25x25"};
+        public static final String DEFAULT_BOARD_SIZE = "9x9";
+        public static final String SIZE_SEPARATOR = "x";
 
-        public static final String WELCOME_VIEW = "/fxml/main-menu-view.fxml";
-        public static final String SUDOKU_VIEW = "/fxml/sudoku-game-view.fxml";
-        public static final String MESSAGE_BUNDLE_SV = "i18n.messages_sv";
-        public static final String MESSAGE_BUNDLE_EN = "i18n.messages_en";
-        public static final String MESSAGE_BUNDLE_ES = "i18n.messages_es";
-    }
+        // Board Cell Constraints
+        public static final int EMPTY_CELL = 0;
+        public static final int FIRST_INDEX = 0;
+        public static final int MIN_VALID_CELL_VALUE = 1;
 
-    public static class SudokuBoard {
+        // Error Messages
+        public static final String ERROR_INVALID_BOARD_SIZE =
+                "Invalid board size: {0}. Supported sizes: " + SUPPORTED_BOARD_SIZES;
+        public static final String ERROR_BOARD_GENERATION_FAILED =
+                "Unable to generate a complete Sudoku solution. Invalid puzzle state.";
 
-        public static final Set<Integer> SUPPORTED_SIZES = Set.of(4, 6, 9, 12, 16, 25);
-        public static final String[] SIZE_OPTIONS = {"4x4", "6x6", "9x9", "12x12", "16x16", "25x25"};
-        public static final String DEFAULT_SIZE = "9x9";
-
+        /**
+         * Determines subgrid layout (rows x columns) for a given board size.
+         */
         public static int[] getBlockLayout(int size) {
             return switch (size) {
-                case 4 -> new int[]{2, 2};   // 4x4 -> 2x2 subgrids (4 st)
-                case 6 -> new int[]{2, 3};   // 6x6 -> 2x3 subgrids (6 st)
-                case 9 -> new int[]{3, 3};   // 9x9 -> 3x3 subgrids (9 st)
-                case 12 -> new int[]{3, 4};  // 12x12 -> 3x4 subgrids (12 st)
-                case 16 -> new int[]{4, 4};  // 16x16 -> 4x4 subgrids (16 st)
-                case 25 -> new int[]{5, 5};  // 25x25 -> 5x5 subgrids (25 st)
+                case 4 -> new int[]{2, 2};   // 2x2 blocks
+                case 6 -> new int[]{2, 3};   // 2x3 blocks
+                case 9 -> new int[]{3, 3};   // 3x3 blocks
+                case 12 -> new int[]{3, 4};  // 3x4 blocks
+                case 16 -> new int[]{4, 4};  // 4x4 blocks
+                case 25 -> new int[]{5, 5};  // 5x5 blocks
                 default -> throw new IllegalArgumentException("Unsupported board size: " + size);
             };
         }
+
+        /**
+         * Private constructor to prevent instantiation.
+         */
+        private GameConstants() {}
     }
 
-    public static class UI {
 
-        public static class Texts {
+    /**
+     * Contains file paths to FXML views and resource bundles used in the UI.
+     * Used to centralize access to all static resource paths in the application.
+     */
+    public static final class PathConstants {
 
-            public static class Titles {
-                public static final String MAIN = "ui.title.main";
-                public static final String BOARD = "ui.title.board";
-            }
+        // FXML View Paths
+        public static final String MAIN_MENU_VIEW = "/fxml/main-menu-view.fxml";
+        public static final String SUDOKU_GAME_VIEW = "/fxml/sudoku-game-view.fxml";
 
-            public static class Labels {
-                public static final String WELCOME = "ui.welcome";
-                public static final String BOARD_SIZE = "ui.label.boardSize";
-                public static final String DIFFICULTY = "ui.label.difficulty";
-            }
+        // Localization Bundles
+        public static final String BUNDLE_SV = "i18n.messages_sv";
+        public static final String BUNDLE_EN = "i18n.messages_en";
+        public static final String BUNDLE_ES = "i18n.messages_es";
 
-            public static class Buttons {
-                public static final String PLAY = "ui.button.play";
-                public static final String RULES = "ui.button.rules";
-            }
-
-            public static class Rules {
-                public static final String TEXT = "ui.rules.text";
-            }
-
-            public static class Difficulty {
-                public static final String EASY = "ui.label.difficulty.easy";
-                public static final String MEDIUM = "ui.label.difficulty.medium";
-                public static final String HARD = "ui.label.difficulty.hard";
-            }
-        }
+        /**
+         * Private constructor to prevent instantiation.
+         */
+        private PathConstants() {}
+    }
 
 
-        public static class CSS {
-            public static final String SUBGRID = "subgrid";
-            public static final String FILLED_CELL = "filled-cell";
-            public static final String TEXT_FIELD = "text-field";
-        }
+    /**
+     * Contains UI-related constants such as layout dimensions, CSS styles,
+     * gameplay rules and localization keys.
+     */
+    public static final class UIConstants {
+
+        // Layout
+        public static final double CELL_SIZE = 40.0;
+        public static final int FIRST_ROW_INDEX = 0;
+        public static final int FIRST_COLUMN_INDEX = 0;
+
+        // Gameplay rules
+        public static final int MAX_ALLOWED_SOLUTIONS = 1;
+        public static final int MIN_CELL_VALUE = 1;
+
+
+        // Clue fractions for different difficulties
+        public static final double CLUE_FRACTION_EASY = 0.50;
+        public static final double CLUE_FRACTION_MEDIUM = 0.35;
+        public static final double CLUE_FRACTION_HARD = 0.20;
+
+        // CSS style classes
+        public static final String CSS_CLASS_SUBGRID = "subgrid";
+        public static final String CSS_CLASS_FILLED_CELL = "filled-cell";
+
+        // Localization keys – general UI
+        public static final String I18N_TITLE_MAIN = "ui.title.main";
+        public static final String I18N_TITLE_BOARD = "ui.title.board";
+        public static final String I18N_LABEL_WELCOME = "ui.welcome";
+        public static final String I18N_LABEL_BOARD_SIZE = "ui.label.boardSize";
+        public static final String I18N_LABEL_DIFFICULTY = "ui.label.difficulty";
+        public static final String I18N_BUTTON_PLAY = "ui.button.play";
+        public static final String I18N_BUTTON_RULES = "ui.button.rules";
+        public static final String I18N_RULES_TEXT = "ui.rules.text";
+
+        // Localization keys – difficulty
+        public static final String I18N_DIFFICULTY_EASY = "ui.label.difficulty.easy";
+        public static final String I18N_DIFFICULTY_MEDIUM = "ui.label.difficulty.medium";
+        public static final String I18N_DIFFICULTY_HARD = "ui.label.difficulty.hard";
+
+        private UIConstants() {}
     }
 }

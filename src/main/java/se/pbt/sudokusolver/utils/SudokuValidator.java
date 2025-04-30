@@ -5,6 +5,8 @@ import se.pbt.sudokusolver.models.SudokuBoard;
 import java.util.HashSet;
 import java.util.stream.IntStream;
 
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.EMPTY_CELL;
+
 /**
  * Validates a {@link SudokuBoard} by ensuring that all rows, columns, and subgrids
  * contain only unique non-zero values according to standard Sudoku rules.
@@ -115,7 +117,7 @@ public class SudokuValidator {
     private boolean hasUniqueNumbers(IntStream numberStream) {
         HashSet<Integer> seenNumbers = new HashSet<>();
         return numberStream
-                .filter(num -> num != 0)
+                .filter(num -> num != EMPTY_CELL)
                 .allMatch(seenNumbers::add);
     }
 }

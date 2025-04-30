@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.ERROR_BOARD_GENERATION_FAILED;
+
 /**
  * This class generates a fully solved Sudoku board and removes numbers based on
  * the selected difficulty level. It ensures the puzzle remains solvable with only one solution.
@@ -54,21 +57,20 @@ public class SudokuBuilder {
         if (solutionGenerator.fillBoardWithSolution(board, 0, 0)) {
             return board.copy();
         } else {
-            throw new IllegalStateException("Failed generating full solution.");
+            throw new IllegalStateException(ERROR_BOARD_GENERATION_FAILED);
         }
     }
 
     private void removeValuesFromBoard(SudokuBoard gameBoard) {
         int valuesRemoved = 0;
         int valuesToRemove = difficulty.calculateValuesToRemove(size);
-
         List<Point> cellsToRemove = getCellsForValueRemoval(gameBoard.getSize(), valuesToRemove);
 
         for (Point p : cellsToRemove) {
             if (valuesRemoved >= valuesToRemove) break;
 
             int backup = gameBoard.getValueAt(p.x, p.y);
-            gameBoard.setValue(p.x, p.y, 0);
+            gameBoard.setValue(p.x, p.y, EMPTY_CELL);
 
             if (!uniquenessChecker.hasUniqueSolution(gameBoard)) {
                 gameBoard.setValue(p.x, p.y, backup);
@@ -81,6 +83,7 @@ public class SudokuBuilder {
 
     private List<Point> getCellsForValueRemoval(int size, int valuesToRemove) {
         List<Point> cells = new ArrayList<>();
+
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 cells.add(new Point(row, col));
@@ -104,7 +107,11 @@ public class SudokuBuilder {
         for (int row = 0; row < board.getSize(); row++) {
             for (int col = 0; col < board.getSize(); col++) {
                 int originalValue = board.getValueAt(row, col);
-                int newValue = (originalValue != 0) ? mapping.get(originalValue - 1) : 0;
+
+                int newValue = (originalValue != EMPTY_CELL)
+                        ? mapping.get(originalValue - 1)
+                        : EMPTY_CELL;
+
                 board.setValue(row, col, newValue);
             }
         }

@@ -2,8 +2,11 @@ package se.pbt.sudokusolver.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
-import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
+
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.CELL_SIZE;
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.CSS_CLASS_FILLED_CELL;
 
 /**
  * Factory class responsible for creating Sudoku cell components (TextFields)
@@ -18,20 +21,21 @@ public class SudokuCellFactory {
      */
     public static TextField create(int row, int col, SudokuViewModel viewModel) {
         int value = viewModel.getCellValue(row, col);
-        return (value != 0)
+        return (value != EMPTY_CELL)
                 ? createClueCell(value)
                 : createEmptyCell(row, col, viewModel);
     }
 
     /**
-     * Creates a non-editable cell representing a pre-filled clue.
+     * Creates a non-editable cell pre-filled with a number (a clue).
+     * These cells are styled and locked to prevent editing.
      */
     private static TextField createClueCell(int value) {
         TextField cell = new TextField(String.valueOf(value));
-        cell.setPrefSize(40, 40);
+        cell.setPrefSize(CELL_SIZE, CELL_SIZE);
         cell.setAlignment(Pos.CENTER);
         cell.setEditable(false);
-        cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
+        cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
         return cell;
     }
 
@@ -40,7 +44,7 @@ public class SudokuCellFactory {
      */
     private static TextField createEmptyCell(int row, int col, SudokuViewModel viewModel) {
         TextField cell = new TextField();
-        cell.setPrefSize(40, 40);
+        cell.setPrefSize(CELL_SIZE, CELL_SIZE);
         cell.setAlignment(Pos.CENTER);
 
         attachInputHandlers(cell, row, col, viewModel);
@@ -78,7 +82,7 @@ public class SudokuCellFactory {
 
             if (success) {
                 cell.setEditable(false);
-                cell.getStyleClass().add(Constants.UI.CSS.FILLED_CELL);
+                cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
             } else {
                 resetToModelValue(cell, row, col, viewModel);
             }
@@ -88,10 +92,11 @@ public class SudokuCellFactory {
     }
 
     /**
-     * Restores the cell's content to reflect the current value from the ViewModel.
+     * Resets the cell's text content to reflect the latest value in the ViewModel.
+     * If the cell is empty (0), the field is cleared.
      */
     private static void resetToModelValue(TextField cell, int row, int col, SudokuViewModel viewModel) {
         int actualValue = viewModel.getCellValue(row, col);
-        cell.setText(actualValue == 0 ? "" : String.valueOf(actualValue));
+        cell.setText(actualValue == EMPTY_CELL ? "" : String.valueOf(actualValue));
     }
 }

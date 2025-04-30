@@ -2,8 +2,9 @@ package se.pbt.sudokusolver.ui;
 
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
+
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.CSS_CLASS_SUBGRID;
 
 /**
  * Represents the UI component responsible for displaying the Sudoku board.
@@ -45,9 +46,9 @@ public class SudokuBoardView {
             for (int subgridCol = 0; subgridCol < boardSize / subgridCols; subgridCol++) {
                 GridPane subgridPane = new GridPane();
                 subgridPane.setGridLinesVisible(true);
-                subgridPane.getStyleClass().add(Constants.UI.CSS.SUBGRID);
+                subgridPane.getStyleClass().add(CSS_CLASS_SUBGRID);
 
-                addCellsToSubgrid(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
+                populateSubgridWithCells(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
 
                 gridPane.add(subgridPane, subgridCol, subgridRow);
             }
@@ -58,7 +59,7 @@ public class SudokuBoardView {
      * Populates the subgrid with individual cells, ensuring proper placement
      * within the larger Sudoku board. Each cell is linked to the ViewModel.
      */
-    private void addCellsToSubgrid(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
+    private void populateSubgridWithCells(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
         int boardSize = viewModel.getBoardSize();
 
         for (int row = 0; row < subgridRows; row++) {

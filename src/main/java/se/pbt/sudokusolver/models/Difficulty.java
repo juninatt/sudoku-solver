@@ -1,16 +1,17 @@
 package se.pbt.sudokusolver.models;
 
-import se.pbt.sudokusolver.utils.Constants;
 import se.pbt.sudokusolver.utils.Localization;
+
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.*;
 
 /**
  * Represents the difficulty levels of a Sudoku puzzle.
  * Each difficulty level determines how many clues (pre-filled numbers) will be provided in the puzzle.
  */
 public enum Difficulty {
-    EASY(0.50, Constants.UI.Texts.Difficulty.EASY),
-    MEDIUM(0.35, Constants.UI.Texts.Difficulty.MEDIUM),
-    HARD(0.20, Constants.UI.Texts.Difficulty.HARD);
+    EASY(CLUE_FRACTION_EASY, I18N_DIFFICULTY_EASY),
+    MEDIUM(CLUE_FRACTION_MEDIUM, I18N_DIFFICULTY_MEDIUM),
+    HARD(CLUE_FRACTION_HARD, I18N_DIFFICULTY_HARD);
 
     private final double clueFraction;
     private final String i18nKey;
