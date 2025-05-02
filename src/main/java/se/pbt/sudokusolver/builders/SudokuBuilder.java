@@ -16,16 +16,19 @@ import static se.pbt.sudokusolver.utils.Constants.GameConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.utils.Constants.GameConstants.ERROR_BOARD_GENERATION_FAILED;
 
 /**
- * This class generates a fully solved Sudoku board and removes numbers based on
- * the selected difficulty level. It ensures the puzzle remains solvable with only one solution.
- * The class relies on {@link SolutionGenerator} for solving and checking solution uniqueness.
+ * Generates both a solved and a playable Sudoku board based on the selected difficulty.
+ * The solved board is randomized and stored internally, while the playable board is derived
+ * by removing values with guaranteed uniqueness.
  */
 public class SudokuBuilder {
+
 
     int size;
     Difficulty difficulty;
     UniquenessChecker uniquenessChecker;
     SolutionGenerator solutionGenerator;
+
+    private SudokuBoard solvedBoard;
 
     public SudokuBuilder(int size, Difficulty difficulty, UniquenessChecker uniquenessChecker, SolutionGenerator solutionGenerator) {
         this.size = size;
@@ -40,15 +43,17 @@ public class SudokuBuilder {
      * @return A {@link SudokuBoard} containing a valid Sudoku puzzle.
      */
     public SudokuBoard buildSudokuPuzzle() {
-        SudokuBoard gameBoard = createSolvedBoard();
+        this.solvedBoard = createSolvedBoard();
 
         // Additional randomization to minimize risk of similarities between puzzles
-        randomizeBoard(gameBoard);
+        randomizeBoard(solvedBoard);
+
+        SudokuBoard playableBoard = solvedBoard.copy();
 
         // Remove numbers from the full sudoku puzzle solution based on difficulty
-        removeValuesFromBoard(gameBoard);
+        removeValuesFromBoard(playableBoard);
 
-        return gameBoard;
+        return playableBoard;
     }
 
 
@@ -116,4 +121,13 @@ public class SudokuBuilder {
             }
         }
     }
+
+    /**
+     * Returns the fully solved board generated during puzzle creation.
+     * Useful for hint systems or automated solving (cheat mode).
+     */
+    public SudokuBoard getSolvedBoard() {
+        return solvedBoard;
+    }
+
 }

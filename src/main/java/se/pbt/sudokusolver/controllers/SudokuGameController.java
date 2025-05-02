@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -41,7 +42,8 @@ public class SudokuGameController {
     private Button solveBoardButton; // TODO: Implement message bundle
 
     private SudokuViewModel viewModel;
-    private SudokuBoardView sudokuBoardView;
+    private SudokuBoard solvedBoard;
+
 
     /**
      * Initializes basic UI logic after FXML is loaded.
@@ -51,20 +53,10 @@ public class SudokuGameController {
         FontIcon homeIcon = new FontIcon(FontAwesomeSolid.HOME);
         homeIcon.setIconSize(20);
         homeButton.setGraphic(homeIcon);
-
         homeButton.setOnAction(event -> returnToMainMenu());
 
         cheatButtonsBox.setVisible(false);
         cheatButtonsBox.setManaged(false);
-    }
-
-    /**
-     * Sets whether cheat mode is enabled and activates related UI.
-     */
-    public void setCheatMode(boolean cheatModeEnabled) {
-        if (cheatModeEnabled) {
-            enableCheatButtons();
-        }
     }
 
     /**
@@ -75,13 +67,16 @@ public class SudokuGameController {
                 size,
                 difficulty,
                 new UniquenessChecker(),
-                new SolutionGenerator());
+                new SolutionGenerator()
+        );
 
         SudokuBoard board = sudokuBuilder.buildSudokuPuzzle();
+        this.solvedBoard = sudokuBuilder.getSolvedBoard();
+
         SudokuValidator validator = new SudokuValidator(board);
 
-        viewModel = new SudokuViewModel(board, validator);
-        sudokuBoardView = new SudokuBoardView(viewModel);
+        this.viewModel = new SudokuViewModel(board, validator);
+        SudokuBoardView sudokuBoardView = new SudokuBoardView(viewModel);
 
         gridPane.getChildren().clear();
         gridPane.getChildren().add(sudokuBoardView.getGridPane());
@@ -100,7 +95,45 @@ public class SudokuGameController {
     }
 
     /**
-     * Closes the current Sudoku window and returns to the main menu.
+     * Reveals the correct value for the next empty cell in the board.
+     * Updates the ViewModel and triggers validation if the board becomes full.
+     */
+    private void revealNextCorrectValue() {
+        for (int row = 0; row < solvedBoard.getSize(); row++) {
+            for (int col = 0; col < solvedBoard.getSize(); col++) {
+                if (viewModel.isEmpty(row, col)) {
+                    int correctValue = solvedBoard.getValueAt(row, col);
+                    viewModel.forceSetValue(row, col, correctValue);
+
+                    if (viewModel.isBoardFull()) {
+                        viewModel.getValidator().validateBoard();
+                    }
+
+                    return;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Fills in the entire board with the correct values from the solved board.
+     * Only fills cells that are currently empty, then triggers validation.
+     */
+    private void solveEntireBoard() {
+        for (int row = 0; row < solvedBoard.getSize(); row++) {
+            for (int col = 0; col < solvedBoard.getSize(); col++) {
+                int value = solvedBoard.getValueAt(row, col);
+                if (viewModel.isEmpty(row, col)) {
+                    viewModel.forceSetValue(row, col, value);
+                }
+            }
+        }
+        viewModel.getValidator().validateBoard();
+    }
+
+    /**
+     * Navigates back to the main menu.
      */
     private void returnToMainMenu() {
         try {
@@ -113,7 +146,17 @@ public class SudokuGameController {
             ((Stage) homeButton.getScene().getWindow()).close();
 
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage()); // TODO: Improve error handling
+        }
+    }
+
+    /**
+     * Sets whether cheat mode is enabled and activates related UI if true.
+     * This must be called before board initialization to ensure correct setup.
+     */
+    public void setCheatMode(boolean cheatModeEnabled) {
+        if (cheatModeEnabled) {
+            enableCheatButtons();
         }
     }
 }

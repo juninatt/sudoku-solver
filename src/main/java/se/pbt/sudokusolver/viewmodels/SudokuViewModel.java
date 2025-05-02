@@ -1,7 +1,11 @@
 package se.pbt.sudokusolver.viewmodels;
 
 import se.pbt.sudokusolver.models.SudokuBoard;
+import se.pbt.sudokusolver.ui.CellUpdateListener;
 import se.pbt.sudokusolver.utils.SudokuValidator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static se.pbt.sudokusolver.utils.Constants.UIConstants.MIN_CELL_VALUE;
 
@@ -15,6 +19,18 @@ public class SudokuViewModel {
     private final int boardSize;
 
     private final SudokuValidator validator;
+
+    private final List<CellUpdateListener> listeners = new ArrayList<>();
+
+    public void addCellUpdateListener(CellUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyCellUpdated(int row, int col, int newValue) {
+        for (CellUpdateListener listener : listeners) {
+            listener.onCellUpdated(row, col, newValue);
+        }
+    }
 
     /**
      * Creates a ViewModel that serves as an intermediary between the UI and game logic.
@@ -59,6 +75,18 @@ public class SudokuViewModel {
                 || value > boardSize;
     }
 
+
+    /**
+     * Forcefully sets the value of a cell without validation.
+     * This method is intended for internal game logic such as cheat mode or
+     * hint generation, and triggers UI listeners directly.
+     */
+    public void forceSetValue(int row, int col, int value) {
+
+        sudokuBoard.setValue(row, col, value);
+        notifyCellUpdated(row, col, value);
+    }
+
     /**
      * Retrieves the current value of a specific cell.
      * Used by the UI to display numbers on the board.
@@ -85,4 +113,16 @@ public class SudokuViewModel {
     public SudokuValidator getValidator() {
         return validator;
     }
+
+    /**
+     * Checks if a specific cell currently has a value set (non-zero).
+     */
+    public boolean isEmpty(int row, int col) {
+        return !sudokuBoard.hasValueAt(row, col);
+    }
+
+    public boolean isBoardFull() {
+        return sudokuBoard.isBoardFull();
+    }
+
 }
