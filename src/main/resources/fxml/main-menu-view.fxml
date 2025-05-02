@@ -30,6 +30,9 @@
         <ComboBox fx:id="difficultyDropdown" />
     </HBox>
 
+    <!-- Checkbox for cheating -->
+    <CheckBox fx:id="cheatModeCheckbox" text="Cheat Mode"/>
+
     <!-- Buttons -->
     <HBox spacing="20"
           alignment="CENTER">

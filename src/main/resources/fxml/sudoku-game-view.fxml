@@ -33,5 +33,15 @@
                alignment="CENTER"
                hgap="5"
                vgap="5"/>
+
+     <!-- Cheat Buttons -->
+     <HBox fx:id="cheatButtonsBox"
+           spacing="10"
+           alignment="CENTER"
+           visible="false"
+           managed="false">
+          <Button fx:id="nextHintButton" text="Next Hint"/>
+          <Button fx:id="solveBoardButton" text="Solve Board"/>
+     </HBox>
 </VBox>
 

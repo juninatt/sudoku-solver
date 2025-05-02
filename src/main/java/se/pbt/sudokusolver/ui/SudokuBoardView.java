@@ -4,6 +4,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import se.pbt.sudokusolver.viewmodels.SudokuViewModel;
 
+import static se.pbt.sudokusolver.utils.Constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.utils.Constants.UIConstants.CSS_CLASS_FILLED_CELL;
 import static se.pbt.sudokusolver.utils.Constants.UIConstants.CSS_CLASS_SUBGRID;
 
 /**
@@ -13,10 +15,13 @@ import static se.pbt.sudokusolver.utils.Constants.UIConstants.CSS_CLASS_SUBGRID;
  *
  * @see SudokuViewModel
  */
-public class SudokuBoardView {
+public class SudokuBoardView implements CellUpdateListener{
+
     private final GridPane gridPane;
     private final int[] subgridDimensions;
     private final SudokuViewModel viewModel;
+    private final TextField[][] cellFields;
+
 
     /**
      * Initializes the UI representation of the Sudoku board.
@@ -29,6 +34,9 @@ public class SudokuBoardView {
         this.viewModel = viewModel;
         this.subgridDimensions = viewModel.getSubgridDimensions();
         this.gridPane = new GridPane();
+
+        viewModel.addCellUpdateListener(this);
+        this.cellFields = new TextField[viewModel.getBoardSize()][viewModel.getBoardSize()];
 
         setupGrid();
     }
@@ -69,6 +77,7 @@ public class SudokuBoardView {
 
                 if (globalRow < boardSize && globalCol < boardSize) {
                     TextField cell = SudokuCellFactory.create(globalRow, globalCol, viewModel);
+                    cellFields[globalRow][globalCol] = cell;
                     subgridPane.add(cell, col, row);
                 }
             }
@@ -77,5 +86,14 @@ public class SudokuBoardView {
 
     public GridPane getGridPane() {
         return gridPane;
+    }
+
+
+    @Override
+    public void onCellUpdated(int row, int col, int newValue) {
+        TextField cell = cellFields[row][col];
+        cell.setText(newValue == EMPTY_CELL ? "" : String.valueOf(newValue));
+        cell.setEditable(false);
+        cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
     }
 }

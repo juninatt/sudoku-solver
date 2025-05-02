@@ -33,14 +33,18 @@ public class SudokuGameController {
     private GridPane gridPane;
     @FXML
     private Button homeButton;
+    @FXML
+    private HBox cheatButtonsBox;
+    @FXML
+    private Button nextHintButton; // TODO: Implement message bundle
+    @FXML
+    private Button solveBoardButton; // TODO: Implement message bundle
 
     private SudokuViewModel viewModel;
     private SudokuBoardView sudokuBoardView;
 
     /**
-     * Initializes UI components after FXML is loaded.
-     * Adds an icon to the home button and sets up its event handler
-     * to allow users to navigate back to the main menu.
+     * Initializes basic UI logic after FXML is loaded.
      */
     @FXML
     public void initialize() {
@@ -49,14 +53,22 @@ public class SudokuGameController {
         homeButton.setGraphic(homeIcon);
 
         homeButton.setOnAction(event -> returnToMainMenu());
+
+        cheatButtonsBox.setVisible(false);
+        cheatButtonsBox.setManaged(false);
     }
 
     /**
-     * Initializes the Sudoku board with the given size.
-     * Creates the game model, ViewModel, and UI representation,
-     * ensuring that all components are properly connected.
-     *
-     * @param size The dimension of the Sudoku board (e.g., 9 for a 9x9 grid).
+     * Sets whether cheat mode is enabled and activates related UI.
+     */
+    public void setCheatMode(boolean cheatModeEnabled) {
+        if (cheatModeEnabled) {
+            enableCheatButtons();
+        }
+    }
+
+    /**
+     * Sets up the Sudoku board based on selected size and difficulty.
      */
     public void initializeBoard(int size, Difficulty difficulty) {
         SudokuBuilder sudokuBuilder = new SudokuBuilder(
@@ -73,6 +85,18 @@ public class SudokuGameController {
 
         gridPane.getChildren().clear();
         gridPane.getChildren().add(sudokuBoardView.getGridPane());
+    }
+
+
+    /**
+     * Displays the cheat buttons and connects their event handlers.
+     */
+    private void enableCheatButtons() {
+        cheatButtonsBox.setVisible(true);
+        cheatButtonsBox.setManaged(true);
+
+        nextHintButton.setOnAction(event -> revealNextCorrectValue());
+        solveBoardButton.setOnAction(event -> solveEntireBoard());
     }
 
     /**

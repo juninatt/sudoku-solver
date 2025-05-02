@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -33,6 +34,8 @@ public class MainMenuController {
     private ComboBox<Difficulty> difficultyDropdown;
     @FXML
     private ComboBox<String> sizeDropdown;
+    @FXML
+    private CheckBox cheatModeCheckbox;
     @FXML
     private Button playButton;
     @FXML
@@ -67,6 +70,7 @@ public class MainMenuController {
      * and replaces the current window with the game board.
      */
     private void loadGameBoard() {
+        boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
         String selectedSize = sizeDropdown.getValue();
         int size = Integer.parseInt(selectedSize.split(SIZE_SEPARATOR)[0]);
         Difficulty difficulty = difficultyDropdown.getValue();
@@ -79,6 +83,7 @@ public class MainMenuController {
             Scene scene = new Scene(loader.load());
 
             SudokuGameController controller = loader.getController();
+            controller.setCheatMode(cheatModeEnabled);
             controller.initializeBoard(size, difficulty);
 
             stage.setTitle(Localization.get(I18N_TITLE_BOARD, size));
