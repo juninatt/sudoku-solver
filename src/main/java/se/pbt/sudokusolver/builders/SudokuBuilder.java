@@ -56,7 +56,9 @@ public class SudokuBuilder {
         return playableBoard;
     }
 
-
+    /**
+     * Constructs a fully solved {@link SudokuBoard} using the {@link SolutionGenerator}.
+     */
     private SudokuBoard createSolvedBoard() {
         SudokuBoard board = new SudokuBoard(size);
         if (solutionGenerator.fillBoardWithSolution(board, 0, 0)) {
@@ -66,6 +68,11 @@ public class SudokuBuilder {
         }
     }
 
+    /**
+     * Attempts to remove a specified number of values from the board while ensuring
+     * that the resulting puzzle retains a unique solution.
+     * Uses {@link UniquenessChecker} to verify solution uniqueness after each removal.
+     */
     private void removeValuesFromBoard(SudokuBoard gameBoard) {
         int valuesRemoved = 0;
         int valuesToRemove = difficulty.calculateValuesToRemove(size);
@@ -85,7 +92,10 @@ public class SudokuBuilder {
         }
     }
 
-
+    /**
+     * Randomly selects cell positions to attempt value removal from, shuffling all cell positions
+     * and returning the first N based on the number of values to remove.
+     */
     private List<Point> getCellsForValueRemoval(int size, int valuesToRemove) {
         List<Point> cells = new ArrayList<>();
 
