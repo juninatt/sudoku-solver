@@ -16,8 +16,8 @@ public class Constants {
     public static final class GameConstants {
 
         // Board Size Definitions
-        public static final Set<Integer> SUPPORTED_BOARD_SIZES = Set.of(4, 6, 9, 12, 16, 25);
-        public static final String[] BOARD_SIZE_OPTIONS = {"4x4", "6x6", "9x9", "12x12", "16x16", "25x25"};
+        public static final Set<Integer> SUPPORTED_BOARD_SIZES = Set.of(4, 6, 9);
+        public static final String[] BOARD_SIZE_OPTIONS = {"4x4", "6x6", "9x9"};
         public static final String DEFAULT_BOARD_SIZE = "9x9";
         public static final String SIZE_SEPARATOR = "x";
 
@@ -40,9 +40,6 @@ public class Constants {
                 case 4 -> new int[]{2, 2};   // 2x2 blocks
                 case 6 -> new int[]{2, 3};   // 2x3 blocks
                 case 9 -> new int[]{3, 3};   // 3x3 blocks
-                case 12 -> new int[]{3, 4};  // 3x4 blocks
-                case 16 -> new int[]{4, 4};  // 4x4 blocks
-                case 25 -> new int[]{5, 5};  // 5x5 blocks
                 default -> throw new IllegalArgumentException("Unsupported board size: " + size);
             };
         }
