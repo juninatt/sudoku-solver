@@ -104,6 +104,7 @@
             <!-- Configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
+              <!-- Module name + class path -->
               <mainClass>se.pbt.sudokusolver/se.pbt.sudokusolver.app.SudokuApp</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
