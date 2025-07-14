@@ -3,7 +3,7 @@
 A JavaFX-based Sudoku app that lets users generate, play, and solve puzzles of various sizes and difficulty levels.
 
 ## Features
-- Supports multiple board sizes (4x4, 6x6, 9x9, 12x12, 16x16, 25x25).
+- Supports multiple board sizes: 4x4, 6x6, and 9x9. Larger sizes (12x12, 16x16, 25x25) are currently unsupported due to stability concerns, but can be re-enabled by updating the relevant constants in the `Constants` class.
 - Interactive grid with real-time validation.
 - Enforces Sudoku rules for valid number placement.
 - Internationalization (i18n) with switchable language files.
