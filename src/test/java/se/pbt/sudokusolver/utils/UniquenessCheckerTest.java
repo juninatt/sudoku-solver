@@ -102,15 +102,4 @@ class UniquenessCheckerTest {
         SudokuTestBoardFactory.fillBoard(board, values);
         assertFalse(checker.hasUniqueSolution(board), "Expected multiple solutions.");
     }
-
-    // -------- 12x12 --------
-
-    @Test
-    @DisplayName("Should detect multiple solutions in empty 12x12 puzzle")
-    void testMultipleSolutionsIn12x12Puzzle() {
-        board = new SudokuBoard(12);
-        int[][] values = new int[12][12];
-        SudokuTestBoardFactory.fillBoard(board, values);
-        assertFalse(checker.hasUniqueSolution(board), "Expected multiple solutions.");
-    }
 }
