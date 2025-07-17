@@ -37,6 +37,8 @@ public enum Difficulty {
         return totalCells - cluesToKeep;
     }
 
+    public double getClueFraction() { return clueFraction; }
+
 
     @Override
     public String toString() {
