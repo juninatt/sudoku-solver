@@ -6,6 +6,7 @@ module se.pbt.sudokusolver {
     requires org.kordamp.ikonli.fontawesome5;
     requires org.kordamp.ikonli.javafx;
     requires java.desktop;
+    requires org.slf4j;
 
     // --- Exports for External Access ---
     exports se.pbt.sudokusolver.controllers;
