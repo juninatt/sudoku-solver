@@ -7,7 +7,7 @@ import java.util.Set;
  * Divided into logical categories to improve readability and maintainability.
  */
 public class Constants {
-
+    // TODO: Organize
 
     /**
      * Contains core logic constants related to the Sudoku board, such as supported sizes,
@@ -88,7 +88,6 @@ public class Constants {
         public static final int MAX_ALLOWED_SOLUTIONS = 1;
         public static final int MIN_CELL_VALUE = 1;
 
-
         // Clue fractions for different difficulties
         public static final double CLUE_FRACTION_EASY = 0.50;
         public static final double CLUE_FRACTION_MEDIUM = 0.35;
@@ -107,6 +106,8 @@ public class Constants {
         public static final String I18N_BUTTON_PLAY = "ui.button.play";
         public static final String I18N_BUTTON_RULES = "ui.button.rules";
         public static final String I18N_RULES_TEXT = "ui.rules.text";
+        public static final String I18N_CHECKBOX_CHEAT_MODE = "ui.checkbox.cheatMode";
+        public static final String I18N_MENU_LANGUAGE = "ui.menu.language";
 
         // Localization keys – difficulty
         public static final String I18N_DIFFICULTY_EASY = "ui.label.difficulty.easy";
@@ -115,4 +116,5 @@ public class Constants {
 
         private UIConstants() {}
     }
+
 }

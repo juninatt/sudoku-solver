@@ -31,7 +31,7 @@
     </HBox>
 
     <!-- Checkbox for cheating -->
-    <CheckBox fx:id="cheatModeCheckbox" text="Cheat Mode"/>
+    <CheckBox fx:id="cheatModeCheckbox"/>
 
     <!-- Buttons -->
     <HBox spacing="20"
@@ -40,5 +40,19 @@
         <Button fx:id="playButton" />
         <Button fx:id="rulesButton" />
     </HBox>
+    <!-- TODO: Replace Menu → MenuItems with a single MenuButton that shows all languages directly -->
+    <MenuButton fx:id="optionsMenuButton" text="?" mnemonicParsing="false">
+        <items>
+            <Menu fx:id="languageMenu">
+                <!-- TODO: Move language menu item labels (Svenska, English etc) from FXML to controller -->
+                <MenuItem fx:id="sv" text="Svenska" onAction="#changeLanguage"/>
+                <MenuItem fx:id="en" text="English" onAction="#changeLanguage"/>
+                <MenuItem fx:id="es" text="Español" onAction="#changeLanguage"/>
+                <MenuItem fx:id="fr" text="Français" onAction="#changeLanguage"/>
+                <MenuItem fx:id="de" text="Deutsch" onAction="#changeLanguage"/>
+                <MenuItem fx:id="ca" text="Català" onAction="#changeLanguage"/>
+            </Menu>
+        </items>
+    </MenuButton>
 </VBox>
 
