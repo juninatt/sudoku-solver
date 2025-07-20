@@ -1,30 +1,38 @@
 package se.pbt.sudokusolver.utils;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static se.pbt.sudokusolver.utils.Constants.PathConstants.BUNDLE_SV;
 
 /**
- * Manages all user-facing text for the application by loading messages from ResourceBundle files.
- * These files are located in the 'resources/i18n' directory, and their file paths are defined in the
- * {@link Constants.PathConstants} class.
- * This class handles only the text displayed to the user and enables easy language
- * switching without modifying the underlying code.
+ * Loads and manages localized messages using resource bundles based on the selected locale.
+ * Supports dynamic switching between languages like Swedish, English, and Spanish.
  */
 public class Localization {
+
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_SV);
+    private static ResourceBundle bundle = BUNDLE;
 
     /**
-     * Retrieves the text for the given key from the ResourceBundle.
-     * If additional arguments are provided, they are used to format the message.
+     * Sets the current locale using a {@link Locale} object.
      *
-     * @param key  the key identifying the message in the ResourceBundle.
-     * @param args optional arguments to format the message.
-     * @return the localized and formatted message.
+     * @param locale The locale to apply (e.g., new Locale("sv") for Swedish).
+     */
+    public static void setLocale(Locale locale) {
+        bundle = ResourceBundle.getBundle("i18n.messages", locale);
+    }
+
+    /**
+     * Retrieves the localized string for the specified key, optionally formatting it with arguments.
+     *
+     * @param key  The message key defined in the bundle.
+     * @param args Optional values to insert into the message string.
+     * @return The localized and formatted message.
      */
     public static String get(String key, Object... args) {
-        String message = BUNDLE.getString(key);
+        String message = bundle.getString(key);
         return args.length > 0 ? MessageFormat.format(message, args) : message;
     }
 }
