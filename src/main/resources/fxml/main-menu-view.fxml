@@ -38,13 +38,13 @@
           alignment="CENTER">
 
         <Button fx:id="playButton" />
-        <Button fx:id="rulesButton" />
+        <Button fx:id="rulesButton" onAction="#onRulesClicked" />
     </HBox>
     <!-- TODO: Replace Menu → MenuItems with a single MenuButton that shows all languages directly -->
     <MenuButton fx:id="optionsMenuButton" text="?" mnemonicParsing="false">
         <items>
             <Menu fx:id="languageMenu">
-                <!-- TODO: Move language menu item labels (Svenska, English etc) from FXML to controller -->
+                <!-- TODO: Move language menu item labels from FXML to controller -->
                 <MenuItem fx:id="sv" text="Svenska" onAction="#changeLanguage"/>
                 <MenuItem fx:id="en" text="English" onAction="#changeLanguage"/>
                 <MenuItem fx:id="es" text="Español" onAction="#changeLanguage"/>

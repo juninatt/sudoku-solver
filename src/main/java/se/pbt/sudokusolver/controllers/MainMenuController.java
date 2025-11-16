@@ -60,6 +60,7 @@ public class MainMenuController {
         cheatModeCheckbox.setText(Localization.get(I18N_CHECKBOX_CHEAT_MODE));
         playButton.setText(Localization.get(I18N_BUTTON_PLAY));
         rulesButton.setText(Localization.get(I18N_BUTTON_RULES));
+        rulesButton.setText(Localization.get(I18N_BUTTON_RULES));
         languageMenu.setText(Localization.get(I18N_MENU_LANGUAGE));
     }
 
@@ -80,7 +81,7 @@ public class MainMenuController {
      */
     private void loadGameBoard() {
         if (sizeDropdown.getValue() == null || difficultyDropdown.getValue() == null) {
-            // TODO: Replace with user-friendly validation (e.g. alert dialog)
+            // TODO: Replace with user-friendly validation
             System.out.println("Please select a board size and difficulty before starting the game.");
             return;
         }
@@ -123,7 +124,29 @@ public class MainMenuController {
         Localization.setLocale(new Locale(languageCode));
         updateTexts();
 
+
         Stage stage = (Stage) welcomeLabel.getScene().getWindow();
         stage.sizeToScene(); // Resize window if translated text needs more space
+    }
+
+    /**
+     * Opens the localized rules window.
+     * Loads the rules, applies the current language, and displays the view in a separate stage.
+     */
+    @FXML
+    private void onRulesClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.PathConstants.RULES_VIEW));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(loader.load()));
+            stage.setTitle(Localization.get(I18N_RULES_TITLE));
+
+            RulesController controller = loader.getController();
+            controller.updateTexts();
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

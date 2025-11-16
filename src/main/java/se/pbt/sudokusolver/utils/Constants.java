@@ -4,10 +4,8 @@ import java.util.Set;
 
 /**
  * Central container class for shared constants across the application.
- * Divided into logical categories to improve readability and maintainability.
  */
 public class Constants {
-    // TODO: Organize
 
     /**
      * Contains core logic constants related to the Sudoku board, such as supported sizes,
@@ -44,9 +42,6 @@ public class Constants {
             };
         }
 
-        /**
-         * Private constructor to prevent instantiation.
-         */
         private GameConstants() {}
     }
 
@@ -59,6 +54,7 @@ public class Constants {
 
         // FXML View Paths
         public static final String MAIN_MENU_VIEW = "/fxml/main-menu-view.fxml";
+        public static final String RULES_VIEW = "/fxml/rules-view.fxml";
         public static final String SUDOKU_GAME_VIEW = "/fxml/sudoku-game-view.fxml";
 
         // Localization Bundles
@@ -66,9 +62,6 @@ public class Constants {
         public static final String BUNDLE_EN = "i18n.messages_en";
         public static final String BUNDLE_ES = "i18n.messages_es";
 
-        /**
-         * Private constructor to prevent instantiation.
-         */
         private PathConstants() {}
     }
 
@@ -98,6 +91,7 @@ public class Constants {
         public static final String CSS_CLASS_FILLED_CELL = "filled-cell";
 
         // Localization keys – general UI
+        // Values are set in ' resources/i18n/Resource Bundle 'messages' ' and connected to their UI parts in MainMenuController
         public static final String I18N_TITLE_MAIN = "ui.title.main";
         public static final String I18N_TITLE_BOARD = "ui.title.board";
         public static final String I18N_LABEL_WELCOME = "ui.welcome";
@@ -105,7 +99,8 @@ public class Constants {
         public static final String I18N_LABEL_DIFFICULTY = "ui.label.difficulty";
         public static final String I18N_BUTTON_PLAY = "ui.button.play";
         public static final String I18N_BUTTON_RULES = "ui.button.rules";
-        public static final String I18N_RULES_TEXT = "ui.rules.text";
+        public static final String I18N_RULES_TITLE = "ui.rules.title";
+        public static final String I18N_RULES_BODY = "ui.rules.body";
         public static final String I18N_CHECKBOX_CHEAT_MODE = "ui.checkbox.cheatMode";
         public static final String I18N_MENU_LANGUAGE = "ui.menu.language";
 
@@ -116,5 +111,4 @@ public class Constants {
 
         private UIConstants() {}
     }
-
 }
