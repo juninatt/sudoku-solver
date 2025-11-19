@@ -1,4 +1,4 @@
-package se.pbt.sudokusolver.core.util;
+package se.pbt.sudokusolver.validation.testutil;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 

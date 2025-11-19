@@ -1,6 +1,5 @@
 package se.pbt.sudokusolver.core.models;
 
-import se.pbt.sudokusolver.core.validation.SudokuValidator;
 import se.pbt.sudokusolver.shared.constants.Constants;
 
 import java.util.Arrays;
@@ -11,7 +10,7 @@ import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.*;
  * Holds the internal state of a Sudoku board.
  * Provides a structured representation of cell values and supports logic that depends on board size.
  * <p>
- * Validation logic is handled externally via {@link SudokuValidator}.
+ * Validation logic is handled externally via {@code SudokuValidator}.
  */
 public class SudokuBoard {
     private final int size;
@@ -46,7 +45,6 @@ public class SudokuBoard {
         }
     }
 
-    // Factory Methods
 
     /**
      * Creates a deep copy of this board.
@@ -56,7 +54,6 @@ public class SudokuBoard {
         return new SudokuBoard(this);
     }
 
-    // Mutators
 
     /**
      * Updates a cell and adjusts the internal count of filled positions.
@@ -74,7 +71,6 @@ public class SudokuBoard {
         }
     }
 
-    // Accessors
 
     /**
      * Retrieves the value stored in a specific cell on the board.
@@ -97,7 +93,6 @@ public class SudokuBoard {
         return subgridDimensions;
     }
 
-    // State Checkers
 
     /**
      * Determines whether the board is completely filled.
@@ -106,7 +101,6 @@ public class SudokuBoard {
         return filledCells == size * size;
     }
 
-    // Private Helpers
 
     /**
      * Calculates subgrid dimensions based on the board size.
@@ -120,7 +114,6 @@ public class SudokuBoard {
         return Constants.GameConstants.getBlockLayout(size);
     }
 
-    // Overrides
 
     @Override
     public String toString() {

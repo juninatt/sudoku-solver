@@ -14,9 +14,9 @@ import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.Difficulty;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.core.validation.SudokuValidator;
 import se.pbt.sudokusolver.ui.view.SudokuBoardView;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
+import se.pbt.sudokusolver.validation.SudokuValidator;
 
 import java.io.IOException;
 

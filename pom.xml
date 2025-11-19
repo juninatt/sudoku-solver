@@ -15,6 +15,7 @@
     <module>core</module>
     <module>ui</module>
     <module>app</module>
+    <module>validation</module>
   </modules>
 
   <properties>

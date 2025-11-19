@@ -1,8 +1,8 @@
 package se.pbt.sudokusolver.ui.viewmodel;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.core.validation.SudokuValidator;
 import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
+import se.pbt.sudokusolver.validation.SudokuValidator;
 
 import java.util.ArrayList;
 import java.util.List;
