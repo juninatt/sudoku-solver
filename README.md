@@ -41,10 +41,11 @@ Supports several board sizes and difficulties and includes a cheat mode.
 
 
 ## Run:
-
+From the project root, simply run:
 ```bash
-   mvn clean javafx:run
+   mvn clean javafx:run -pl app
 ```
+No additional runtime configuration is required as long as Java 17 and Maven are installed.
 
 ## Available Languages
 
