@@ -20,12 +20,20 @@
   <properties>
     <java.version>17</java.version>
     <slf4j.version>2.0.9</slf4j.version>
-    <logback.version>1.5.13</logback.version>
+    <logback.version>1.5.2</logback.version>
     <junit.version>5.10.0</junit.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
 
       <!-- Logging -->
       <dependency>
