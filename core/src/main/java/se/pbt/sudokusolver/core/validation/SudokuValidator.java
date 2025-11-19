@@ -1,5 +1,7 @@
 package se.pbt.sudokusolver.core.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.HashSet;
@@ -13,6 +15,7 @@ import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY
  * This class operates in a read-only manner and does not modify the board.
  */
 public class SudokuValidator {
+    private static final Logger logger = LoggerFactory.getLogger(SudokuValidator.class);
 
     private final SudokuBoard board;
     private final int boardSize;
@@ -36,9 +39,9 @@ public class SudokuValidator {
 
         // TODO: Add user friendly game completion
         if (isValid) {
-            System.out.println("✅ Sudoku board is valid! (WINNER)");
+            logger.info("Sudoku board validated: valid");
         } else {
-            System.out.println("❌ Sudoku board is invalid! (LOSER)");
+            logger.warn("Sudoku board validated: invalid");
         }
 
         return isValid;
@@ -85,28 +88,51 @@ public class SudokuValidator {
      * Validates that a specific row contains only unique non-zero values.
      */
     private boolean isValidRow(int row) {
-        return hasUniqueNumbers(IntStream.range(0, boardSize)
+        boolean valid = hasUniqueNumbers(IntStream.range(0, boardSize)
                 .map(col -> board.getValueAt(row, col)));
+
+        if (!valid) {
+            logger.debug("Invalid row detected at index {}", row);
+        }
+
+        return valid;
     }
 
     /**
      * Validates that a specific column contains only unique non-zero values.
      */
     private boolean isValidColumn(int col) {
-        return hasUniqueNumbers(IntStream.range(0, boardSize)
+        boolean valid = hasUniqueNumbers(IntStream.range(0, boardSize)
                 .map(row -> board.getValueAt(row, col)));
+
+        if (!valid) {
+            logger.debug("Invalid column detected at index {}", col);
+        }
+
+        return valid;
     }
+
 
     /**
      * Validates that a subgrid (block) contains only unique non-zero values.
      */
     private boolean isValidSubgrid(int startRow, int startCol, int subgridRows, int subgridCols) {
-        return hasUniqueNumbers(
+        boolean valid = hasUniqueNumbers(
                 IntStream.range(0, subgridRows)
                         .flatMap(r -> IntStream.range(0, subgridCols)
                                 .map(c -> board.getValueAt(startRow + r, startCol + c)))
         );
+
+        if (!valid) {
+            logger.debug(
+                    "Invalid subgrid detected at start position ({}, {}) with size {}x{}",
+                    startRow, startCol, subgridRows, subgridCols
+            );
+        }
+
+        return valid;
     }
+
 
     /**
      * Determines whether all non-zero values in the stream are unique.
