@@ -2,6 +2,8 @@ package se.pbt.sudokusolver.core.generation.helpers;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
+import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
+
 /**
  * Component responsible for generating a fully solved {@link SudokuBoard}.
  * Uses recursive backtracking to fill every cell with a valid value, ensuring that
@@ -20,7 +22,7 @@ public class SolutionGenerator extends SudokuBuilderHelper {
 
         if (isBoardFull(row, boardSize)) return true;
 
-        if (board.hasValueAt(row, col)) {
+        if (board.getValueAt(row, col) == EMPTY_CELL) {
             int[] next = getNextCell(row, col, boardSize);
             return fillBoardWithSolution(board, next[0], next[1]);
         }

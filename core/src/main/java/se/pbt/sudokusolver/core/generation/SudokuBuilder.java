@@ -101,9 +101,9 @@ public class SudokuBuilder {
 
         long startTime = System.currentTimeMillis();
 
-        // TODO[REVIEW]: Improve reliability of hiding logic to ensure consistent number of hidden cells across runs.
+        // TODO: Improve reliability of hiding logic to ensure consistent number of hidden cells across runs.
         // Revisit the timing and placement of uniqueness checks in the flow to reduce randomness and improve determinism.
-        // TODO[LOGGING]: Add UI-side logging to confirm hidden cell count and detect discrepancies between builder and view.
+        // TODO: Add UI-side logging to confirm hidden cell count and detect discrepancies between builder and view.
         for (Point p : cellsToHideList) {
             if (hiddenCellsCount >= cellsToHideCount) break;
 

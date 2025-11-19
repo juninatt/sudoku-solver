@@ -1,12 +1,13 @@
 package se.pbt.sudokusolver.ui.viewmodel;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
 import se.pbt.sudokusolver.core.validation.SudokuValidator;
+import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.MIN_CELL_VALUE;
 
 /**
@@ -48,7 +49,7 @@ public class SudokuViewModel {
      * Performs a full-board validation once the last cell is filled to check for a completed solution.
      */
     public boolean setValue(int row, int col, int value) {
-        if (isOutOfBounds(row, col, value) || sudokuBoard.hasValueAt(row, col)) {
+        if (isOutOfBounds(row, col, value) || sudokuBoard.getValueAt(row, col) == EMPTY_CELL) {
             return false;
         }
 
@@ -85,12 +86,8 @@ public class SudokuViewModel {
         notifyCellUpdated(row, col, value);
     }
 
-    /**
-     * Retrieves the current value of a specific cell.
-     * Used by the UI to display numbers on the board.
-     */
-    public int getCellValue(int row, int col) {
-        return sudokuBoard.getValueAt(row, col);
+    public SudokuBoard getBoard() {
+        return sudokuBoard;
     }
 
     /**
@@ -108,15 +105,17 @@ public class SudokuViewModel {
         return sudokuBoard.getSubgridDimensions();
     }
 
-    public SudokuValidator getValidator() {
-        return validator;
+    /**
+     * Retrieves the current value of a specific cell.
+     * Used by the UI to display numbers on the board.
+     */
+    public int getCellValue(int row, int col) {
+        return sudokuBoard.getValueAt(row, col);
     }
 
-    /**
-     * Checks if a specific cell currently has a value set (non-zero).
-     */
-    public boolean isEmpty(int row, int col) {
-        return !sudokuBoard.hasValueAt(row, col);
+
+    public SudokuValidator getValidator() {
+        return validator;
     }
 
     public boolean isBoardFull() {

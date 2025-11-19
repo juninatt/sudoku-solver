@@ -4,6 +4,7 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.*;
 
 /**
@@ -38,7 +39,7 @@ public class UniquenessChecker extends SudokuBuilderHelper {
         int nextRow = next[0];
         int nextCol = next[1];
 
-        if (board.hasValueAt(row, col)) {
+        if (board.getValueAt(row, col) == EMPTY_CELL) {
             return isSolutionUnique(board, nextRow, nextCol, solutionCount);
         }
 

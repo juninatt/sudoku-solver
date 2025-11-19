@@ -14,12 +14,13 @@ import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.Difficulty;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.ui.view.SudokuBoardView;
 import se.pbt.sudokusolver.core.validation.SudokuValidator;
+import se.pbt.sudokusolver.ui.view.SudokuBoardView;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
 import java.io.IOException;
 
+import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.shared.constants.Constants.PathConstants.MAIN_MENU_VIEW;
 import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.I18N_TITLE_MAIN;
 
@@ -101,7 +102,7 @@ public class SudokuGameController {
     private void revealNextCorrectValue() {
         for (int row = 0; row < solvedBoard.getSize(); row++) {
             for (int col = 0; col < solvedBoard.getSize(); col++) {
-                if (viewModel.isEmpty(row, col)) {
+                if (viewModel.getBoard().getValueAt(row, col) == EMPTY_CELL) {
                     int correctValue = solvedBoard.getValueAt(row, col);
                     viewModel.forceSetValue(row, col, correctValue);
 
@@ -124,7 +125,7 @@ public class SudokuGameController {
         for (int row = 0; row < solvedBoard.getSize(); row++) {
             for (int col = 0; col < solvedBoard.getSize(); col++) {
                 int value = solvedBoard.getValueAt(row, col);
-                if (viewModel.isEmpty(row, col)) {
+                if (viewModel.getBoard().getValueAt(row, col) == EMPTY_CELL) {
                     viewModel.forceSetValue(row, col, value);
                 }
             }

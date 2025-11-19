@@ -100,13 +100,6 @@ public class SudokuBoard {
     // State Checkers
 
     /**
-     * Indicates whether a given position currently contains a number.
-     */
-    public boolean hasValueAt(int row, int col) {
-        return getValueAt(row, col) != EMPTY_CELL;
-    }
-
-    /**
      * Determines whether the board is completely filled.
      */
     public boolean isBoardFull() {
