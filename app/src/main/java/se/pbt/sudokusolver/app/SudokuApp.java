@@ -10,8 +10,9 @@ import se.pbt.sudokusolver.shared.localization.Localization;
 
 import java.io.IOException;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.PathConstants.MAIN_MENU_VIEW;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.I18N_TITLE_MAIN;
+import static se.pbt.sudokusolver.app.AppConstants.I18N_TITLE_MAIN;
+import static se.pbt.sudokusolver.app.AppConstants.MAIN_MENU_VIEW;
+
 
 public class SudokuApp extends Application {
     private static final Logger logger = LoggerFactory.getLogger(SudokuApp.class);

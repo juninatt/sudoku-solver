@@ -7,8 +7,8 @@ import se.pbt.sudokusolver.validation.SudokuValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.MIN_CELL_VALUE;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.MIN_CELL_VALUE;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.EMPTY_CELL;
 
 /**
  * Serves as the connection layer between the UI and the underlying {@link SudokuBoard}.
@@ -49,7 +49,7 @@ public class SudokuViewModel {
      * Performs a full-board validation once the last cell is filled to check for a completed solution.
      */
     public boolean setValue(int row, int col, int value) {
-        if (isOutOfBounds(row, col, value) || sudokuBoard.getValueAt(row, col) == EMPTY_CELL) {
+        if (isOutOfBounds(row, col, value) || sudokuBoard.getValueAt(row, col) != EMPTY_CELL) {
             return false;
         }
 

@@ -6,14 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import se.pbt.sudokusolver.core.models.Difficulty;
-import se.pbt.sudokusolver.shared.constants.Constants;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
 import java.io.IOException;
 import java.util.Locale;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.*;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.*;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Controller for the main menu view.
@@ -87,10 +85,10 @@ public class MainMenuController {
         }
         boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
         String selectedSize = sizeDropdown.getValue();
-        int size = Integer.parseInt(selectedSize.split(SIZE_SEPARATOR)[0]);
+        int size = Integer.parseInt(selectedSize.split("x")[0]);
         Difficulty difficulty = difficultyDropdown.getValue();
 
-        String viewFilePath = Constants.PathConstants.SUDOKU_GAME_VIEW;
+        String viewFilePath = SUDOKU_GAME_VIEW;
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(viewFilePath));
@@ -136,7 +134,7 @@ public class MainMenuController {
     @FXML
     private void onRulesClicked() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.PathConstants.RULES_VIEW));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(RULES_VIEW));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
             stage.setTitle(Localization.get(I18N_RULES_TITLE));

@@ -1,10 +1,12 @@
 package se.pbt.sudokusolver.core.models;
 
-import se.pbt.sudokusolver.shared.constants.Constants;
+import se.pbt.sudokusolver.core.constants.CoreConstants;
 
 import java.util.Arrays;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.*;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.ERROR_INVALID_BOARD_SIZE;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.SUPPORTED_BOARD_SIZES;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 /**
  * Holds the internal state of a Sudoku board.
@@ -111,7 +113,7 @@ public class SudokuBoard {
                     String.format(ERROR_INVALID_BOARD_SIZE, size)
             );
         }
-        return Constants.GameConstants.getBlockLayout(size);
+        return CoreConstants.getBlockLayout(size);
     }
 
 

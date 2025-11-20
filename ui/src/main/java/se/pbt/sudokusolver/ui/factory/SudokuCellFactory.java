@@ -4,9 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.CELL_SIZE;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.CSS_CLASS_FILLED_CELL;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Factory class responsible for creating Sudoku cell components (TextFields)

@@ -4,8 +4,8 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.*;
+import static se.pbt.sudokusolver.generation.constants.GenerationConstants.*;
+
 
 /**
  * Core component used during puzzle generation to verify that a {@link SudokuBoard} has exactly one solution.
@@ -28,11 +28,11 @@ public class UniquenessChecker extends SudokuBuilderHelper {
      * Returns {@code true} if only one solution is found; otherwise, stops early and returns {@code false}.
      */
     private boolean isSolutionUnique(SudokuBoard board, int row, int col, AtomicInteger solutionCount) {
-        if (solutionCount.get() > MAX_ALLOWED_SOLUTIONS) return false;
+        if (solutionCount.get() > 1) return false;
 
         if (isBoardFull(row, board.getSize())) {
             solutionCount.incrementAndGet();
-            return solutionCount.get() == MAX_ALLOWED_SOLUTIONS;
+            return solutionCount.get() == 1;
         }
 
         int[] next = getNextCell(row, col, board.getSize());
@@ -45,7 +45,7 @@ public class UniquenessChecker extends SudokuBuilderHelper {
 
         return !tryNumbersInCell(board, row, col, num -> {
             isSolutionUnique(board, nextRow, nextCol, solutionCount);
-            return solutionCount.get() > MAX_ALLOWED_SOLUTIONS;
+            return solutionCount.get() > 1;
         });
     }
 }

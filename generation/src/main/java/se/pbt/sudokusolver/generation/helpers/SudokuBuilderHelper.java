@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.*;
+import static se.pbt.sudokusolver.generation.constants.GenerationConstants.*;
 
 
 /**

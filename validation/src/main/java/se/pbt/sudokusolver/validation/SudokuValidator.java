@@ -7,7 +7,8 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 import java.util.HashSet;
 import java.util.stream.IntStream;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.validation.ValidationConstants.EMPTY_CELL;
+
 
 /**
  * Validates a {@link SudokuBoard} by ensuring that all rows, columns, and subgrids
@@ -132,7 +133,6 @@ public class SudokuValidator {
 
         return valid;
     }
-
 
     /**
      * Determines whether all non-zero values in the stream are unique.

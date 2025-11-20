@@ -6,9 +6,7 @@ import se.pbt.sudokusolver.ui.factory.SudokuCellFactory;
 import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.CSS_CLASS_FILLED_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.CSS_CLASS_SUBGRID;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Represents the UI component responsible for displaying the Sudoku board.

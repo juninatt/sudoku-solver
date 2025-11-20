@@ -5,7 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.*;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.I18N_RULES_BODY;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.I18N_RULES_TITLE;
+
 
 /**
  * Controller for the rules view.

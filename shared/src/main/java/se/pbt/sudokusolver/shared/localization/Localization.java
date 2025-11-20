@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.PathConstants.BUNDLE_SV;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.BUNDLE_SV;
 
 /**
  * Loads and manages localized messages using resource bundles based on the selected locale.

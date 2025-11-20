@@ -2,7 +2,7 @@ package se.pbt.sudokusolver.core.models;
 
 import se.pbt.sudokusolver.shared.localization.Localization;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.*;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
 
 /**
  * Represents the difficulty levels of a Sudoku puzzle.

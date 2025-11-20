@@ -2,7 +2,7 @@ package se.pbt.sudokusolver.core.generation.helpers;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
 
 /**
  * Component responsible for generating a fully solved {@link SudokuBoard}.

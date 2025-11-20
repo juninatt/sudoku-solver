@@ -20,9 +20,7 @@ import se.pbt.sudokusolver.validation.SudokuValidator;
 
 import java.io.IOException;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.PathConstants.MAIN_MENU_VIEW;
-import static se.pbt.sudokusolver.shared.constants.Constants.UIConstants.I18N_TITLE_MAIN;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Manages the initialization of the Sudoku board and links the UI components

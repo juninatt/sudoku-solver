@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.EMPTY_CELL;
-import static se.pbt.sudokusolver.shared.constants.Constants.GameConstants.ERROR_BOARD_GENERATION_FAILED;
+import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.generation.constants.GenerationConstants.ERROR_BOARD_GENERATION_FAILED;
+
 
 /**
  * Builds both a solved and a playable Sudoku board based on a selected difficulty level.
