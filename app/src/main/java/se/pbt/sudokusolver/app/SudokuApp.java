@@ -21,7 +21,6 @@ public class SudokuApp extends Application {
      * Initializes and displays the application's primary window.
      * Ensures the main UI loads before user interaction begins.
      */
-
     @Override
     public void start(Stage primaryStage) throws IOException {
         logger.info("Launching SudokuApp");
@@ -39,7 +38,6 @@ public class SudokuApp extends Application {
      * Starts the JavaFX runtime.
      * Used as the standard entry point for launching the application.
      */
-
     public static void main(String[] args) {
         try {
             launch(args);

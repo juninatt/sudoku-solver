@@ -3,7 +3,7 @@ package se.pbt.sudokusolver.ui.view;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import se.pbt.sudokusolver.ui.factory.SudokuCellFactory;
-import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
+import se.pbt.sudokusolver.shared.listeners.CellUpdateListener;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
 import static se.pbt.sudokusolver.ui.constants.UIConstants.*;

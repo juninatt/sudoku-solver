@@ -16,6 +16,7 @@
     <module>ui</module>
     <module>app</module>
     <module>validation</module>
+    <module>generation</module>
   </modules>
 
   <properties>

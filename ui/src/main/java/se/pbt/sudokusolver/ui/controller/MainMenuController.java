@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import se.pbt.sudokusolver.core.models.Difficulty;
+import se.pbt.sudokusolver.shared.dto.DifficultyDto;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class MainMenuController {
     @FXML private Label welcomeLabel;
     @FXML private Label boardSizeLabel;
     @FXML private Label difficultyLabel;
-    @FXML private ComboBox<Difficulty> difficultyDropdown;
+    @FXML private ComboBox<DifficultyDto> difficultyDropdown;
     @FXML private ComboBox<String> sizeDropdown;
     @FXML private CheckBox cheatModeCheckbox;
     @FXML private Button playButton;
@@ -69,8 +69,8 @@ public class MainMenuController {
         sizeDropdown.getItems().setAll(BOARD_SIZE_OPTIONS);
         sizeDropdown.getSelectionModel().select(DEFAULT_BOARD_SIZE);
 
-        difficultyDropdown.getItems().setAll(Difficulty.values());
-        difficultyDropdown.setValue(Difficulty.MEDIUM);
+        difficultyDropdown.getItems().setAll(DifficultyDto.values());
+        difficultyDropdown.setValue(DifficultyDto.MEDIUM);
     }
 
     /**
@@ -86,7 +86,7 @@ public class MainMenuController {
         boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
         String selectedSize = sizeDropdown.getValue();
         int size = Integer.parseInt(selectedSize.split("x")[0]);
-        Difficulty difficulty = difficultyDropdown.getValue();
+        DifficultyDto difficulty = difficultyDropdown.getValue();
 
         String viewFilePath = SUDOKU_GAME_VIEW;
 

@@ -15,11 +15,7 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>se.pbt</groupId>
-            <artifactId>ui</artifactId>
-            <version>1.0</version>
-        </dependency>
+        <!-- Project module dependencies -->
 
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -31,6 +27,14 @@
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.10</version>
         </dependency>
+        <dependency>
+            <groupId>se.pbt</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- External dependencies -->
 
     </dependencies>
 

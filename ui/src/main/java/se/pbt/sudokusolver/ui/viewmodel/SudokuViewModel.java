@@ -1,14 +1,13 @@
 package se.pbt.sudokusolver.ui.viewmodel;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.ui.listener.CellUpdateListener;
-import se.pbt.sudokusolver.validation.SudokuValidator;
+import se.pbt.sudokusolver.shared.listeners.CellUpdateListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static se.pbt.sudokusolver.ui.constants.UIConstants.MIN_CELL_VALUE;
 import static se.pbt.sudokusolver.ui.constants.UIConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.MIN_CELL_VALUE;
 
 /**
  * Serves as the connection layer between the UI and the underlying {@link SudokuBoard}.
@@ -18,8 +17,6 @@ import static se.pbt.sudokusolver.ui.constants.UIConstants.EMPTY_CELL;
 public class SudokuViewModel {
     private final SudokuBoard sudokuBoard;
     private final int boardSize;
-
-    private final SudokuValidator validator;
 
     private final List<CellUpdateListener> listeners = new ArrayList<>();
 
@@ -112,14 +109,4 @@ public class SudokuViewModel {
     public int getCellValue(int row, int col) {
         return sudokuBoard.getValueAt(row, col);
     }
-
-
-    public SudokuValidator getValidator() {
-        return validator;
-    }
-
-    public boolean isBoardFull() {
-        return sudokuBoard.isBoardFull();
-    }
-
 }

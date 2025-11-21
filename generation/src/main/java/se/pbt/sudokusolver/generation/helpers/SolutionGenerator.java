@@ -1,4 +1,5 @@
-package se.pbt.sudokusolver.core.generation.helpers;
+package se.pbt.sudokusolver.generation.helpers;
+
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 

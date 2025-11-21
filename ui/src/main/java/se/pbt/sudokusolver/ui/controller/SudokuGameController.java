@@ -9,14 +9,12 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
-import se.pbt.sudokusolver.core.generation.SudokuBuilder;
-import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
-import se.pbt.sudokusolver.core.models.Difficulty;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
+import se.pbt.sudokusolver.game.service.GameService;
+import se.pbt.sudokusolver.shared.dto.DifficultyDto;
+import se.pbt.sudokusolver.shared.dto.NewGameData;
 import se.pbt.sudokusolver.ui.view.SudokuBoardView;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
-import se.pbt.sudokusolver.validation.SudokuValidator;
 
 import java.io.IOException;
 
