@@ -13,29 +13,25 @@ import static se.pbt.sudokusolver.validation.ValidationConstants.EMPTY_CELL;
 /**
  * Validates a {@link SudokuBoard} by ensuring that all rows, columns, and subgrids
  * contain only unique non-zero values according to standard Sudoku rules.
- * This class operates in a read-only manner and does not modify the board.
  */
 public class SudokuValidator {
     private static final Logger logger = LoggerFactory.getLogger(SudokuValidator.class);
 
-    private final SudokuBoard board;
-    private final int boardSize;
-    private final int[] subgridDimensions;
+    private  SudokuBoard board;
+    private  int boardSize;
+    private  int[] subgridDimensions;
 
-    /**
-     * Sets up a read-only validator for the given Sudoku board.
-     */
-    public SudokuValidator(SudokuBoard board) {
-        this.board = board;
-        this.boardSize = board.getSize();
-        this.subgridDimensions = board.getSubgridDimensions();
-    }
+
+    public SudokuValidator() {}
 
     /**
      * Validates the entire board by checking rows, columns, and subgrids.
-     * Acts as the main entry point for rule verification.
      */
-    public boolean validateBoard() {
+    public boolean validateBoard(SudokuBoard board) {
+        this.board = board;
+        boardSize = board.getSize();
+        subgridDimensions = board.getSubgridDimensions();
+
         boolean isValid = validateRows() && validateColumns() && validateSubgrids();
 
         // TODO: Add user friendly game completion
@@ -48,7 +44,6 @@ public class SudokuValidator {
         return isValid;
     }
 
-    //  Row, Column, and Subgrid Validation
 
     /**
      * Validates that every row in the board contains only unique non-zero values.
@@ -83,8 +78,6 @@ public class SudokuValidator {
         return true;
     }
 
-    //  Unit Validation
-
     /**
      * Validates that a specific row contains only unique non-zero values.
      */
@@ -112,7 +105,6 @@ public class SudokuValidator {
 
         return valid;
     }
-
 
     /**
      * Validates that a subgrid (block) contains only unique non-zero values.

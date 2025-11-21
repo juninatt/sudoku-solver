@@ -23,7 +23,7 @@ public class SudokuValidatorTest {
         @BeforeEach
         void setUp() {
             board = new SudokuBoard(4);
-            validator = new SudokuValidator(board);
+            validator = new SudokuValidator();
         }
 
         @Test
@@ -37,7 +37,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, validBoard);
-            assertTrue(validator.validateBoard(), "The 4x4 board should be valid.");
+            assertTrue(validator.validateBoard(board), "The 4x4 board should be valid.");
         }
 
         @Test
@@ -51,7 +51,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 4x4 board should be invalid due to duplicate rows.");
+            assertFalse(validator.validateBoard(board), "The 4x4 board should be invalid due to duplicate rows.");
         }
 
         @Test
@@ -65,7 +65,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 4x4 board should be invalid due to duplicate columns.");
+            assertFalse(validator.validateBoard(board), "The 4x4 board should be invalid due to duplicate columns.");
         }
 
         @Test
@@ -79,7 +79,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 4x4 board should be invalid due to duplicate subgrid.");
+            assertFalse(validator.validateBoard(board), "The 4x4 board should be invalid due to duplicate subgrid.");
         }
     }
 
@@ -94,7 +94,7 @@ public class SudokuValidatorTest {
         @BeforeEach
         void setUp() {
             board = new SudokuBoard(6);
-            validator = new SudokuValidator(board);
+            validator = new SudokuValidator();
         }
 
         @Test
@@ -110,7 +110,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, validBoard);
-            assertTrue(validator.validateBoard(), "The 6x6 board should be valid.");
+            assertTrue(validator.validateBoard(board), "The 6x6 board should be valid.");
         }
 
         @Test
@@ -126,7 +126,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 6x6 board should be invalid due to duplicate rows.");
+            assertFalse(validator.validateBoard(board), "The 6x6 board should be invalid due to duplicate rows.");
         }
 
         @Test
@@ -142,7 +142,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 6x6 board should be invalid due to duplicate columns.");
+            assertFalse(validator.validateBoard(board), "The 6x6 board should be invalid due to duplicate columns.");
         }
 
         @Test
@@ -158,7 +158,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The 6x6 board should be invalid due to duplicate subgrid.");
+            assertFalse(validator.validateBoard(board), "The 6x6 board should be invalid due to duplicate subgrid.");
         }
     }
 
@@ -173,7 +173,7 @@ public class SudokuValidatorTest {
         @BeforeEach
         void setUp() {
             board = new SudokuBoard(9);
-            validator = new SudokuValidator(board);
+            validator = new SudokuValidator();
         }
 
 
@@ -194,7 +194,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, validBoard);
-            assertTrue(validator.validateBoard(), "The board should be valid.");
+            assertTrue(validator.validateBoard(board), "The board should be valid.");
         }
 
         @Test
@@ -213,7 +213,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The board should be invalid due to duplicate rows.");
+            assertFalse(validator.validateBoard(board), "The board should be invalid due to duplicate rows.");
         }
 
         @Test
@@ -232,7 +232,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The board should be invalid due to duplicate columns.");
+            assertFalse(validator.validateBoard(board), "The board should be invalid due to duplicate columns.");
         }
 
         @Test
@@ -251,7 +251,7 @@ public class SudokuValidatorTest {
             };
 
             SudokuTestBoardFactory.fillBoard(board, invalidBoard);
-            assertFalse(validator.validateBoard(), "The board should be invalid due to duplicate subgrid.");
+            assertFalse(validator.validateBoard(board), "The board should be invalid due to duplicate subgrid.");
         }
     }
 }
