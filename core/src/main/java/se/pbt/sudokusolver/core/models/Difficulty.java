@@ -1,5 +1,6 @@
 package se.pbt.sudokusolver.core.models;
 
+import se.pbt.sudokusolver.shared.dto.DifficultyDto;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
 import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
@@ -36,6 +37,21 @@ public enum Difficulty {
     }
 
     public double getClueFraction() { return clueFraction; }
+
+    /**
+     * Converts {@code Difficulty} enum into a transport-safe DTO.
+     */
+    // TODO: Move Difficulty to game-layer in future
+    public static DifficultyDto toDto(Difficulty difficulty) {
+        return DifficultyDto.valueOf(difficulty.name());
+    }
+
+    /**
+     * Parses a {@code DifficultyDto} back into its domain enum equivalent.
+     */
+    public static Difficulty fromDto(DifficultyDto dto) {
+        return Difficulty.valueOf(dto.name());
+    }
 
 
     @Override

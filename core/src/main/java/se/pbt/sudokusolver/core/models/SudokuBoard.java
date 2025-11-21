@@ -1,12 +1,11 @@
 package se.pbt.sudokusolver.core.models;
 
 import se.pbt.sudokusolver.core.constants.CoreConstants;
+import se.pbt.sudokusolver.shared.dto.SudokuBoardDto;
 
 import java.util.Arrays;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.ERROR_INVALID_BOARD_SIZE;
-import static se.pbt.sudokusolver.core.constants.CoreConstants.SUPPORTED_BOARD_SIZES;
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
 
 /**
  * Holds the internal state of a Sudoku board.
@@ -20,7 +19,6 @@ public class SudokuBoard {
     private int filledCells;
     private final int[][] board;
 
-    // Constructors
 
     /**
      * Creates an empty board of the chosen size.
@@ -114,6 +112,45 @@ public class SudokuBoard {
             );
         }
         return CoreConstants.getBlockLayout(size);
+    }
+
+    /**
+     * Converts this {@code SudokuBoard} into a transferable DTO.
+     * Preserves cell values and structural dimensions.
+     */
+    // TODO: Separate SudokuBoard (structure) from game logic (Difficulty etc.)
+    public SudokuBoardDto toDto() {
+        return new SudokuBoardDto(
+                deepCopy(this.board),
+                this.size,
+                this.subgridDimensions.clone()
+        );
+    }
+
+    /**
+     * Builds a {@code SudokuBoard} instance from a provided DTO.
+     * Used to recreate domain objects from external representations.
+     */
+    public static SudokuBoard fromDto(SudokuBoardDto dto) {
+        SudokuBoard board = new SudokuBoard(dto.size());
+        int[][] cells = dto.cells();
+        for (int row = 0; row < dto.size(); row++) {
+            for (int col = 0; col < dto.size(); col++) {
+                board.setValue(row, col, cells[row][col]);
+            }
+        }
+        return board;
+    }
+
+    /**
+     * Creates a deep copy of a 2D array of cell values.
+     */
+    private int[][] deepCopy(int[][] source) {
+        int[][] copy = new int[source.length][];
+        for (int i = 0; i < source.length; i++) {
+            copy[i] = source[i].clone();
+        }
+        return copy;
     }
 
 
