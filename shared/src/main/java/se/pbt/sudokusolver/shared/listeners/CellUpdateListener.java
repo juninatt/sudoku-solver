@@ -1,4 +1,4 @@
-package se.pbt.sudokusolver.ui.listener;
+package se.pbt.sudokusolver.shared.listeners;
 
 /**
  * Listener interface for observing updates to individual cells in the Sudoku board.
