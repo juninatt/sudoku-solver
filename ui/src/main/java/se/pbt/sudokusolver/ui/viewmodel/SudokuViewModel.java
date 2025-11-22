@@ -34,10 +34,9 @@ public class SudokuViewModel {
      * Sets up the ViewModel as the link between UI and game logic.
      * Stores the board and validator so that gameplay updates can be applied and checked in a controlled way.
      */
-    public SudokuViewModel(SudokuBoard sudokuBoard, SudokuValidator validator) {
+    public SudokuViewModel(SudokuBoard sudokuBoard) {
         this.sudokuBoard = sudokuBoard;
         this.boardSize = sudokuBoard.getSize();
-        this.validator = validator;
     }
 
 
