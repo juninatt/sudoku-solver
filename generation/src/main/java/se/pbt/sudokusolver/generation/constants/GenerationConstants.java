@@ -11,9 +11,4 @@ public class GenerationConstants {
     // UI layout functional values
     public static final int FIRST_ROW_INDEX = 0;
     public static final int FIRST_COLUMN_INDEX = 0;
-
-
-    // Error Messages
-    public static final String ERROR_BOARD_GENERATION_FAILED =
-            "Unable to generate a complete Sudoku solution. Invalid puzzle state.";
 }

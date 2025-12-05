@@ -12,7 +12,7 @@ import static se.pbt.sudokusolver.generation.constants.GenerationConstants.*;
  * This class uses recursive backtracking to count all valid solutions for a given board,
  * terminating early if more than one solution is found.
  */
-public class UniquenessChecker extends SudokuBuilderHelper {
+public final class UniquenessChecker extends SudokuBuilderHelper {
 
     /**
      * Checks whether the given Sudoku {@link SudokuBoard} has exactly one valid solution.
@@ -28,14 +28,16 @@ public class UniquenessChecker extends SudokuBuilderHelper {
      * Returns {@code true} if only one solution is found; otherwise, stops early and returns {@code false}.
      */
     private boolean isSolutionUnique(SudokuBoard board, int row, int col, AtomicInteger solutionCount) {
+        int size = board.getSize();;
+
         if (solutionCount.get() > 1) return false;
 
-        if (isBoardFull(row, board.getSize())) {
+        if (isBoardFull(row, size)) {
             solutionCount.incrementAndGet();
             return solutionCount.get() == 1;
         }
 
-        int[] next = getNextCell(row, col, board.getSize());
+        int[] next = getNextCell(row, col, size);
         int nextRow = next[0];
         int nextCol = next[1];
 

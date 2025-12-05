@@ -21,7 +21,7 @@ public abstract class SudokuBuilderHelper {
     /**
      * Determines whether the current row index indicates that the board is completely filled.
      */
-    protected boolean isBoardFull(int row, int boardSize) {
+    protected final boolean isBoardFull(int row, int boardSize) {
         return row >= boardSize;
     }
 
@@ -41,7 +41,8 @@ public abstract class SudokuBuilderHelper {
      * The loop stops early if the strategy returns {@code true}.
      */
     protected final boolean tryNumbersInCell(SudokuBoard board, int row, int col, Function<Integer, Boolean> strategy) {
-        for (int num : getShuffledNumbers(board.getSize())) {
+        List<Integer> numbers = getShuffledNumbers(board.getSize());
+        for (int num : numbers) {
             if (isPlacementAllowed(board, row, col, num)) {
                 board.setValue(row, col, num);
 
@@ -64,6 +65,7 @@ public abstract class SudokuBuilderHelper {
                 .boxed()
                 .collect(Collectors.toList());
         Collections.shuffle(numbers);
+
         return numbers;
     }
 
@@ -72,8 +74,9 @@ public abstract class SudokuBuilderHelper {
      * without violating the standard Sudoku rules (row, column, subgrid).
      */
     private boolean isPlacementAllowed(SudokuBoard board, int row, int col, int num) {
+        int size = board.getSize();
         // Return false if the number already exists in the same row or column
-        for (int i = 0; i < board.getSize(); i++) {
+        for (int i = 0; i < size; i++) {
             if (board.getValueAt(row, i) == num || board.getValueAt(i, col) == num) {
                 return false;
             }
