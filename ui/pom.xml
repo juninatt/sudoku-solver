@@ -28,10 +28,11 @@
         </dependency>
         <dependency>
             <groupId>se.pbt</groupId>
-            <artifactId>validation</artifactId>
+            <artifactId>game</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
+
+        <!-- External Dependencies -->
 
         <!-- JavaFX -->
         <dependency>
