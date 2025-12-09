@@ -21,7 +21,7 @@ public class BoardGrid implements CellViewListener {
     private final TextField[][] cellFields;
     private final int size;
 
-    private SudokuViewModel viewModel;
+    private final SudokuViewModel viewModel;
 
 
     /**

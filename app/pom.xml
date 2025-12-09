@@ -45,17 +45,8 @@
 
         <!-- Logging -->
         <dependency>
-            <groupId>se.pbt</groupId>
-            <artifactId>shared</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- External dependencies -->
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
 
     </dependencies>
