@@ -18,6 +18,21 @@
         <!-- Project module dependencies -->
 
         <dependency>
+            <groupId>se.pbt</groupId>
+            <artifactId>ui</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>se.pbt</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- External dependencies -->
+
+        <!-- JavaFX -->
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>17.0.10</version>
@@ -27,6 +42,8 @@
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.10</version>
         </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>se.pbt</groupId>
             <artifactId>shared</artifactId>

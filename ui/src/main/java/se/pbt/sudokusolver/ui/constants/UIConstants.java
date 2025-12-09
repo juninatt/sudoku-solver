@@ -15,7 +15,6 @@ public class UIConstants {
 
     // Functional cell values
     public static final int EMPTY_CELL = 0;
-    public static final int MIN_CELL_VALUE = 1;
     public static final double CELL_SIZE = 40.0;
 
 

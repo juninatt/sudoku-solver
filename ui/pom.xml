@@ -15,15 +15,11 @@
 
     <dependencies>
 
-        <!-- Internal module dependencies -->
+        <!-- Project module dependencies -->
+
         <dependency>
             <groupId>se.pbt</groupId>
             <artifactId>shared</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>se.pbt</groupId>
-            <artifactId>core</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

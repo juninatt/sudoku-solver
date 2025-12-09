@@ -24,14 +24,16 @@ public class SudokuApp extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         logger.info("Launching SudokuApp");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(MAIN_MENU_VIEW));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getClassLoader().getResource("fxml/main-menu-view.fxml")
+        );
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
         primaryStage.setTitle(
                 Localization.get(I18N_TITLE_MAIN));
         primaryStage.show();
 
-        logger.info("SudokuApp UI loaded successfully");
+        logger.info("Sudoku Solver main menu loaded successfully");
     }
 
     /**

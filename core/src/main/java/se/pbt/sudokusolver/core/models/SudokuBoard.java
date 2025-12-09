@@ -14,6 +14,7 @@ import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
  * Validation logic is handled externally via {@code SudokuValidator}.
  */
 public class SudokuBoard {
+
     private final int size;
     private final int[] subgridDimensions;
     private int filledCells;
@@ -43,6 +44,18 @@ public class SudokuBoard {
         for (int row = 0; row < size; row++) {
             this.board[row] = original.board[row].clone();
         }
+    }
+
+    /**
+     * Calculates subgrid dimensions based on the board size.
+     */
+    private int[] calculateSubgridSize() {
+        if (!SUPPORTED_BOARD_SIZES.contains(size)) {
+            throw new IllegalArgumentException(
+                    String.format(ERROR_INVALID_BOARD_SIZE, size)
+            );
+        }
+        return CoreConstants.getBlockLayout(size);
     }
 
 
@@ -101,18 +114,6 @@ public class SudokuBoard {
         return filledCells == size * size;
     }
 
-
-    /**
-     * Calculates subgrid dimensions based on the board size.
-     */
-    private int[] calculateSubgridSize() {
-        if (!SUPPORTED_BOARD_SIZES.contains(size)) {
-            throw new IllegalArgumentException(
-                    String.format(ERROR_INVALID_BOARD_SIZE, size)
-            );
-        }
-        return CoreConstants.getBlockLayout(size);
-    }
 
     /**
      * Converts this {@code SudokuBoard} into a transferable DTO.

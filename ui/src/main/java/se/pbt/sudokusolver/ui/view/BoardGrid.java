@@ -2,8 +2,7 @@ package se.pbt.sudokusolver.ui.view;
 
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import se.pbt.sudokusolver.ui.factory.SudokuCellFactory;
-import se.pbt.sudokusolver.shared.listeners.CellUpdateListener;
+import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
 import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
@@ -15,43 +14,39 @@ import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
  *
  * @see SudokuViewModel
  */
-public class SudokuBoardView implements CellUpdateListener {
+public class BoardGrid implements CellViewListener {
 
     private final GridPane gridPane;
-    private final int[] subgridDimensions;
-    private final SudokuViewModel viewModel;
+    private final int[] subGrid;
     private final TextField[][] cellFields;
+    private final int size;
+
+    private SudokuViewModel viewModel;
 
 
     /**
      * Initializes the UI representation of the Sudoku board.
      * This includes setting up a grid structure with subgrids and binding
      * each cell to the ViewModel to ensure reactive updates.
-     *
-     * @param viewModel The {@link SudokuViewModel} managing game state and UI synchronization.
      */
-    public SudokuBoardView(SudokuViewModel viewModel) {
+    public BoardGrid(int size, SudokuViewModel viewModel) {
         this.viewModel = viewModel;
-        this.subgridDimensions = viewModel.getSubgridDimensions();
+        this.size = size;
+        this.subGrid = viewModel.getSubGridDimensions();
         this.gridPane = new GridPane();
-
-        viewModel.addCellUpdateListener(this);
-        this.cellFields = new TextField[viewModel.getBoardSize()][viewModel.getBoardSize()];
-
-        setupGrid();
+        this.cellFields = new TextField[size][size];
     }
 
     /**
      * Constructs the Sudoku board by arranging subgrids according to Sudoku rules.
      * The grid is dynamically adjusted based on the selected board size.
      */
-    private void setupGrid() {
-        int subgridRows = subgridDimensions[0];
-        int subgridCols = subgridDimensions[1];
-        int boardSize = viewModel.getBoardSize();
+    public void setupGrid() {
+        int subgridRows = subGrid[0];
+        int subgridCols = subGrid[1];
 
-        for (int subgridRow = 0; subgridRow < boardSize / subgridRows; subgridRow++) {
-            for (int subgridCol = 0; subgridCol < boardSize / subgridCols; subgridCol++) {
+        for (int subgridRow = 0; subgridRow < size / subgridRows; subgridRow++) {
+            for (int subgridCol = 0; subgridCol < size / subgridCols; subgridCol++) {
                 GridPane subgridPane = new GridPane();
                 subgridPane.setGridLinesVisible(true);
                 subgridPane.getStyleClass().add(CSS_CLASS_SUBGRID);
@@ -68,15 +63,13 @@ public class SudokuBoardView implements CellUpdateListener {
      * within the larger Sudoku board. Each cell is linked to the ViewModel.
      */
     private void populateSubgridWithCells(GridPane subgridPane, int subgridRow, int subgridCol, int subgridRows, int subgridCols) {
-        int boardSize = viewModel.getBoardSize();
-
         for (int row = 0; row < subgridRows; row++) {
             for (int col = 0; col < subgridCols; col++) {
                 int globalRow = subgridRow * subgridRows + row;
                 int globalCol = subgridCol * subgridCols + col;
 
-                if (globalRow < boardSize && globalCol < boardSize) {
-                    TextField cell = SudokuCellFactory.create(globalRow, globalCol, viewModel);
+                if (globalRow < size && globalCol < size) {
+                    TextField cell = viewModel.createCell(globalRow, globalCol);
                     cellFields[globalRow][globalCol] = cell;
                     subgridPane.add(cell, col, row);
                 }

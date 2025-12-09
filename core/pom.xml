@@ -14,12 +14,15 @@
 
     <dependencies>
 
-        <!-- Internal module dependencies -->
+        <!-- Project module dependencies -->
+
         <dependency>
             <groupId>se.pbt</groupId>
             <artifactId>shared</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <!-- External dependencies -->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

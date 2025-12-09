@@ -5,7 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import se.pbt.sudokusolver.shared.dto.DifficultyDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.pbt.sudokusolver.game.model.Difficulty;
+import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
 import java.io.IOException;
@@ -15,15 +18,17 @@ import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Controller for the main menu view.
- * Handles initialization of dropdowns, language switching, and navigation to the Sudoku board.
- * Also manages UI updates when changing languages dynamically during runtime.
+ * Handles initialization of dropdowns, localization updates, language switching,
+ * and navigation to the Sudoku game view. Also controls cheat-mode options.
  */
 public class MainMenuController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainMenuController.class);
 
     @FXML private Label welcomeLabel;
     @FXML private Label boardSizeLabel;
     @FXML private Label difficultyLabel;
-    @FXML private ComboBox<DifficultyDto> difficultyDropdown;
+    @FXML private ComboBox<Difficulty> difficultyDropdown;
     @FXML private ComboBox<String> sizeDropdown;
     @FXML private CheckBox cheatModeCheckbox;
     @FXML private Button playButton;
@@ -31,25 +36,31 @@ public class MainMenuController {
     @FXML private Menu languageMenu;
 
     /**
-     * Initializes the menu with default values and localized text.
+     * Initializes UI components after FXML loading.
+     * Populates dropdowns, applies localized text, and wires button actions.
      */
     @FXML
     public void initialize() {
+        logger.debug("Initializing main menu UI");
+
         initializeDropdowns();
         updateLocalizedTexts();
+
         playButton.setOnAction(event -> loadGameBoard());
     }
 
     /**
-     * Called after a locale change to update all visible text elements.
+     * Refreshes UI text after a locale change.
+     * Re-applies localized labels and repopulates dropdowns.
      */
     public void updateTexts() {
+        logger.debug("Updating localized UI texts");
         updateLocalizedTexts();
         initializeDropdowns();
     }
 
     /**
-     * Updates labels, buttons, and checkbox with localized strings.
+     * Updates labels, buttons, and menu titles based on active localization settings.
      */
     private void updateLocalizedTexts() {
         welcomeLabel.setText(Localization.get(I18N_LABEL_WELCOME));
@@ -58,44 +69,43 @@ public class MainMenuController {
         cheatModeCheckbox.setText(Localization.get(I18N_CHECKBOX_CHEAT_MODE));
         playButton.setText(Localization.get(I18N_BUTTON_PLAY));
         rulesButton.setText(Localization.get(I18N_BUTTON_RULES));
-        rulesButton.setText(Localization.get(I18N_BUTTON_RULES));
         languageMenu.setText(Localization.get(I18N_MENU_LANGUAGE));
     }
 
     /**
-     * Populates dropdowns for board size and difficulty.
+     * Populates dropdowns for board size selection and difficulty selection.
+     * Uses predefined UI constants for available options.
      */
     private void initializeDropdowns() {
         sizeDropdown.getItems().setAll(BOARD_SIZE_OPTIONS);
         sizeDropdown.getSelectionModel().select(DEFAULT_BOARD_SIZE);
 
-        difficultyDropdown.getItems().setAll(DifficultyDto.values());
-        difficultyDropdown.setValue(DifficultyDto.MEDIUM);
+        difficultyDropdown.getItems().setAll(Difficulty.values());
+        difficultyDropdown.setValue(Difficulty.MEDIUM);
     }
 
     /**
-     * Loads the game board view with user-selected parameters.
-     * Closes the menu window after launching the game.
+     * Loads the game board view using the selected size and difficulty.
+     * Initializes the game controller and closes the main menu window.
      */
     private void loadGameBoard() {
+        logger.info("User requested to start a new game");
+
         if (sizeDropdown.getValue() == null || difficultyDropdown.getValue() == null) {
-            // TODO: Replace with user-friendly validation
-            System.out.println("Please select a board size and difficulty before starting the game.");
+            logger.warn("Game start requested without selecting size or difficulty");
             return;
         }
-        boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
-        String selectedSize = sizeDropdown.getValue();
-        int size = Integer.parseInt(selectedSize.split("x")[0]);
-        DifficultyDto difficulty = difficultyDropdown.getValue();
 
-        String viewFilePath = SUDOKU_GAME_VIEW;
+        boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
+        int size = Integer.parseInt(sizeDropdown.getValue().split("x")[0]);
+        PuzzleDifficulty difficulty = difficultyDropdown.getValue();
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(viewFilePath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(SUDOKU_GAME_VIEW));
             Stage stage = new Stage();
             Scene scene = new Scene(loader.load());
 
-            SudokuGameController controller = loader.getController();
+            GameController controller = loader.getController();
             controller.setCheatMode(cheatModeEnabled);
             controller.initializeBoard(size, difficulty);
 
@@ -103,36 +113,38 @@ public class MainMenuController {
             stage.setScene(scene);
             stage.show();
 
+            logger.info("Game board loaded successfully (size={}, difficulty={})", size, difficulty);
             ((Stage) playButton.getScene().getWindow()).close();
+
         } catch (IOException e) {
-            // TODO: Replace with proper logging instead of printing to console
-            System.out.println(e.getMessage());
+            logger.error("Failed to load game board view", e);
         }
     }
 
     /**
-     * Called when the user selects a language from the menu.
-     * Updates the UI to reflect the new language and adjusts window size if needed.
-     *
-     * @param event The ActionEvent triggered by selecting a language item.
+     * Changes application language based on user menu selection,
+     * updates all UI text and resizes the window if needed.
      */
     @FXML
     public void changeLanguage(javafx.event.ActionEvent event) {
         String languageCode = ((MenuItem) event.getSource()).getId();
+
+        logger.info("Switching language to '{}'", languageCode);
+
         Localization.setLocale(new Locale(languageCode));
         updateTexts();
 
-
         Stage stage = (Stage) welcomeLabel.getScene().getWindow();
-        stage.sizeToScene(); // Resize window if translated text needs more space
+        stage.sizeToScene();
     }
 
     /**
-     * Opens the localized rules window.
-     * Loads the rules, applies the current language, and displays the view in a separate stage.
+     * Opens the rules dialog window, loads localized rules content and displays it in a separate stage.
      */
     @FXML
     private void onRulesClicked() {
+        logger.debug("Opening rules window");
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(RULES_VIEW));
             Stage stage = new Stage();
@@ -143,8 +155,9 @@ public class MainMenuController {
             controller.updateTexts();
 
             stage.show();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to load rules view", e);
         }
     }
 }
