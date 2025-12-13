@@ -23,6 +23,10 @@ public class CellFactory {
         return cell;
     }
 
+    /**
+     * Creates a basic empty cell configured with default size and alignment.
+     * Callers are responsible for setting content and editability.
+     */
     public TextField createBaseCell() {
         TextField cell = new TextField();
         cell.setPrefSize(CELL_SIZE, CELL_SIZE);
@@ -31,6 +35,10 @@ public class CellFactory {
         return cell;
     }
 
+    /**
+     * Sets the given number in the cell and marks it as a non-editable filled cell.
+     * Applies the appropriate style to visually distinguish it from user-editable cells.
+     */
     private void setNumberAndLockCell(TextField cell, int number) {
         cell.setText(String.valueOf(number));
         cell.setEditable(false);
