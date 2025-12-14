@@ -1,70 +1,66 @@
 package se.pbt.sudokusolver.core.models;
 
-import se.pbt.sudokusolver.core.constants.CoreConstants;
-import se.pbt.sudokusolver.shared.dto.SudokuBoardDto;
-
 import java.util.Arrays;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 /**
  * Holds the internal state of a Sudoku board.
  * Provides a structured representation of cell values and supports logic that depends on board size.
- * <p>
- * Validation logic is handled externally via {@code SudokuValidator}.
  */
 public class SudokuBoard {
 
-    private final int size;
-    private final int[] subgridDimensions;
+    private final int[][] grid;
+    private final int rowLength;
+    private final int[] subgridSize;
     private int filledCells;
-    private final int[][] board;
 
 
     /**
      * Creates an empty board of the chosen size.
      * Establishes its subgrid layout so later logic can rely on consistent dimensions.
      */
-    public SudokuBoard(int size) {
-        this.size = size;
-        this.subgridDimensions = calculateSubgridSize();
-        this.board = new int[size][size];
+    public SudokuBoard(int rowLength) {
+        this.rowLength = rowLength;
+        this.grid = new int[rowLength][rowLength];
+        this.subgridSize = setSubgridSize();
+        this.filledCells = 0;
     }
+
 
     /**
      * Private constructor used to create a deep copy of an existing SudokuBoard.
      * Produces a fully independent instance by cloning all mutable fields.
      */
     private SudokuBoard(SudokuBoard original) {
-        this.size = original.size;
-        this.subgridDimensions = original.subgridDimensions.clone();
+        this.rowLength = original.rowLength;
+        this.subgridSize = original.subgridSize.clone();
         this.filledCells = original.filledCells;
 
-        this.board = new int[size][size];
-        for (int row = 0; row < size; row++) {
-            this.board[row] = original.board[row].clone();
+        this.grid = new int[rowLength][rowLength];
+        for (int row = 0; row < rowLength; row++) {
+            this.grid[row] = original.grid[row].clone();
         }
     }
-
-    /**
-     * Calculates subgrid dimensions based on the board size.
-     */
-    private int[] calculateSubgridSize() {
-        if (!SUPPORTED_BOARD_SIZES.contains(size)) {
-            throw new IllegalArgumentException(
-                    String.format(ERROR_INVALID_BOARD_SIZE, size)
-            );
-        }
-        return CoreConstants.getBlockLayout(size);
-    }
-
 
     /**
      * Creates a deep copy of this board.
      * Delegates to the private copy-constructor to ensure full structural independence.
      */
-    public SudokuBoard copy() {
+    public SudokuBoard deepCopy() {
         return new SudokuBoard(this);
+    }
+
+    /**
+     * Calculates subgrid dimensions based on the board size.
+     */
+    private int[] setSubgridSize() {
+        return switch (rowLength) {
+            case 4 -> new int[]{2, 2};
+            case 6 -> new int[]{2, 3};
+            case 9 -> new int[]{3, 3};
+            default -> throw new IllegalArgumentException("Unsupported board size: " + rowLength);
+        };
     }
 
 
@@ -75,11 +71,15 @@ public class SudokuBoard {
      * which internally delegates to this method.
      */
     public void setValue(int row, int col, int value) {
-        int oldValue = board[row][col];
-        board[row][col] = value;
-        if (oldValue == EMPTY_CELL && value != EMPTY_CELL) {
+        int oldValue = grid[row][col];
+        grid[row][col] = value;
+
+        boolean numberIsNotEmpty = value != EMPTY_CELL;
+        boolean cellIsEmpty = oldValue == EMPTY_CELL;
+
+        if (cellIsEmpty && numberIsNotEmpty) {
             filledCells++;
-        } else if (oldValue != EMPTY_CELL && value == EMPTY_CELL) {
+        } else if (value == EMPTY_CELL) {
             filledCells--;
         }
     }
@@ -89,76 +89,35 @@ public class SudokuBoard {
      * Retrieves the value stored in a specific cell on the board.
      */
     public int getValueAt(int row, int col) {
-        return board[row][col];
+        return grid[row][col];
     }
 
     /**
      * Get the overall width/height of the board so other logic can adapt to its size.
      */
-    public int getSize() {
-        return size;
+    public int getRowLength() {
+        return rowLength;
     }
 
     /**
      * Provides the row/column structure of each subgrid, used by validation and generation routines.
      */
-    public int[] getSubgridDimensions() {
-        return subgridDimensions;
-    }
-
-
-    /**
-     * Determines whether the board is completely filled.
-     */
-    public boolean isBoardFull() {
-        return filledCells == size * size;
-    }
-
-
-    /**
-     * Converts this {@code SudokuBoard} into a transferable DTO.
-     * Preserves cell values and structural dimensions.
-     */
-    // TODO: Separate SudokuBoard (structure) from game logic (Difficulty etc.)
-    public SudokuBoardDto toDto() {
-        return new SudokuBoardDto(
-                deepCopy(this.board),
-                this.size,
-                this.subgridDimensions.clone()
-        );
+    public int[] getSubgridSize() {
+        return subgridSize;
     }
 
     /**
-     * Builds a {@code SudokuBoard} instance from a provided DTO.
-     * Used to recreate domain objects from external representations.
+     * Get the number of filled cells.
      */
-    public static SudokuBoard fromDto(SudokuBoardDto dto) {
-        SudokuBoard board = new SudokuBoard(dto.size());
-        int[][] cells = dto.cells();
-        for (int row = 0; row < dto.size(); row++) {
-            for (int col = 0; col < dto.size(); col++) {
-                board.setValue(row, col, cells[row][col]);
-            }
-        }
-        return board;
-    }
-
-    /**
-     * Creates a deep copy of a 2D array of cell values.
-     */
-    private int[][] deepCopy(int[][] source) {
-        int[][] copy = new int[source.length][];
-        for (int i = 0; i < source.length; i++) {
-            copy[i] = source[i].clone();
-        }
-        return copy;
+    public int getFilledCells() {
+        return filledCells;
     }
 
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int[] row : board) {
+        for (int[] row : grid) {
             sb.append(Arrays.toString(row)).append("\n");
         }
         return sb.toString();

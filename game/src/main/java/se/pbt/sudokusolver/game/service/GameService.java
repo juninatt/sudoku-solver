@@ -66,7 +66,9 @@ public class GameService {
         gameBoard.setValue(row, col, value);
         cellViewListener.onCellUpdated(row, col, value);
 
-        if (gameBoard.isBoardFull()) {
+        int rowLength = gameBoard.getRowLength();
+        int gridSize =  rowLength * rowLength;
+        if (gameBoard.getFilledCells() == gridSize) {
             logger.info("Board is full, triggering validation");
             validator.validateBoard(gameBoard);
         }
@@ -78,7 +80,7 @@ public class GameService {
      * Checks whether a requested move is outside valid board or value ranges.
      */
     private boolean outOfBounds(int row, int col, int value) {
-        int limit = gameBoard.getSize();
+        int limit = gameBoard.getRowLength();
         return (row < 0 || row >= limit ||
                 col < 0 || col >= limit ||
                 value < MIN_CELL_VALUE || value > limit);
@@ -98,7 +100,7 @@ public class GameService {
      */
     public void revealFullSolution() {
         logger.info("Revealing full solution");
-        int toReveal = solutionBoard.getSize() * solutionBoard.getSize();
+        int toReveal = solutionBoard.getRowLength() * solutionBoard.getRowLength();
         revealCells(toReveal);
     }
 
@@ -107,7 +109,7 @@ public class GameService {
      */
     private void revealCells(int maxCells) {
         int revealed = 0;
-        int size = solutionBoard.getSize();
+        int size = solutionBoard.getRowLength();
 
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
@@ -127,7 +129,7 @@ public class GameService {
      * Returns subgrid dimensions used by the current board.
      */
     public int[] getSubgridDimensions() {
-        return gameBoard.getSubgridDimensions();
+        return gameBoard.getSubgridSize();
     }
 
     /**

@@ -26,8 +26,8 @@ class SudokuBuilderTest {
         assertNotNull(playable, "Expected playable board to be returned");
         assertNotNull(solution, "Expected solution board to be stored");
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertPlayableBoardValuesInRange(playable);
@@ -47,8 +47,8 @@ class SudokuBuilderTest {
         assertNotNull(playable);
         assertNotNull(solution);
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertSolutionBoardFilled(playable);
@@ -75,8 +75,8 @@ class SudokuBuilderTest {
         assertNotNull(playable, "Expected playable board to be returned");
         assertNotNull(solution, "Expected solution board to be stored");
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertPlayableBoardValuesInRange(playable);
@@ -96,8 +96,8 @@ class SudokuBuilderTest {
         assertNotNull(playable);
         assertNotNull(solution);
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertSolutionBoardFilled(playable);
@@ -124,8 +124,8 @@ class SudokuBuilderTest {
         assertNotNull(playable, "Expected playable board to be returned");
         assertNotNull(solution, "Expected solution board to be stored");
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertPlayableBoardValuesInRange(playable);
@@ -145,8 +145,8 @@ class SudokuBuilderTest {
         assertNotNull(playable);
         assertNotNull(solution);
 
-        assertEquals(size, playable.getSize());
-        assertEquals(size, solution.getSize());
+        assertEquals(size, playable.getRowLength());
+        assertEquals(size, solution.getRowLength());
 
         assertSolutionBoardFilled(solution);
         assertSolutionBoardFilled(playable);
@@ -163,7 +163,7 @@ class SudokuBuilderTest {
      * Verifies that a solution board has no empty cells and that all values are within 1..size.
      */
     private void assertSolutionBoardFilled(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int value = board.getValueAt(row, col);
@@ -178,7 +178,7 @@ class SudokuBuilderTest {
      * Verifies that all non-empty cells in a playable board have values within 1..size.
      */
     private void assertPlayableBoardValuesInRange(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int value = board.getValueAt(row, col);

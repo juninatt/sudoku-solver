@@ -41,7 +41,7 @@ public abstract class SudokuBuilderHelper {
      * The loop stops early if the strategy returns {@code true}.
      */
     protected final boolean tryNumbersInCell(SudokuBoard board, int row, int col, Function<Integer, Boolean> strategy) {
-        List<Integer> numbers = getShuffledNumbers(board.getSize());
+        List<Integer> numbers = getShuffledNumbers(board.getRowLength());
         for (int num : numbers) {
             if (isPlacementAllowed(board, row, col, num)) {
                 board.setValue(row, col, num);
@@ -74,7 +74,7 @@ public abstract class SudokuBuilderHelper {
      * without violating the standard Sudoku rules (row, column, subgrid).
      */
     private boolean isPlacementAllowed(SudokuBoard board, int row, int col, int num) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         // Return false if the number already exists in the same row or column
         for (int i = 0; i < size; i++) {
             if (board.getValueAt(row, i) == num || board.getValueAt(i, col) == num) {
@@ -83,7 +83,7 @@ public abstract class SudokuBuilderHelper {
         }
 
         // Calculate the starting coordinates of the subgrid that contains the cell (row, col)
-        int[] subgrid = board.getSubgridDimensions();
+        int[] subgrid = board.getSubgridSize();
         int subgridRows = subgrid[0];
         int subgridCols = subgrid[1];
         int startRow = row - row % subgridRows;

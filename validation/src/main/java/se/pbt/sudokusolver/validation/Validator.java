@@ -30,8 +30,8 @@ public class Validator {
      */
     public boolean validateBoard(SudokuBoard sudokuBoard) {
         this.sudokuBoard = sudokuBoard;
-        this.boardSize = sudokuBoard.getSize();
-        this.subgridDimensions = sudokuBoard.getSubgridDimensions();
+        this.boardSize = sudokuBoard.getRowLength();
+        this.subgridDimensions = sudokuBoard.getSubgridSize();
 
         boolean isValid = validateRows() && validateColumns() && validateSubgrids();
 

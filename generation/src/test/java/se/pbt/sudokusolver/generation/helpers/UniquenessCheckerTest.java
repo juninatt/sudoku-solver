@@ -25,7 +25,7 @@ class UniquenessCheckerTest {
     @DisplayName("does not modify original board when checking uniqueness")
     void hasUniqueSolution_doesNotModifyOriginalBoard() {
         SudokuBoard board = createSolved4x4Board();
-        SudokuBoard snapshot = board.copy();
+        SudokuBoard snapshot = board.deepCopy();
         UniquenessChecker checker = new UniquenessChecker();
 
         checker.hasUniqueSolution(board);
@@ -77,8 +77,8 @@ class UniquenessCheckerTest {
      * Asserts that two boards have the same size and identical values in all cells.
      */
     private void assertBoardsEqual(SudokuBoard expected, SudokuBoard actual) {
-        assertEquals(expected.getSize(), actual.getSize(), "Board sizes must match");
-        int size = expected.getSize();
+        assertEquals(expected.getRowLength(), actual.getRowLength(), "Board sizes must match");
+        int size = expected.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 assertEquals(expected.getValueAt(row, col), actual.getValueAt(row, col),

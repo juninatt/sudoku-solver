@@ -19,7 +19,7 @@ public final class UniquenessChecker extends SudokuBuilderHelper {
      * Makes a defensive copy of the board to avoid modifying the original.
      */
     public boolean hasUniqueSolution(SudokuBoard board) {
-        return isSolutionUnique(board.copy(), FIRST_ROW_INDEX, FIRST_COLUMN_INDEX, new AtomicInteger(0));
+        return isSolutionUnique(board.deepCopy(), FIRST_ROW_INDEX, FIRST_COLUMN_INDEX, new AtomicInteger(0));
     }
 
     /**
@@ -28,7 +28,7 @@ public final class UniquenessChecker extends SudokuBuilderHelper {
      * Returns {@code true} if only one solution is found; otherwise, stops early and returns {@code false}.
      */
     private boolean isSolutionUnique(SudokuBoard board, int row, int col, AtomicInteger solutionCount) {
-        int size = board.getSize();;
+        int size = board.getRowLength();;
 
         if (solutionCount.get() > 1) return false;
 

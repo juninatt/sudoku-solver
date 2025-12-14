@@ -22,7 +22,7 @@ public final class  SolutionGenerator extends SudokuBuilderHelper {
      *
      */
     public boolean fillBoardWithSolution(SudokuBoard board, int row, int col) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         logger.debug("Starting solution generation for size={}", size);
 
         if (row >= size) {

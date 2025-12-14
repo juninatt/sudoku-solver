@@ -20,11 +20,11 @@ public final class TestBoardFactory {
      * @param values the board layout to test, must match board size exactly
      */
     public static void applyBoardState(SudokuBoard board, int[][] values) {
-        if (values.length != board.getSize()) {
+        if (values.length != board.getRowLength()) {
             throw new IllegalArgumentException("Size mismatch in test board input");
         }
-        IntStream.range(0, board.getSize()).forEach(r ->
-                IntStream.range(0, board.getSize()).forEach(c ->
+        IntStream.range(0, board.getRowLength()).forEach(r ->
+                IntStream.range(0, board.getRowLength()).forEach(c ->
                         board.setValue(r, c, values[r][c])
                 )
         );

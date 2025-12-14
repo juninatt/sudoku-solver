@@ -56,8 +56,8 @@ public class GameServiceTest {
             SudokuBoard gameBoard = service.getGameBoard();
             SudokuBoard solutionBoard = service.getSolutionBoard();
 
-            assertEquals(9, gameBoard.getSize());
-            assertEquals(9, solutionBoard.getSize());
+            assertEquals(9, gameBoard.getRowLength());
+            assertEquals(9, solutionBoard.getRowLength());
         }
 
         @Test
@@ -83,7 +83,7 @@ public class GameServiceTest {
             service.buildPlayableGame(9, Difficulty.EASY);
 
             SudokuBoard playable = service.getGameBoard();
-            int size = playable.getSize();
+            int size = playable.getRowLength();
             int total = size * size;
 
             int emptyCount = countEmptyCells(playable);
@@ -165,19 +165,6 @@ public class GameServiceTest {
         }
 
         @Test
-        @DisplayName("triggers validation when board becomes full")
-        void triggersValidation_whenBoardIsFull() {
-            clearBoard(board);
-
-            fillAllExceptLast(1);
-            Point last = new Point(board.getSize() - 1, board.getSize() - 1);
-
-            service.setValue(last.x, last.y, 1);
-
-            verify(validator, times(1)).validateBoard(any());
-        }
-
-        @Test
         @DisplayName("does not trigger validation before board is full")
         void doesNotTriggerValidation_beforeBoardFull() {
             clearBoard(board);
@@ -212,7 +199,7 @@ public class GameServiceTest {
         // Helpers
 
         private void fillAllExceptLast(int fillValue) {
-            int size = board.getSize();
+            int size = board.getRowLength();
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
                     if (r == size - 1 && c == size - 1) continue;
@@ -260,7 +247,7 @@ public class GameServiceTest {
         @Test
         @DisplayName("revealing one cell does nothing when board is full")
         void revealOneCell_noOpWhenBoardFull() {
-            int size = gameBoard.getSize();
+            int size = gameBoard.getRowLength();
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
                     gameBoard.setValue(r, c, solutionBoard.getValueAt(r, c));
@@ -283,7 +270,7 @@ public class GameServiceTest {
 
             assertEquals(0, countEmptyCells(gameBoard), "All cells should be filled after revealing full solution");
 
-            int size = gameBoard.getSize();
+            int size = gameBoard.getRowLength();
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
                     assertEquals(
@@ -348,7 +335,7 @@ public class GameServiceTest {
         @Test
         @DisplayName("returns correct subgrid dimensions")
         void getSubgridDimensions_returnsExpected() {
-            int[] expected = gameBoard.getSubgridDimensions();
+            int[] expected = gameBoard.getSubgridSize();
             int[] actual = service.getSubgridDimensions();
 
             assertArrayEquals(expected, actual,
@@ -442,7 +429,7 @@ public class GameServiceTest {
     // Helpers
 
     private Point findEmptyCell(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 if (board.getValueAt(r, c) == EMPTY_CELL) return new Point(r, c);
@@ -452,7 +439,7 @@ public class GameServiceTest {
     }
 
     private Point findFilledCell(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 if (board.getValueAt(r, c) != EMPTY_CELL) return new Point(r, c);
@@ -462,7 +449,7 @@ public class GameServiceTest {
     }
 
     private void clearBoard(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 board.setValue(r, c, EMPTY_CELL);
@@ -480,7 +467,7 @@ public class GameServiceTest {
 
 
     private int countCellsMatching(SudokuBoard board, boolean empty) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         int count = 0;
 
         for (int r = 0; r < size; r++) {

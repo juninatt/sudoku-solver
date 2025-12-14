@@ -112,7 +112,7 @@ class SolutionGeneratorTest {
      * Verifies that all cells in the given board are filled with values in the valid range 1..size.
      */
     private static void assertBoardFilledWithValuesInRange(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int value = board.getValueAt(row, col);

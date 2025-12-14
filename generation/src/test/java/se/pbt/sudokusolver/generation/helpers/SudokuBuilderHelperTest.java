@@ -115,7 +115,7 @@ class SudokuBuilderHelperTest {
 
             int value = board.getValueAt(0, 0);
             assertNotEquals(EMPTY_CELL, value, "Cell should remain filled when strategy returns true");
-            assertTrue(value >= 1 && value <= board.getSize(),
+            assertTrue(value >= 1 && value <= board.getRowLength(),
                     "Filled value should be within valid range 1..size");
         }
 

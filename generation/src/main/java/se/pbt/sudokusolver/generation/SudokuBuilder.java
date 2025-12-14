@@ -47,7 +47,7 @@ public class SudokuBuilder {
 
         this.solutionBoard = createSolution(size);
         randomizeBoard(solutionBoard);
-        SudokuBoard playableBoard = solutionBoard.copy();
+        SudokuBoard playableBoard = solutionBoard.deepCopy();
 
         hideCellValues(playableBoard, clueFraction);
 
@@ -63,7 +63,7 @@ public class SudokuBuilder {
         SudokuBoard board = new SudokuBoard(size);
 
         if (solutionGenerator.fillBoardWithSolution(board, 0, 0)) {
-            return board.copy();
+            return board.deepCopy();
         } else {
             logger.error("Failed to generate solved Sudoku board (size: {})", size);
             throw new IllegalStateException("Unable to generate a complete Sudoku solution. Invalid puzzle state.");
@@ -77,7 +77,7 @@ public class SudokuBuilder {
     private void hideCellValues(SudokuBoard gameBoard, double clueFraction) {
         int hiddenCellsCount = 0;
         int uniquenessViolations = 0;
-        int size = gameBoard.getSize();
+        int size = gameBoard.getRowLength();
 
         int cellsToHideCount = getCellsToHideCount(clueFraction, size);
         List<Point> cellsToHideList = getCellsToHide(size, cellsToHideCount);
@@ -149,7 +149,7 @@ public class SudokuBuilder {
      * while preserving the structure and validity of the solution.
      */
     private void randomizeBoard(SudokuBoard board) {
-        int size = board.getSize();
+        int size = board.getRowLength();
         logger.debug("Randomizing solved board values");
 
         List<Integer> mapping = IntStream.rangeClosed(1, size)
