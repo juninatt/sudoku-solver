@@ -2,11 +2,8 @@ package se.pbt.sudokusolver.core.generation.helpers;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
@@ -34,7 +31,7 @@ public abstract class SudokuBuilderHelper {
      * The loop stops early if the strategy returns {@code true}.
      */
     protected final boolean tryNumbersInCell(SudokuBoard board, int row, int col, Function<Integer, Boolean> strategy) {
-        List<Integer> numbers = getShuffledNumbers(board.getRowLength());
+        int[] numbers = getShuffledNumbers(board.getRowLength());
         for (int num : numbers) {
             if (isPlacementAllowed(board, row, col, num)) {
                 board.setValue(row, col, num);
@@ -50,17 +47,27 @@ public abstract class SudokuBuilderHelper {
     }
 
     /**
-     * Generates a list of integers from 1 to the board size in random order.
-     * Used during backtracking to try possible numbers in a cell.
+     * Generates an array containing numbers from 1 to maxNumber in random order.
+     * Used during backtracking to try possible values in a cell.
      */
-    private List<Integer> getShuffledNumbers(int maxNumber) {
-        List<Integer> numbers = IntStream.rangeClosed(0, maxNumber)
-                .boxed()
-                .collect(Collectors.toList());
-        Collections.shuffle(numbers);
+    private int[] getShuffledNumbers(int maxNumber) {
+        int[] numbers = new int[maxNumber];
+
+        for (int i = 0; i < maxNumber; i++) {
+            numbers[i] = i + 1;
+        }
+
+        // Fisher–Yates shuffle
+        for (int i = numbers.length - 1; i > 0; i--) {
+            int j = ThreadLocalRandom.current().nextInt(i + 1);
+            int tmp = numbers[i];
+            numbers[i] = numbers[j];
+            numbers[j] = tmp;
+        }
 
         return numbers;
     }
+
 
     /**
      * Checks whether a specific number can be placed in a given cell
