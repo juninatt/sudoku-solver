@@ -1,10 +1,10 @@
-package se.pbt.sudokusolver.generation;
+package se.pbt.sudokusolver.core.generation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
+import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.generation.helpers.UniquenessChecker;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 // TODO: Make class reusable
 /**
@@ -27,7 +27,7 @@ public class SudokuBuilder {
     private final UniquenessChecker uniquenessChecker;
     private final SolutionGenerator solutionGenerator;
 
-    private SudokuBoard solutionBoard;
+    private SudokuBoard solution;
 
     public SudokuBuilder(UniquenessChecker uniquenessChecker,
                          SolutionGenerator solutionGenerator) {
@@ -41,13 +41,13 @@ public class SudokuBuilder {
      *
      * @return a playable {@link SudokuBoard} with a unique solution
      */
-    public SudokuBoard buildSudokuPuzzle(int size, double clueFraction) {
-        logger.info("Building new Sudoku puzzle (size: {}, target cells to hide: {})",
-                size, getCellsToHideCount(clueFraction, size));
+    public SudokuBoard buildPlayableBoard(int gridSize, double clueFraction) {
+        logger.info("Building new Sudoku puzzle (size: {}, clue fraction: {})",
+                gridSize, clueFraction);
 
-        this.solutionBoard = createSolution(size);
-        randomizeBoard(solutionBoard);
-        SudokuBoard playableBoard = solutionBoard.deepCopy();
+        this.solution = createSolution(gridSize);
+        randomizeBoard(solution);
+        SudokuBoard playableBoard = solution.deepCopy();
 
         hideCellValues(playableBoard, clueFraction);
 
@@ -59,13 +59,13 @@ public class SudokuBuilder {
     /**
      * Builds a fully solved Sudoku board using the {@link SolutionGenerator}.
      */
-    private SudokuBoard createSolution(int size) {
-        SudokuBoard board = new SudokuBoard(size);
+    private SudokuBoard createSolution(int gridSize) {
+        SudokuBoard solution = new SudokuBoard(gridSize);
 
-        if (solutionGenerator.fillBoardWithSolution(board, 0, 0)) {
-            return board.deepCopy();
+        if (solutionGenerator.fillBoardWithSolution(solution, 0, 0)) {
+            return solution.deepCopy();
         } else {
-            logger.error("Failed to generate solved Sudoku board (size: {})", size);
+            logger.error("Failed to generate solved Sudoku board (size: {})", gridSize);
             throw new IllegalStateException("Unable to generate a complete Sudoku solution. Invalid puzzle state.");
         }
     }
@@ -75,15 +75,15 @@ public class SudokuBuilder {
      * ensuring a unique solution remains after each removal using {@link UniquenessChecker}.
      */
     private void hideCellValues(SudokuBoard gameBoard, double clueFraction) {
-        int hiddenCellsCount = 0;
-        int uniquenessViolations = 0;
-        int size = gameBoard.getRowLength();
+        int gridSize = gameBoard.getRowLength();
+        int totalCells = gridSize * gridSize;
+        int cellsToHideCount = (int) (totalCells - (clueFraction * totalCells));
 
-        int cellsToHideCount = getCellsToHideCount(clueFraction, size);
-        List<Point> cellsToHideList = getCellsToHide(size, cellsToHideCount);
+        int hiddenCellsCount = 0;
+        List<Point> cellsToHideList = getCellsToHide(gridSize, cellsToHideCount);
 
         logger.debug("Starting cell hiding (boardSize: {}, clueFraction: {}, targetHiddenCells: {})",
-                size, clueFraction, cellsToHideCount);
+                gridSize, clueFraction, cellsToHideCount);
 
         // start and end time for performance purposes. Shown in logg
         long startTime = System.currentTimeMillis();
@@ -94,14 +94,13 @@ public class SudokuBuilder {
         for (Point p : cellsToHideList) {
             if (hiddenCellsCount >= cellsToHideCount) break;
 
-            int cellValue = gameBoard.getValueAt(p.x, p.y);
+            int oldCellValue = gameBoard.getCellValue(p.x, p.y);
             gameBoard.setValue(p.x, p.y, EMPTY_CELL);
 
             boolean unique = uniquenessChecker.hasUniqueSolution(gameBoard);
 
             if (!unique) {
-                gameBoard.setValue(p.x, p.y, cellValue);
-                uniquenessViolations++;
+                gameBoard.setValue(p.x, p.y, oldCellValue);
             } else {
                 hiddenCellsCount++;
             }
@@ -110,19 +109,9 @@ public class SudokuBuilder {
         long duration = System.currentTimeMillis() - startTime;
 
         logger.info(
-                "Cell hiding complete: {} cells successfully hidden out of {} attempts in {} ms ({} uniqueness violations)",
-                hiddenCellsCount, cellsToHideList.size(), duration, uniquenessViolations
+                "Cell hiding complete: {} cells successfully hidden out of {} attempts in {} ms.)",
+                hiddenCellsCount, cellsToHideList.size(), duration
         );
-    }
-
-    /**
-     * Calculates how many cells should be hidden based on the desired clue fraction
-     * and the size of the board.
-     */
-    private static int getCellsToHideCount(double clueFraction, int size) {
-        int totalCells = size * size;
-        int cluesToKeep = (int) (clueFraction * totalCells);
-        return totalCells - cluesToKeep;
     }
 
     /**
@@ -159,7 +148,7 @@ public class SudokuBuilder {
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                int originalValue = board.getValueAt(row, col);
+                int originalValue = board.getCellValue(row, col);
 
                 int newValue = (originalValue != EMPTY_CELL)
                         ? mapping.get(originalValue - 1)
@@ -175,6 +164,6 @@ public class SudokuBuilder {
      * Typically used for hint systems or revealing full solutions.
      */
     public SudokuBoard getSolutionBoard() {
-        return solutionBoard;
+        return solution;
     }
 }

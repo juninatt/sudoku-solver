@@ -1,7 +1,5 @@
 package se.pbt.sudokusolver.core.constants;
 
-import java.util.Set;
-
 public class CoreConstants {
 
     // Functional cell values

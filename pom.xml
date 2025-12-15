@@ -16,7 +16,6 @@
     <module>ui</module>
     <module>app</module>
     <module>validation</module>
-    <module>generation</module>
     <module>game</module>
   </modules>
 

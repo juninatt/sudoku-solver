@@ -1,4 +1,4 @@
-package se.pbt.sudokusolver.generation.helpers;
+package se.pbt.sudokusolver.core.generation.helpers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -8,49 +8,11 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 @DisplayName("SudokuBuilderHelper")
 class SudokuBuilderHelperTest {
 
-    private static class TestHelper extends SudokuBuilderHelper {
-
-        boolean isBoardFullProxy(int row, int size) {
-            return isBoardFull(row, size);
-        }
-
-        int[] getNextCellProxy(int row, int col, int size) {
-            return getNextCell(row, col, size);
-        }
-
-        boolean tryNumbersInCellProxy(SudokuBoard board, int row, int col,
-                                      java.util.function.Function<Integer, Boolean> strategy) {
-            return tryNumbersInCell(board, row, col, strategy);
-        }
-    }
-
-    private final TestHelper helper = new TestHelper();
-
-    @Nested
-    @DisplayName("isBoardFull")
-    class IsBoardFullTests {
-
-        @Test
-        @DisplayName("returns false when row index is within bounds")
-        void returnsFalse_whenRowWithinBounds() {
-            int size = 9;
-            assertFalse(helper.isBoardFullProxy(0, size));
-            assertFalse(helper.isBoardFullProxy(8, size));
-        }
-
-        @Test
-        @DisplayName("returns true when row index is equal to or greater than board size")
-        void returnsTrue_whenRowAtOrBeyondSize() {
-            int size = 9;
-            assertTrue(helper.isBoardFullProxy(9, size));
-            assertTrue(helper.isBoardFullProxy(10, size));
-        }
-    }
 
     @Nested
     @DisplayName("getNextCell")
@@ -96,7 +58,7 @@ class SudokuBuilderHelperTest {
 
             assertFalse(result, "Expected tryNumbersInCell to return false when no numbers are allowed");
             assertEquals(0, calls.get(), "Strategy should not be called when no placements are allowed");
-            assertEquals(EMPTY_CELL, board.getValueAt(0, 0), "Cell should remain empty when no placements are allowed");
+            assertEquals(EMPTY_CELL, board.getCellValue(0, 0), "Cell should remain empty when no placements are allowed");
         }
 
         @Test
@@ -113,7 +75,7 @@ class SudokuBuilderHelperTest {
             assertTrue(result, "Expected tryNumbersInCell to return true when strategy returns true");
             assertEquals(1, calls.get(), "Strategy should be called exactly once when only one number is allowed");
 
-            int value = board.getValueAt(0, 0);
+            int value = board.getCellValue(0, 0);
             assertNotEquals(EMPTY_CELL, value, "Cell should remain filled when strategy returns true");
             assertTrue(value >= 1 && value <= board.getRowLength(),
                     "Filled value should be within valid range 1..size");
@@ -133,7 +95,7 @@ class SudokuBuilderHelperTest {
             assertFalse(result, "Expected tryNumbersInCell to return false when strategy never returns true");
             assertEquals(1, calls.get(), "Strategy should be called once when exactly one number is allowed");
 
-            int value = board.getValueAt(0, 0);
+            int value = board.getCellValue(0, 0);
             assertEquals(EMPTY_CELL, value, "Cell should be backtracked to EMPTY_CELL when strategy returns false");
         }
     }
@@ -163,4 +125,14 @@ class SudokuBuilderHelperTest {
         return board;
     }
 
+    private static class TestHelper extends SudokuBuilderHelper {
+
+        int[] getNextCellProxy(int row, int col, int size) { return getNextCellPos(row, col, size);  }
+
+        boolean tryNumbersInCellProxy(SudokuBoard board, int row, int col,
+                                      java.util.function.Function<Integer, Boolean> strategy) {
+            return tryNumbersInCell(board, row, col, strategy);
+        }
+    }
+    private final TestHelper helper = new TestHelper();
 }

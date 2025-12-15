@@ -1,9 +1,9 @@
-package se.pbt.sudokusolver.generation.helpers;
+package se.pbt.sudokusolver.core.generation.helpers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import se.pbt.sudokusolver.core.generation.SudokuBuilder;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.generation.SudokuBuilder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +41,7 @@ class UniquenessCheckerTest {
 
         SudokuBuilder builder = new SudokuBuilder(new UniquenessChecker(), new SolutionGenerator());
 
-        SudokuBoard playable = builder.buildSudokuPuzzle(size, clueFraction);
+        SudokuBoard playable = builder.buildPlayableBoard(size, clueFraction);
         SudokuBoard solution = builder.getSolutionBoard();
 
         assertNotNull(playable);
@@ -81,7 +81,7 @@ class UniquenessCheckerTest {
         int size = expected.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                assertEquals(expected.getValueAt(row, col), actual.getValueAt(row, col),
+                assertEquals(expected.getCellValue(row, col), actual.getCellValue(row, col),
                         "Boards differ at (" + row + "," + col + ")");
             }
         }

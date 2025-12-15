@@ -3,9 +3,9 @@ package se.pbt.sudokusolver.game.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
-import se.pbt.sudokusolver.generation.SudokuBuilder;
-import se.pbt.sudokusolver.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.generation.helpers.UniquenessChecker;
+import se.pbt.sudokusolver.core.generation.SudokuBuilder;
+import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
+import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.validation.Validator;
@@ -44,7 +44,7 @@ public class GameService {
      */
     public void buildPlayableGame(int size, PuzzleDifficulty difficulty) {
         logger.info("Building new playable game (size: {}, difficulty: {})", size, difficulty);
-        gameBoard = sudokuBuilder.buildSudokuPuzzle(size, difficulty.getClueFraction());
+        gameBoard = sudokuBuilder.buildPlayableBoard(size, difficulty.getClueFraction());
         solutionBoard = sudokuBuilder.getSolutionBoard();
         logger.debug("New game constructed successfully");
     }
@@ -58,7 +58,7 @@ public class GameService {
             logger.warn("Rejected setValue request: out of bounds (row={}, col={}, value={})", row, col, value);
             return false;
         }
-        if (gameBoard.getValueAt(row, col) != EMPTY_CELL) {
+        if (gameBoard.getCellValue(row, col) != EMPTY_CELL) {
             logger.debug("Rejected setValue: cell ({},{}) is not empty", row, col);
             return false;
         }
@@ -113,8 +113,8 @@ public class GameService {
 
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                if (gameBoard.getValueAt(r, c) == EMPTY_CELL) {
-                    setValue(r, c, solutionBoard.getValueAt(r, c));
+                if (gameBoard.getCellValue(r, c) == EMPTY_CELL) {
+                    setValue(r, c, solutionBoard.getCellValue(r, c));
                     if (++revealed >= maxCells) {
                         logger.debug("Revealed {} cell(s)", revealed);
                         return;
@@ -136,7 +136,7 @@ public class GameService {
      * Retrieves the value in a specific board cell.
      */
     public int getCellValue(int row, int col) {
-        return gameBoard.getValueAt(row, col);
+        return gameBoard.getCellValue(row, col);
     }
 
     /**

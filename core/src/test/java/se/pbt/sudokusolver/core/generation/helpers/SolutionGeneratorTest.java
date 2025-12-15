@@ -1,4 +1,4 @@
-package se.pbt.sudokusolver.generation.helpers;
+package se.pbt.sudokusolver.core.generation.helpers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 @DisplayName("Solution Generator")
 class SolutionGeneratorTest {
@@ -89,22 +89,22 @@ class SolutionGeneratorTest {
             board.setValue(4, 4, 7);
             board.setValue(8, 8, 9);
 
-            int value00 = board.getValueAt(0, 0);
-            int value01 = board.getValueAt(0, 1);
-            int value10 = board.getValueAt(1, 0);
-            int value44 = board.getValueAt(4, 4);
-            int value88 = board.getValueAt(8, 8);
+            int value00 = board.getCellValue(0, 0);
+            int value01 = board.getCellValue(0, 1);
+            int value10 = board.getCellValue(1, 0);
+            int value44 = board.getCellValue(4, 4);
+            int value88 = board.getCellValue(8, 8);
 
             boolean solved = generator.fillBoardWithSolution(board, 0, 0);
 
             assertTrue(solved, "Expected solution generator to succeed for partially filled 9x9 board");
             assertBoardFilledWithValuesInRange(board);
 
-            assertEquals(value00, board.getValueAt(0, 0));
-            assertEquals(value01, board.getValueAt(0, 1));
-            assertEquals(value10, board.getValueAt(1, 0));
-            assertEquals(value44, board.getValueAt(4, 4));
-            assertEquals(value88, board.getValueAt(8, 8));
+            assertEquals(value00, board.getCellValue(0, 0));
+            assertEquals(value01, board.getCellValue(0, 1));
+            assertEquals(value10, board.getCellValue(1, 0));
+            assertEquals(value44, board.getCellValue(4, 4));
+            assertEquals(value88, board.getCellValue(8, 8));
         }
     }
 
@@ -115,7 +115,7 @@ class SolutionGeneratorTest {
         int size = board.getRowLength();
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                int value = board.getValueAt(row, col);
+                int value = board.getCellValue(row, col);
                 assertNotEquals(EMPTY_CELL, value, "Expected all cells to be filled");
                 assertTrue(value >= 1 && value <= size,
                         "Expected value to be within valid range 1.." + size);

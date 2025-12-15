@@ -88,7 +88,7 @@ public class SudokuBoard {
     /**
      * Retrieves the value stored in a specific cell on the board.
      */
-    public int getValueAt(int row, int col) {
+    public int getCellValue(int row, int col) {
         return grid[row][col];
     }
 

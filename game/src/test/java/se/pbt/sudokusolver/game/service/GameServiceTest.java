@@ -161,7 +161,7 @@ public class GameServiceTest {
             boolean ok = service.setValue(empty.x, empty.y, 7);
 
             assertTrue(ok);
-            assertEquals(7, board.getValueAt(empty.x, empty.y));
+            assertEquals(7, board.getCellValue(empty.x, empty.y));
         }
 
         @Test
@@ -194,18 +194,6 @@ public class GameServiceTest {
             service.setValue(filled.x, filled.y, 9);
 
             assertFalse(listenerTriggered);
-        }
-
-        // Helpers
-
-        private void fillAllExceptLast(int fillValue) {
-            int size = board.getRowLength();
-            for (int r = 0; r < size; r++) {
-                for (int c = 0; c < size; c++) {
-                    if (r == size - 1 && c == size - 1) continue;
-                    board.setValue(r, c, fillValue);
-                }
-            }
         }
     }
 
@@ -250,7 +238,7 @@ public class GameServiceTest {
             int size = gameBoard.getRowLength();
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
-                    gameBoard.setValue(r, c, solutionBoard.getValueAt(r, c));
+                    gameBoard.setValue(r, c, solutionBoard.getCellValue(r, c));
                 }
             }
 
@@ -274,8 +262,8 @@ public class GameServiceTest {
             for (int r = 0; r < size; r++) {
                 for (int c = 0; c < size; c++) {
                     assertEquals(
-                            solutionBoard.getValueAt(r, c),
-                            gameBoard.getValueAt(r, c),
+                            solutionBoard.getCellValue(r, c),
+                            gameBoard.getCellValue(r, c),
                             "Revealed board must match the solution"
                     );
                 }
@@ -288,11 +276,11 @@ public class GameServiceTest {
             clearBoard(gameBoard);
 
             gameBoard.setValue(0, 0, 9);
-            int beforeValue = gameBoard.getValueAt(0, 0);
+            int beforeValue = gameBoard.getCellValue(0, 0);
 
             service.revealSolutionCellValue();
 
-            int afterValue = gameBoard.getValueAt(0, 0);
+            int afterValue = gameBoard.getCellValue(0, 0);
 
             assertEquals(beforeValue, afterValue,
                     "Reveal must not overwrite manually entered player values");
@@ -325,7 +313,7 @@ public class GameServiceTest {
             int row = 0;
             int col = 0;
 
-            int expected = gameBoard.getValueAt(row, col);
+            int expected = gameBoard.getCellValue(row, col);
             int actual = service.getCellValue(row, col);
 
             assertEquals(expected, actual,
@@ -421,7 +409,7 @@ public class GameServiceTest {
 
             assertDoesNotThrow(() -> service.setValue(0, 0, 1));
 
-            assertEquals(1, board.getValueAt(0, 0),
+            assertEquals(1, board.getCellValue(0, 0),
                     "Setting a value must still work when listener is null");
         }
     }
@@ -432,7 +420,7 @@ public class GameServiceTest {
         int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                if (board.getValueAt(r, c) == EMPTY_CELL) return new Point(r, c);
+                if (board.getCellValue(r, c) == EMPTY_CELL) return new Point(r, c);
             }
         }
         throw new IllegalStateException("No empty cells found");
@@ -442,7 +430,7 @@ public class GameServiceTest {
         int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                if (board.getValueAt(r, c) != EMPTY_CELL) return new Point(r, c);
+                if (board.getCellValue(r, c) != EMPTY_CELL) return new Point(r, c);
             }
         }
         throw new IllegalStateException("No filled cells found");
@@ -472,7 +460,7 @@ public class GameServiceTest {
 
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                boolean isEmpty = board.getValueAt(r, c) == EMPTY_CELL;
+                boolean isEmpty = board.getCellValue(r, c) == EMPTY_CELL;
                 if (isEmpty == empty) {
                     count++;
                 }

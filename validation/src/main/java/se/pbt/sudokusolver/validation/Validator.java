@@ -18,8 +18,8 @@ public class Validator {
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
     private  SudokuBoard sudokuBoard;
-    private  int boardSize;
-    private  int[] subgridDimensions;
+    private  int rowLength;
+    private  int[] subgridSize;
 
 
     public Validator() {}
@@ -30,8 +30,8 @@ public class Validator {
      */
     public boolean validateBoard(SudokuBoard sudokuBoard) {
         this.sudokuBoard = sudokuBoard;
-        this.boardSize = sudokuBoard.getRowLength();
-        this.subgridDimensions = sudokuBoard.getSubgridSize();
+        this.rowLength = sudokuBoard.getRowLength();
+        this.subgridSize = sudokuBoard.getSubgridSize();
 
         boolean isValid = validateRows() && validateColumns() && validateSubgrids();
 
@@ -50,11 +50,11 @@ public class Validator {
      * Validates that every row in the board contains only unique non-zero values.
      */
     private boolean validateRows() {
-        logger.debug("Validating rows for board size: {}", boardSize);
+        logger.debug("Validating rows for board size: {}", rowLength);
 
-        boolean hasZeros = IntStream.range(0, boardSize)
-                .flatMap(r -> IntStream.range(0, boardSize)
-                        .map(c -> sudokuBoard.getValueAt(r, c)))
+        boolean hasZeros = IntStream.range(0, rowLength)
+                .flatMap(r -> IntStream.range(0, rowLength)
+                        .map(c -> sudokuBoard.getCellValue(r, c)))
                 .anyMatch(v -> v == EMPTY_CELL);
 
         if (hasZeros) {
@@ -62,7 +62,7 @@ public class Validator {
             return false;
         }
 
-        boolean valid = IntStream.range(0, boardSize)
+        boolean valid = IntStream.range(0, rowLength)
                 .allMatch(this::isValidRow);
 
         if (!valid) {
@@ -77,9 +77,9 @@ public class Validator {
      * Validates that every column in the board contains only unique values.
      */
     private boolean validateColumns() {
-        logger.debug("Validating columns for board size: {}", boardSize);
+        logger.debug("Validating columns for board size: {}", rowLength);
 
-        boolean valid = IntStream.range(0, boardSize)
+        boolean valid = IntStream.range(0, rowLength)
                 .allMatch(this::isValidColumn);
 
         if (!valid) {
@@ -94,15 +94,15 @@ public class Validator {
      */
     private boolean validateSubgrids() {
         logger.debug("Validating subgrids for board size: {}, layout: {}x{}",
-                boardSize, subgridDimensions[0], subgridDimensions[1]);
+                rowLength, subgridSize[0], subgridSize[1]);
 
-        int rows = subgridDimensions[0];
-        int cols = subgridDimensions[1];
+        int rows = subgridSize[0];
+        int cols = subgridSize[1];
 
         boolean valid = true;
 
-        for (int r = 0; r < boardSize; r += rows) {
-            for (int c = 0; c < boardSize; c += cols) {
+        for (int r = 0; r < rowLength; r += rows) {
+            for (int c = 0; c < rowLength; c += cols) {
                 if (!isValidSubgrid(r, c, rows, cols)) {
                     valid = false;
                 }
@@ -121,17 +121,15 @@ public class Validator {
      * Validates that a row has no empty cells and only unique numbers.
      */
     private boolean isValidRow(int row) {
-        boolean hasZero = IntStream.range(0, boardSize)
-                .anyMatch(col -> sudokuBoard.getValueAt(row, col) == 0);
+        boolean hasZero = IntStream.range(0, rowLength)
+                .anyMatch(col -> sudokuBoard.getCellValue(row, col) == 0);
 
         if (hasZero) return false;
 
-        boolean unique = hasUniqueNumbers(
-                IntStream.range(0, boardSize)
-                        .map(col -> sudokuBoard.getValueAt(row, col))
+        return hasUniqueNumbers(
+                IntStream.range(0, rowLength)
+                        .map(col -> sudokuBoard.getCellValue(row, col))
         );
-
-        return unique;
     }
 
 
@@ -139,8 +137,8 @@ public class Validator {
      * Validates that a specific column contains only unique values.
      */
     private boolean isValidColumn(int col) {
-        return hasUniqueNumbers(IntStream.range(0, boardSize)
-                .map(row -> sudokuBoard.getValueAt(row, col)));
+        return hasUniqueNumbers(IntStream.range(0, rowLength)
+                .map(row -> sudokuBoard.getCellValue(row, col)));
     }
 
     /**
@@ -150,7 +148,7 @@ public class Validator {
         return hasUniqueNumbers(
                 IntStream.range(0, subgridRows)
                         .flatMap(r -> IntStream.range(0, subgridCols)
-                                .map(c -> sudokuBoard.getValueAt(startRow + r, startCol + c)))
+                                .map(c -> sudokuBoard.getCellValue(startRow + r, startCol + c)))
         );
     }
 

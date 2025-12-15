@@ -1,11 +1,11 @@
-package se.pbt.sudokusolver.generation.helpers;
+package se.pbt.sudokusolver.core.generation.helpers;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
-import static se.pbt.sudokusolver.generation.constants.GenerationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 /**
  * Generates a complete solved board.
@@ -22,21 +22,21 @@ public final class  SolutionGenerator extends SudokuBuilderHelper {
      *
      */
     public boolean fillBoardWithSolution(SudokuBoard board, int row, int col) {
-        int size = board.getRowLength();
-        logger.debug("Starting solution generation for size={}", size);
+        int rowLength = board.getRowLength();
+        logger.debug("Starting solution generation for size={}", rowLength);
 
-        if (row >= size) {
+        if (row >= rowLength) {
             logger.info("Reached end of board (row={}, col={}), solution path valid", row, col);
             return true;
         }
 
-        if (board.getValueAt(row, col) != EMPTY_CELL) {
-            int[] next = getNextCell(row, col, size);
-            return fillBoardWithSolution(board, next[0], next[1]);
+        if (board.getCellValue(row, col) != EMPTY_CELL) {
+            int[] nextCellPos = getNextCellPos(row, col, rowLength);
+            return fillBoardWithSolution(board, nextCellPos[0], nextCellPos[1]);
         }
 
         boolean solved = tryNumbersInCell(board, row, col, num -> {
-            int[] next = getNextCell(row, col, size);
+            int[] next = getNextCellPos(row, col, rowLength);
             return fillBoardWithSolution(board, next[0], next[1]);
         });
 

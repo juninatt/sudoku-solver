@@ -1,10 +1,10 @@
-package se.pbt.sudokusolver.generation.helpers;
+package se.pbt.sudokusolver.core.generation.helpers;
 
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static se.pbt.sudokusolver.generation.constants.GenerationConstants.*;
+import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
 
 
 /**
@@ -19,7 +19,7 @@ public final class UniquenessChecker extends SudokuBuilderHelper {
      * Makes a defensive copy of the board to avoid modifying the original.
      */
     public boolean hasUniqueSolution(SudokuBoard board) {
-        return isSolutionUnique(board.deepCopy(), FIRST_ROW_INDEX, FIRST_COLUMN_INDEX, new AtomicInteger(0));
+        return isSolutionUnique(board.deepCopy(), 0, 0, new AtomicInteger(0));
     }
 
     /**
@@ -28,26 +28,27 @@ public final class UniquenessChecker extends SudokuBuilderHelper {
      * Returns {@code true} if only one solution is found; otherwise, stops early and returns {@code false}.
      */
     private boolean isSolutionUnique(SudokuBoard board, int row, int col, AtomicInteger solutionCount) {
-        int size = board.getRowLength();;
+        int rowLength = board.getRowLength();
+        int count = solutionCount.get();
 
-        if (solutionCount.get() > 1) return false;
+        if (count > 1) return false;
 
-        if (isBoardFull(row, size)) {
+        if (row >= rowLength) {
             solutionCount.incrementAndGet();
-            return solutionCount.get() == 1;
+            return count == 1;
         }
 
-        int[] next = getNextCell(row, col, size);
-        int nextRow = next[0];
-        int nextCol = next[1];
+        int[] nextCell = getNextCellPos(row, col, rowLength);
+        int nextRow = nextCell[0];
+        int nextCol = nextCell[1];
 
-        if (board.getValueAt(row, col) == EMPTY_CELL) {
+        if (board.getCellValue(row, col) == EMPTY_CELL) {
             return isSolutionUnique(board, nextRow, nextCol, solutionCount);
         }
 
         return !tryNumbersInCell(board, row, col, num -> {
             isSolutionUnique(board, nextRow, nextCol, solutionCount);
-            return solutionCount.get() > 1;
+            return false;
         });
     }
 }
