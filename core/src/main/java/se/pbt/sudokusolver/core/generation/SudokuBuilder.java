@@ -6,7 +6,6 @@ import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +27,13 @@ public class SudokuBuilder {
     private final SolutionGenerator solutionGenerator;
 
     private SudokuBoard solution;
+
+    /**
+     * Lightweight coordinate pair used to track which cells to hide.
+     * Replaces {@code java.awt.Point}, which pulls in an unnecessary AWT dependency
+     * for what is otherwise just a (row, col) pair.
+     */
+    private record Cell(int row, int col) {}
 
     public SudokuBuilder(UniquenessChecker uniquenessChecker,
                          SolutionGenerator solutionGenerator) {
@@ -63,7 +69,7 @@ public class SudokuBuilder {
         SudokuBoard solution = new SudokuBoard(gridSize);
 
         if (solutionGenerator.fillBoardWithSolution(solution, 0, 0)) {
-            return solution.deepCopy();
+            return solution;
         } else {
             logger.error("Failed to generate solved Sudoku board (size: {})", gridSize);
             throw new IllegalStateException("Unable to generate a complete Sudoku solution. Invalid puzzle state.");
@@ -80,7 +86,7 @@ public class SudokuBuilder {
         int cellsToHideCount = (int) (totalCells - (clueFraction * totalCells));
 
         int hiddenCellsCount = 0;
-        List<Point> cellsToHideList = getCellsToHide(gridSize, cellsToHideCount);
+        List<Cell> cellsToHideList = getCellsToHide(gridSize, cellsToHideCount);
 
         logger.debug("Starting cell hiding (boardSize: {}, clueFraction: {}, targetHiddenCells: {})",
                 gridSize, clueFraction, cellsToHideCount);
@@ -91,16 +97,16 @@ public class SudokuBuilder {
         // TODO: Improve reliability of hiding logic to ensure consistent number of hidden cells across runs.
         // Revisit the timing and placement of uniqueness checks in the flow to reduce randomness and improve determinism.
         // TODO: Add UI-side logging to confirm hidden cell count and detect discrepancies between builder and view.
-        for (Point p : cellsToHideList) {
+        for (Cell p : cellsToHideList) {
             if (hiddenCellsCount >= cellsToHideCount) break;
 
-            int oldCellValue = gameBoard.getCellValue(p.x, p.y);
-            gameBoard.setValue(p.x, p.y, EMPTY_CELL);
+            int oldCellValue = gameBoard.getCellValue(p.row(), p.col());
+            gameBoard.setValue(p.row(), p.col(), EMPTY_CELL);
 
             boolean unique = uniquenessChecker.hasUniqueSolution(gameBoard);
 
             if (!unique) {
-                gameBoard.setValue(p.x, p.y, oldCellValue);
+                gameBoard.setValue(p.row(), p.col(), oldCellValue);
             } else {
                 hiddenCellsCount++;
             }
@@ -120,12 +126,12 @@ public class SudokuBuilder {
      *
      * @return a shuffled list of cell coordinates to consider for hiding
      */
-    private List<Point> getCellsToHide(int size, int cellsToHideCount) {
-        List<Point> cellsList = new ArrayList<>();
+    private List<Cell> getCellsToHide(int size, int cellsToHideCount) {
+        List<Cell> cellsList = new ArrayList<>();
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                cellsList.add(new Point(row, col));
+                cellsList.add(new Cell(row, col));
             }
         }
         Collections.shuffle(cellsList);
