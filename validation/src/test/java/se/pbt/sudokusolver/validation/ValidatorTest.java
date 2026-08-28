@@ -14,6 +14,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ValidatorTest {
 
     @Nested
+    @DisplayName("Reused validator instance")
+    class ReusedValidatorInstance {
+
+        @Test
+        @DisplayName("produces correct result when reused across boards of different sizes")
+        void reusedAcrossDifferentBoardSizes() {
+            Validator validator = new Validator();
+
+            SudokuBoard invalid4x4 = new SudokuBoard(4);
+            TestBoardFactory.applyBoardState(invalid4x4, new int[4][4]); // all zeros
+
+            SudokuBoard valid9x9 = new SudokuBoard(9);
+            TestBoardFactory.applyBoardState(valid9x9, new int[][] {
+                    {5,3,4,6,7,8,9,1,2},
+                    {6,7,2,1,9,5,3,4,8},
+                    {1,9,8,3,4,2,5,6,7},
+                    {8,5,9,7,6,1,4,2,3},
+                    {4,2,6,8,5,3,7,9,1},
+                    {7,1,3,9,2,4,8,5,6},
+                    {9,6,1,5,3,7,2,8,4},
+                    {2,8,7,4,1,9,6,3,5},
+                    {3,4,5,2,8,6,1,7,9}
+            });
+
+            assertFalse(validator.validateBoard(invalid4x4),
+                    "First validation (invalid 4x4) should return false");
+            assertTrue(validator.validateBoard(valid9x9),
+                    "Second validation (valid 9x9) must not be affected by prior board/size state");
+        }
+    }
+
+    @Nested
     @DisplayName("4x4 board")
     class Validator4x4 {
 
@@ -31,6 +63,23 @@ public class ValidatorTest {
         void returnsFalse_whenContainsZero() {
             int[][] zeros = new int[4][4];
             TestBoardFactory.applyBoardState(board, zeros);
+            assertFalse(validator.validateBoard(board));
+        }
+
+        @Test
+        @DisplayName("returns false when only a single cell is empty")
+        void returnsFalse_whenSingleCellIsEmpty() {
+            // Otherwise-valid board with exactly one empty cell. Regression coverage for
+            // validateRows(), which must catch this via its whole-board zero scan
+            // rather than relying on a per-row check inside isValidRow().
+            int[][] valid = {
+                    {1,2,3,4},
+                    {3,4,1,2},
+                    {2,1,4,3},
+                    {4,3,2,1}
+            };
+            valid[0][0] = 0;
+            TestBoardFactory.applyBoardState(board, valid);
             assertFalse(validator.validateBoard(board));
         }
 
@@ -76,11 +125,13 @@ public class ValidatorTest {
         @Test
         @DisplayName("returns false when subgrid has duplicates")
         void returnsFalse_whenSubgridHasDuplicates() {
+            // Cyclic Latin square: every row and every column is a valid permutation of 1..4,
+            // but the top-left 2x2 subgrid contains duplicate values (1 and 2 each appear twice).
             int[][] bad = {
                     {1,2,3,4},
+                    {2,3,4,1},
                     {3,4,1,2},
-                    {1,2,4,3},
-                    {4,3,2,1}
+                    {4,1,2,3}
             };
             TestBoardFactory.applyBoardState(board, bad);
             assertFalse(validator.validateBoard(board));
@@ -156,13 +207,15 @@ public class ValidatorTest {
         @Test
         @DisplayName("returns false when a subgrid has duplicates")
         void returnsFalse_whenSubgridHasDuplicates_size6() {
+            // Cyclic Latin square: every row and every column is a valid permutation of 1..6,
+            // but the top-left 2x3 subgrid contains duplicate values (2 and 3 each appear twice).
             int[][] bad = {
                     {1,2,3,4,5,6},
+                    {2,3,4,5,6,1},
+                    {3,4,5,6,1,2},
                     {4,5,6,1,2,3},
-                    {1,2,3,4,5,6},
-                    {5,6,4,2,3,1},
-                    {3,1,2,6,4,5},
-                    {6,4,5,3,1,2}
+                    {5,6,1,2,3,4},
+                    {6,1,2,3,4,5}
             };
             TestBoardFactory.applyBoardState(board, bad);
             assertFalse(validator.validateBoard(board));
@@ -232,6 +285,28 @@ public class ValidatorTest {
             assertFalse(validator.validateBoard(board));
         }
 
+        @Test
+        @DisplayName("returns false when only a single cell is empty")
+        void returnsFalse_whenSingleCellIsEmpty_size9() {
+            // Otherwise-valid board with exactly one empty cell. Regression coverage for
+            // validateRows(), which must catch this via its whole-board zero scan
+            // rather than relying on a per-row check inside isValidRow().
+            int[][] valid = {
+                    {5,3,4,6,7,8,9,1,2},
+                    {6,7,2,1,9,5,3,4,8},
+                    {1,9,8,3,4,2,5,6,7},
+                    {8,5,9,7,6,1,4,2,3},
+                    {4,2,6,8,5,3,7,9,1},
+                    {7,1,3,9,2,4,8,5,6},
+                    {9,6,1,5,3,7,2,8,4},
+                    {2,8,7,4,1,9,6,3,5},
+                    {3,4,5,2,8,6,1,7,9}
+            };
+            valid[8][8] = 0;
+            TestBoardFactory.applyBoardState(board, valid);
+            assertFalse(validator.validateBoard(board));
+        }
+
         private int[][] validDuplicateRow() {
             return new int[][] {
                     {5,3,4,6,7,8,9,1,2},
@@ -261,16 +336,19 @@ public class ValidatorTest {
         }
 
         private int[][] validDuplicateSubgrid() {
+            // Cyclic Latin square: every row and every column is a valid permutation of 1..9,
+            // but the top-left 3x3 subgrid contains duplicate values (2, 3 and 4 each appear
+            // more than once), isolating a pure subgrid violation.
             return new int[][] {
-                    {5,3,4,6,7,8,9,1,2},
-                    {6,7,2,1,9,5,3,4,8},
-                    {1,9,8,3,4,2,5,6,7},
-                    {5,3,4,1,2,3,6,7,8},
-                    {4,2,6,8,5,3,7,9,1},
-                    {7,1,3,9,2,4,8,5,6},
-                    {9,6,1,5,3,7,2,8,4},
-                    {2,8,7,4,1,9,6,3,5},
-                    {3,4,5,2,8,6,1,7,9}
+                    {1,2,3,4,5,6,7,8,9},
+                    {2,3,4,5,6,7,8,9,1},
+                    {3,4,5,6,7,8,9,1,2},
+                    {4,5,6,7,8,9,1,2,3},
+                    {5,6,7,8,9,1,2,3,4},
+                    {6,7,8,9,1,2,3,4,5},
+                    {7,8,9,1,2,3,4,5,6},
+                    {8,9,1,2,3,4,5,6,7},
+                    {9,1,2,3,4,5,6,7,8}
             };
         }
     }

@@ -7,33 +7,28 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 import java.util.HashSet;
 import java.util.stream.IntStream;
 
-import static se.pbt.sudokusolver.validation.ValidationConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 
 /**
  * Validates {@link SudokuBoard} state when a game is finished.
  * Ensures each row, column, and sub-grid contains unique values and that the solution is valid.
+ * Stateless and safe to reuse across boards: each validation pass reads its board directly
+ * from method parameters rather than from stored instance state.
  */
 public class Validator {
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
-    private  SudokuBoard sudokuBoard;
-    private  int rowLength;
-    private  int[] subgridSize;
-
-
-    public Validator() {}
-
     /**
      * Runs full Sudoku validation.
-     * Loads boardSize + subgridDimensions from the given board so later checks operate on correct bounds.
      */
-    public boolean validateBoard(SudokuBoard sudokuBoard) {
-        this.sudokuBoard = sudokuBoard;
-        this.rowLength = sudokuBoard.getRowLength();
-        this.subgridSize = sudokuBoard.getSubgridSize();
+    public boolean validateBoard(SudokuBoard board) {
+        int rowLength = board.getRowLength();
+        int[] subgridSize = board.getSubgridSize();
 
-        boolean isValid = validateRows() && validateColumns() && validateSubgrids();
+        boolean isValid = validateRows(board, rowLength)
+                && validateColumns(board, rowLength)
+                && validateSubgrids(board, rowLength, subgridSize);
 
         // TODO: Add user friendly game completion
         if (isValid) {
@@ -49,12 +44,12 @@ public class Validator {
     /**
      * Validates that every row in the board contains only unique non-zero values.
      */
-    private boolean validateRows() {
+    private boolean validateRows(SudokuBoard board, int rowLength) {
         logger.debug("Validating rows for board size: {}", rowLength);
 
         boolean hasZeros = IntStream.range(0, rowLength)
                 .flatMap(r -> IntStream.range(0, rowLength)
-                        .map(c -> sudokuBoard.getCellValue(r, c)))
+                        .map(c -> board.getCellValue(r, c)))
                 .anyMatch(v -> v == EMPTY_CELL);
 
         if (hasZeros) {
@@ -63,7 +58,7 @@ public class Validator {
         }
 
         boolean valid = IntStream.range(0, rowLength)
-                .allMatch(this::isValidRow);
+                .allMatch(row -> isValidRow(board, rowLength, row));
 
         if (!valid) {
             logger.debug("Row validation failed — duplicate values found");
@@ -76,11 +71,11 @@ public class Validator {
     /**
      * Validates that every column in the board contains only unique values.
      */
-    private boolean validateColumns() {
+    private boolean validateColumns(SudokuBoard board, int rowLength) {
         logger.debug("Validating columns for board size: {}", rowLength);
 
         boolean valid = IntStream.range(0, rowLength)
-                .allMatch(this::isValidColumn);
+                .allMatch(col -> isValidColumn(board, rowLength, col));
 
         if (!valid) {
             logger.debug("Column validation failed — duplicate values found");
@@ -92,7 +87,7 @@ public class Validator {
     /**
      * Validates that all subgrids in the board contain only unique values.
      */
-    private boolean validateSubgrids() {
+    private boolean validateSubgrids(SudokuBoard board, int rowLength, int[] subgridSize) {
         logger.debug("Validating subgrids for board size: {}, layout: {}x{}",
                 rowLength, subgridSize[0], subgridSize[1]);
 
@@ -103,7 +98,7 @@ public class Validator {
 
         for (int r = 0; r < rowLength; r += rows) {
             for (int c = 0; c < rowLength; c += cols) {
-                if (!isValidSubgrid(r, c, rows, cols)) {
+                if (!isValidSubgrid(board, r, c, rows, cols)) {
                     valid = false;
                 }
             }
@@ -118,17 +113,13 @@ public class Validator {
 
 
     /**
-     * Validates that a row has no empty cells and only unique numbers.
+     * Validates that a row contains only unique numbers.
+     * Assumes the caller ({@link #validateRows}) has already confirmed the board has no empty cells.
      */
-    private boolean isValidRow(int row) {
-        boolean hasZero = IntStream.range(0, rowLength)
-                .anyMatch(col -> sudokuBoard.getCellValue(row, col) == 0);
-
-        if (hasZero) return false;
-
+    private boolean isValidRow(SudokuBoard board, int rowLength, int row) {
         return hasUniqueNumbers(
                 IntStream.range(0, rowLength)
-                        .map(col -> sudokuBoard.getCellValue(row, col))
+                        .map(col -> board.getCellValue(row, col))
         );
     }
 
@@ -136,19 +127,19 @@ public class Validator {
     /**
      * Validates that a specific column contains only unique values.
      */
-    private boolean isValidColumn(int col) {
+    private boolean isValidColumn(SudokuBoard board, int rowLength, int col) {
         return hasUniqueNumbers(IntStream.range(0, rowLength)
-                .map(row -> sudokuBoard.getCellValue(row, col)));
+                .map(row -> board.getCellValue(row, col)));
     }
 
     /**
-     * Validates that a specifik subgrid contains only unique values.
+     * Validates that a specific subgrid contains only unique values.
      */
-    private boolean isValidSubgrid(int startRow, int startCol, int subgridRows, int subgridCols) {
+    private boolean isValidSubgrid(SudokuBoard board, int startRow, int startCol, int subgridRows, int subgridCols) {
         return hasUniqueNumbers(
                 IntStream.range(0, subgridRows)
                         .flatMap(r -> IntStream.range(0, subgridCols)
-                                .map(c -> sudokuBoard.getCellValue(startRow + r, startCol + c)))
+                                .map(c -> board.getCellValue(startRow + r, startCol + c)))
         );
     }
 
