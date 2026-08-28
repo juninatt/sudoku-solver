@@ -8,8 +8,6 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 import se.pbt.sudokusolver.game.model.Difficulty;
 import se.pbt.sudokusolver.validation.Validator;
 
-import java.awt.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,7 +35,7 @@ public class GameServiceTest {
             Validator validator = new Validator();
             GameService service = new GameService(validator);
 
-            assertSame(validator, service.validator);
+            assertSame(validator, service.getValidator());
         }
     }
 
@@ -148,29 +146,29 @@ public class GameServiceTest {
         @Test
         @DisplayName("returns false when cell is not empty")
         void returnsFalse_whenCellNotEmpty() {
-            Point filled = findFilledCell(board);
-            assertFalse(service.setValue(filled.x, filled.y, 9));
+            Cell filled = findFilledCell(board);
+            assertFalse(service.setValue(filled.row(), filled.col(), 9));
         }
 
         @Test
         @DisplayName("updates cell when move is valid")
         void updatesCell_whenValid() {
             clearBoard(board);
-            Point empty = findEmptyCell(board);
+            Cell empty = findEmptyCell(board);
 
-            boolean ok = service.setValue(empty.x, empty.y, 7);
+            boolean ok = service.setValue(empty.row(), empty.col(), 7);
 
             assertTrue(ok);
-            assertEquals(7, board.getCellValue(empty.x, empty.y));
+            assertEquals(7, board.getCellValue(empty.row(), empty.col()));
         }
 
         @Test
         @DisplayName("does not trigger validation before board is full")
         void doesNotTriggerValidation_beforeBoardFull() {
             clearBoard(board);
-            Point empty = findEmptyCell(board);
+            Cell empty = findEmptyCell(board);
 
-            service.setValue(empty.x, empty.y, 5);
+            service.setValue(empty.row(), empty.col(), 5);
 
             verify(validator, never()).validateBoard(any());
         }
@@ -179,9 +177,9 @@ public class GameServiceTest {
         @DisplayName("triggers cell listener on valid update")
         void triggersCellViewListener_onSuccessfulUpdate() {
             clearBoard(board);
-            Point empty = findEmptyCell(board);
+            Cell empty = findEmptyCell(board);
 
-            service.setValue(empty.x, empty.y, 8);
+            service.setValue(empty.row(), empty.col(), 8);
 
             assertTrue(listenerTriggered);
         }
@@ -189,9 +187,9 @@ public class GameServiceTest {
         @Test
         @DisplayName("does not trigger cell listener when update is rejected")
         void doesNotTriggerListener_onRejectedUpdate() {
-            Point filled = findFilledCell(board);
+            Cell filled = findFilledCell(board);
 
-            service.setValue(filled.x, filled.y, 9);
+            service.setValue(filled.row(), filled.col(), 9);
 
             assertFalse(listenerTriggered);
         }
@@ -416,21 +414,27 @@ public class GameServiceTest {
 
     // Helpers
 
-    private Point findEmptyCell(SudokuBoard board) {
+    /**
+     * Lightweight coordinate pair for locating cells in tests.
+     * Mirrors the same pattern used in {@code SudokuBuilder} instead of pulling in java.awt.Point.
+     */
+    private record Cell(int row, int col) {}
+
+    private Cell findEmptyCell(SudokuBoard board) {
         int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                if (board.getCellValue(r, c) == EMPTY_CELL) return new Point(r, c);
+                if (board.getCellValue(r, c) == EMPTY_CELL) return new Cell(r, c);
             }
         }
         throw new IllegalStateException("No empty cells found");
     }
 
-    private Point findFilledCell(SudokuBoard board) {
+    private Cell findFilledCell(SudokuBoard board) {
         int size = board.getRowLength();
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
-                if (board.getCellValue(r, c) != EMPTY_CELL) return new Point(r, c);
+                if (board.getCellValue(r, c) != EMPTY_CELL) return new Cell(r, c);
             }
         }
         throw new IllegalStateException("No filled cells found");

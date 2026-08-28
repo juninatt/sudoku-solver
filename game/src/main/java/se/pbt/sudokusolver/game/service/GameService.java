@@ -20,11 +20,11 @@ import static se.pbt.sudokusolver.game.constants.GameConstants.MIN_CELL_VALUE;
 public class GameService {
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    SudokuBuilder sudokuBuilder;
-    Validator validator;
+    private final SudokuBuilder sudokuBuilder;
+    private final Validator validator;
 
-    SudokuBoard gameBoard;
-    SudokuBoard solutionBoard;
+    private SudokuBoard gameBoard;
+    private SudokuBoard solutionBoard;
 
     private CellViewListener cellViewListener = (r, c, v) -> {};
 
@@ -159,5 +159,14 @@ public class GameService {
      */
     public SudokuBoard getSolutionBoard() {
         return solutionBoard;
+    }
+
+    /**
+     * Returns the {@link Validator} used by this service.
+     * Package-private: exposed only so tests can verify the injected dependency
+     * without requiring the {@code validator} field itself to be package-visible.
+     */
+    Validator getValidator() {
+        return validator;
     }
 }
