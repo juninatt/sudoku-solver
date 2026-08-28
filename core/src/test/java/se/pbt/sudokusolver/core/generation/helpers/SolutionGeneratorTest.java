@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 @DisplayName("Solution Generator")
 class SolutionGeneratorTest {

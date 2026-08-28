@@ -2,7 +2,7 @@ package se.pbt.sudokusolver.core.models;
 
 import java.util.Arrays;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
  * Holds the internal state of a Sudoku board.

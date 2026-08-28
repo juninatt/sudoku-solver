@@ -4,7 +4,7 @@ import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 
 /**

@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
  * Generates a complete solved board.

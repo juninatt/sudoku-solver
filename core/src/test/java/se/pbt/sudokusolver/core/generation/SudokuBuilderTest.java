@@ -9,7 +9,7 @@ import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.pbt.sudokusolver.core.constants.CoreConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 @DisplayName("Sudoku Builder")
 class SudokuBuilderTest {

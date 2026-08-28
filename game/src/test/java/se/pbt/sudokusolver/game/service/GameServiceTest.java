@@ -11,7 +11,7 @@ import se.pbt.sudokusolver.validation.Validator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static se.pbt.sudokusolver.game.constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 @DisplayName("GameService:")
 public class GameServiceTest {

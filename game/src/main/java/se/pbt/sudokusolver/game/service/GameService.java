@@ -10,7 +10,7 @@ import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.validation.Validator;
 
-import static se.pbt.sudokusolver.game.constants.GameConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.game.constants.GameConstants.MIN_CELL_VALUE;
 
 /**

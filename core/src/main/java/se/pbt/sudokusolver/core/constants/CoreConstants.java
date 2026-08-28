@@ -2,10 +2,6 @@ package se.pbt.sudokusolver.core.constants;
 
 public class CoreConstants {
 
-    // Functional cell values
-    public static final int EMPTY_CELL = 0;
-
-
     // Difficulty
     public static final double CLUE_FRACTION_EASY = 0.50;
     public static final double CLUE_FRACTION_MEDIUM = 0.35;

@@ -2,6 +2,9 @@ package se.pbt.sudokusolver.shared.constants;
 
 public class SharedConstants {
 
+        // Functional cell values
+        public static final int EMPTY_CELL = 0;
+
         // Localization Bundles
         public static final String BUNDLE_SV = "i18n.messages_sv";
         public static final String BUNDLE_EN = "i18n.messages_en";

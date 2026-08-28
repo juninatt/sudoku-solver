@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
 import static se.pbt.sudokusolver.ui.constants.UIConstants.CSS_CLASS_FILLED_CELL;
-import static se.pbt.sudokusolver.ui.constants.UIConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
  * Handles user input events for editable Sudoku cells.

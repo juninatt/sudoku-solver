@@ -5,6 +5,7 @@ import javafx.scene.layout.GridPane;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**

@@ -6,7 +6,7 @@ import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.ui.interaction.CellEventHandler;
 import se.pbt.sudokusolver.ui.view.CellFactory;
 
-import static se.pbt.sudokusolver.ui.constants.UIConstants.EMPTY_CELL;
+import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
  * Serves as the connection layer between the UI and the underlying {@code SudokuBoard}.
