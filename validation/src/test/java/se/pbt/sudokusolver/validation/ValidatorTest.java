@@ -46,6 +46,64 @@ public class ValidatorTest {
     }
 
     @Nested
+    @DisplayName("validateCell()")
+    class ValidateCell {
+
+        private final Validator validator = new Validator();
+
+        @Test
+        @DisplayName("returns true on a mostly empty board with no conflicts")
+        void returnsTrue_onPartiallyFilledBoard() {
+            SudokuBoard board = new SudokuBoard(9);
+            board.setValue(0, 0, 5);
+
+            assertTrue(validator.validateCell(board, 0, 0),
+                    "A single placed value on an otherwise empty board cannot conflict with anything");
+        }
+
+        @Test
+        @DisplayName("returns false when the row already contains the value")
+        void returnsFalse_onRowConflict() {
+            SudokuBoard board = new SudokuBoard(9);
+            board.setValue(0, 0, 5);
+            board.setValue(0, 4, 5);
+
+            assertFalse(validator.validateCell(board, 0, 4));
+        }
+
+        @Test
+        @DisplayName("returns false when the column already contains the value")
+        void returnsFalse_onColumnConflict() {
+            SudokuBoard board = new SudokuBoard(9);
+            board.setValue(0, 0, 5);
+            board.setValue(4, 0, 5);
+
+            assertFalse(validator.validateCell(board, 4, 0));
+        }
+
+        @Test
+        @DisplayName("returns false when the subgrid already contains the value")
+        void returnsFalse_onSubgridConflict() {
+            SudokuBoard board = new SudokuBoard(9);
+            board.setValue(0, 0, 5);
+            board.setValue(2, 2, 5); // same 3x3 subgrid, different row and column
+
+            assertFalse(validator.validateCell(board, 2, 2));
+        }
+
+        @Test
+        @DisplayName("returns true when the same value appears elsewhere outside row, column and subgrid")
+        void returnsTrue_whenValueRepeatsOutsideConstraintGroups() {
+            SudokuBoard board = new SudokuBoard(9);
+            board.setValue(0, 0, 5);
+            board.setValue(4, 4, 5); // different row, column and subgrid
+
+            assertTrue(validator.validateCell(board, 4, 4));
+        }
+    }
+
+
+    @Nested
     @DisplayName("4x4 board")
     class Validator4x4 {
 

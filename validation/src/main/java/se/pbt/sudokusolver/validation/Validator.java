@@ -42,6 +42,31 @@ public class Validator {
 
 
     /**
+     * Validates that the cell at {@code (row, col)} does not violate Sudoku rules,
+     * i.e. that its value does not already appear elsewhere in the same row, column,
+     * or subgrid. Unlike {@link #validateBoard}, this does not require the board to be full —
+     * it is intended for checking a single move during gameplay rather than a finished puzzle.
+     */
+    public boolean validateCell(SudokuBoard board, int row, int col) {
+        int rowLength = board.getRowLength();
+        int[] subgridSize = board.getSubgridSize();
+
+        int subgridStartRow = row - row % subgridSize[0];
+        int subgridStartCol = col - col % subgridSize[1];
+
+        boolean valid = isValidRow(board, rowLength, row)
+                && isValidColumn(board, rowLength, col)
+                && isValidSubgrid(board, subgridStartRow, subgridStartCol, subgridSize[0], subgridSize[1]);
+
+        if (!valid) {
+            logger.debug("Cell ({},{}) violates Sudoku rules", row, col);
+        }
+
+        return valid;
+    }
+
+
+    /**
      * Validates that every row in the board contains only unique non-zero values.
      */
     private boolean validateRows(SudokuBoard board, int rowLength) {
@@ -113,8 +138,9 @@ public class Validator {
 
 
     /**
-     * Validates that a row contains only unique numbers.
-     * Assumes the caller ({@link #validateRows}) has already confirmed the board has no empty cells.
+     * Validates that a row contains only unique numbers, ignoring empty cells.
+     * {@link #validateRows} additionally requires the whole board to be free of empty
+     * cells before calling this; {@link #validateCell} does not make that requirement.
      */
     private boolean isValidRow(SudokuBoard board, int rowLength, int row) {
         return hasUniqueNumbers(
