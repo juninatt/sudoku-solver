@@ -37,7 +37,7 @@ The project is designed as a multi-module Maven structure, separating UI, game l
      |
      ├─ game/         -->    GameService: central gameplay coordinator
      |
-     ├─ generation/   -->    SudokuBuilder, SolutionGenerator, UniquenessChecker
+     ├─ generation/   -->    SudokuBuilder, SolutionGenerator
      |                       Full puzzle creation logic
      |
      ├─ shared/       -->    Cross-module interfaces, listeners, and shared constants/helpers

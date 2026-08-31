@@ -10,8 +10,8 @@ import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
  * Abstract superclass providing shared logic for Sudoku puzzle generation and validation.
- * Designed to be extended by classes such as {@link SolutionGenerator} and {@link UniquenessChecker},
- * which apply recursive techniques and rule enforcement to construct or assess Sudoku boards.
+ * Designed to be extended by classes such as {@link SolutionGenerator}, which apply
+ * recursive techniques and rule enforcement to construct or assess Sudoku boards.
  */
 public abstract class SudokuBuilderHelper {
 

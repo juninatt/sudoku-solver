@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +19,7 @@ class SudokuBuilderTest {
     void buildPlayableBoard_createsSolutionAndPlayableBoard(int size) {
         double clueFraction = 0.5;
 
-        SudokuBuilder builder = new SudokuBuilder(new UniquenessChecker(), new SolutionGenerator());
+        SudokuBuilder builder = new SudokuBuilder(new SolutionGenerator());
 
         SudokuBoard playable = builder.buildPlayableBoard(size, clueFraction);
         SudokuBoard solution = builder.getSolutionBoard();
@@ -41,7 +40,7 @@ class SudokuBuilderTest {
     void buildPlayableBoard_keepsAllCellsVisible_whenClueFractionIsOne(int size) {
         double clueFraction = 1.0;
 
-        SudokuBuilder builder = new SudokuBuilder(new UniquenessChecker(), new SolutionGenerator());
+        SudokuBuilder builder = new SudokuBuilder(new SolutionGenerator());
 
         SudokuBoard playable = builder.buildPlayableBoard(size, clueFraction);
         SudokuBoard solution = builder.getSolutionBoard();

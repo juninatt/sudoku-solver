@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 import se.pbt.sudokusolver.core.generation.SudokuBuilder;
 import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.shared.listeners.RuleViolationListener;
@@ -23,9 +22,9 @@ public class GameService {
 
     private final SudokuBuilder sudokuBuilder;
     private final Validator validator;
+    private final LiveSolutionTracker liveSolutionTracker;
 
     private SudokuBoard gameBoard;
-    private SudokuBoard solutionBoard;
 
     private boolean cheatModeEnabled;
     private boolean endGameOnMistake;
@@ -38,11 +37,11 @@ public class GameService {
      * Constructs a GameService with required dependencies for validation and puzzle generation.
      */
     public GameService(Validator validator) {
-        UniquenessChecker uniquenessChecker = new UniquenessChecker();
         SolutionGenerator solutionGenerator = new SolutionGenerator();
 
-        this.sudokuBuilder = new SudokuBuilder(uniquenessChecker, solutionGenerator);
+        this.sudokuBuilder = new SudokuBuilder(solutionGenerator);
         this.validator = validator;
+        this.liveSolutionTracker = new LiveSolutionTracker(solutionGenerator);
     }
 
     /**
@@ -51,7 +50,7 @@ public class GameService {
     public void buildPlayableGame(int size, PuzzleDifficulty difficulty) {
         logger.info("Building new playable game (size: {}, difficulty: {})", size, difficulty);
         gameBoard = sudokuBuilder.buildPlayableBoard(size, difficulty.getClueFraction());
-        solutionBoard = sudokuBuilder.getSolutionBoard();
+        liveSolutionTracker.seed(sudokuBuilder.getSolutionBoard());
         gameOver = false;
         logger.debug("New game constructed successfully");
     }
@@ -141,24 +140,25 @@ public class GameService {
      */
     public void revealFullSolution() {
         logger.info("Revealing full solution");
-        int toReveal = solutionBoard.getRowLength() * solutionBoard.getRowLength();
+        int toReveal = gameBoard.getRowLength() * gameBoard.getRowLength();
         revealCells(toReveal);
     }
 
     /**
-     * Reveals up to maxCells missing values from the solution board.
-     * Places values directly via {@link #placeValue}, bypassing rule enforcement:
-     * a revealed value always matches {@code solutionBoard} and must never be treated
-     * as a mistake, even if it conflicts with a player's own (rule-valid but diverging) entries.
+     * Reveals up to maxCells missing values from a completion consistent with the current
+     * board. Places values directly via {@link #placeValue}, bypassing rule enforcement:
+     * a revealed value always matches that completion and must never be treated as a
+     * mistake, even if it conflicts with a player's own (rule-valid but diverging) entries.
      */
     private void revealCells(int maxCells) {
+        SudokuBoard solution = liveSolutionTracker.getSolution(gameBoard);
         int revealed = 0;
-        int size = solutionBoard.getRowLength();
+        int size = solution.getRowLength();
 
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 if (gameBoard.getCellValue(r, c) == EMPTY_CELL) {
-                    placeValue(r, c, solutionBoard.getCellValue(r, c));
+                    placeValue(r, c, solution.getCellValue(r, c));
                     if (++revealed >= maxCells) {
                         logger.debug("Revealed {} cell(s)", revealed);
                         return;
@@ -172,10 +172,13 @@ public class GameService {
     /**
      * Writes a value directly to the board and notifies listeners, without any rule enforcement.
      * Shared by {@link #setValue} (after its own legality checks) and {@link #revealCells}.
+     * Every accepted placement also kicks off a background recompute of the live completion,
+     * so hint/solve stay consistent with whatever the player (or a reveal) just wrote.
      */
     private void placeValue(int row, int col, int value) {
         gameBoard.setValue(row, col, value);
         cellViewListener.onCellUpdated(row, col, value);
+        liveSolutionTracker.requestRecompute(gameBoard.deepCopy());
 
         int rowLength = gameBoard.getRowLength();
         int gridSize = rowLength * rowLength;
@@ -230,10 +233,12 @@ public class GameService {
     }
 
     /**
-     * Returns the solved version of the current Sudoku puzzle.
+     * Returns a valid full completion consistent with the current game board.
+     * Not a fixed answer key: as the player fills cells, this reflects the live board
+     * rather than the puzzle's originally generated (and possibly since-diverged-from) solution.
      */
     public SudokuBoard getSolutionBoard() {
-        return solutionBoard;
+        return liveSolutionTracker.getSolution(gameBoard);
     }
 
     /**

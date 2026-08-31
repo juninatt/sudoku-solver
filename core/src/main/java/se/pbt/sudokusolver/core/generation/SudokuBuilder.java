@@ -3,7 +3,6 @@ package se.pbt.sudokusolver.core.generation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
-import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 
 import java.util.ArrayList;
@@ -17,13 +16,13 @@ import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 // TODO: Make class reusable
 /**
  * Builds both a solved and a playable Sudoku board based on a selected difficulty level.
- * Internally stores the solved board and generates a playable version by hiding values
- * while ensuring the puzzle retains a unique solution.
+ * Internally stores the solved board and generates a playable version by hiding values.
+ * The playable board is not guaranteed to have a unique solution; live gameplay relies on
+ * rule enforcement rather than a fixed answer key, so multiple valid completions are fine.
  */
 public class SudokuBuilder {
     private static final Logger logger = LoggerFactory.getLogger(SudokuBuilder.class);
 
-    private final UniquenessChecker uniquenessChecker;
     private final SolutionGenerator solutionGenerator;
 
     private SudokuBoard solution;
@@ -35,17 +34,15 @@ public class SudokuBuilder {
      */
     private record Cell(int row, int col) {}
 
-    public SudokuBuilder(UniquenessChecker uniquenessChecker,
-                         SolutionGenerator solutionGenerator) {
-        this.uniquenessChecker = uniquenessChecker;
+    public SudokuBuilder(SolutionGenerator solutionGenerator) {
         this.solutionGenerator = solutionGenerator;
     }
 
     /**
-     * Generates a new Sudoku puzzle with a unique solution.
-     * The solved board is randomized, and a playable puzzle is derived from it.
+     * Generates a new Sudoku puzzle.
+     * The solved board is randomized, and a playable puzzle is derived from it by hiding cells.
      *
-     * @return a playable {@link SudokuBoard} with a unique solution
+     * @return a playable {@link SudokuBoard}
      */
     public SudokuBoard buildPlayableBoard(int gridSize, double clueFraction) {
         logger.info("Building new Sudoku puzzle (size: {}, clue fraction: {})",
@@ -77,46 +74,31 @@ public class SudokuBuilder {
     }
 
     /**
-     * Removes values from a solved Sudoku board to generate a playable puzzle,
-     * ensuring a unique solution remains after each removal using {@link UniquenessChecker}.
+     * Removes values from a solved Sudoku board to generate a playable puzzle.
+     * Hidden cells are chosen at random; no uniqueness guarantee is enforced, so the
+     * resulting puzzle may admit more than one valid completion.
      */
     private void hideCellValues(SudokuBoard gameBoard, double clueFraction) {
         int gridSize = gameBoard.getRowLength();
         int totalCells = gridSize * gridSize;
         int cellsToHideCount = (int) (totalCells - (clueFraction * totalCells));
 
-        int hiddenCellsCount = 0;
         List<Cell> cellsToHideList = getCellsToHide(gridSize, cellsToHideCount);
 
         logger.debug("Starting cell hiding (boardSize: {}, clueFraction: {}, targetHiddenCells: {})",
                 gridSize, clueFraction, cellsToHideCount);
 
-        // start and end time for performance purposes. Shown in logg
         long startTime = System.currentTimeMillis();
 
-        // TODO: Improve reliability of hiding logic to ensure consistent number of hidden cells across runs.
-        // Revisit the timing and placement of uniqueness checks in the flow to reduce randomness and improve determinism.
-        // TODO: Add UI-side logging to confirm hidden cell count and detect discrepancies between builder and view.
         for (Cell p : cellsToHideList) {
-            if (hiddenCellsCount >= cellsToHideCount) break;
-
-            int oldCellValue = gameBoard.getCellValue(p.row(), p.col());
             gameBoard.setValue(p.row(), p.col(), EMPTY_CELL);
-
-            boolean unique = uniquenessChecker.hasUniqueSolution(gameBoard);
-
-            if (!unique) {
-                gameBoard.setValue(p.row(), p.col(), oldCellValue);
-            } else {
-                hiddenCellsCount++;
-            }
         }
 
         long duration = System.currentTimeMillis() - startTime;
 
         logger.info(
-                "Cell hiding complete: {} cells successfully hidden out of {} attempts in {} ms.)",
-                hiddenCellsCount, cellsToHideList.size(), duration
+                "Cell hiding complete: {} cells hidden in {} ms.",
+                cellsToHideList.size(), duration
         );
     }
 
