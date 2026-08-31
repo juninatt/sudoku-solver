@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
-import static se.pbt.sudokusolver.ui.constants.UIConstants.CSS_CLASS_FILLED_CELL;
 import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
 
 /**
@@ -36,8 +35,11 @@ public class CellEventHandler {
     }
 
     /**
-     * Attempts to write user-provided input to the ViewModel.
-     * Invalid input restores the cell's previous value.
+     * Attempts to write user-provided input to the ViewModel. A rejected or unparseable
+     * input restores the cell's previous value; an accepted move needs no UI action here
+     * since {@link se.pbt.sudokusolver.ui.view.BoardGrid}, registered as the game's
+     * {@code CellViewListener}, already rendered the resulting cell state synchronously
+     * as part of {@code viewModel.setValue()} itself.
      */
     private void handleInput(TextField cell, int row, int col, SudokuViewModel viewModel) {
         String trimmed = cell.getText().trim();
@@ -46,10 +48,7 @@ public class CellEventHandler {
             int newValue = Integer.parseInt(trimmed);
             boolean accepted = viewModel.setValue(row, col, newValue);
 
-            if (accepted) {
-                logger.debug("Cell ({},{}) move accepted, syncing UI with model state", row, col);
-                syncCellWithModel(cell, row, col, viewModel);
-            } else {
+            if (!accepted) {
                 logger.debug("Rejected cell update at ({},{}): invalid move", row, col);
                 resetToModelValue(cell, row, col, viewModel);
             }
@@ -57,25 +56,6 @@ public class CellEventHandler {
         } catch (NumberFormatException e) {
             logger.debug("Invalid input '{}' at ({},{}), reverting", trimmed, row, col);
             resetToModelValue(cell, row, col, viewModel);
-        }
-    }
-
-    /**
-     * Reflects the cell's actual current value from the model.
-     * A structurally accepted move ({@code setValue() == true}) does not guarantee the cell
-     * ended up filled: cheat mode may have reverted a rule-breaking move back to empty, in
-     * which case {@link se.pbt.sudokusolver.ui.view.BoardGrid} has already restored the cell
-     * to an editable, empty state and this must not override that with a locked "filled" look.
-     */
-    private void syncCellWithModel(TextField cell, int row, int col, SudokuViewModel viewModel) {
-        int actualValue = viewModel.getCellValue(row, col);
-        boolean isEmpty = actualValue == EMPTY_CELL;
-
-        cell.setText(isEmpty ? "" : String.valueOf(actualValue));
-        cell.setEditable(isEmpty);
-        cell.getStyleClass().remove(CSS_CLASS_FILLED_CELL);
-        if (!isEmpty) {
-            cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
         }
     }
 

@@ -4,16 +4,15 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static se.pbt.sudokusolver.shared.constants.SharedConstants.BUNDLE_SV;
-
 /**
  * Loads and manages localized messages using resource bundles based on the selected locale.
  * Supports dynamic switching between languages like Swedish, English, and Spanish.
  */
 public class Localization {
 
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_SV);
-    private static ResourceBundle bundle = BUNDLE;
+    private static final String BUNDLE_BASE_NAME = "i18n.messages";
+
+    private static ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_BASE_NAME, new Locale("sv"));
 
     /**
      * Sets the current locale using a {@link Locale} object.
@@ -21,7 +20,7 @@ public class Localization {
      * @param locale The locale to apply (e.g., new Locale("sv") for Swedish).
      */
     public static void setLocale(Locale locale) {
-        bundle = ResourceBundle.getBundle("i18n.messages", locale);
+        bundle = ResourceBundle.getBundle(BUNDLE_BASE_NAME, locale);
     }
 
     /**

@@ -10,7 +10,7 @@ import se.pbt.sudokusolver.shared.localization.Localization;
 
 import java.io.IOException;
 
-import static se.pbt.sudokusolver.app.AppConstants.I18N_TITLE_MAIN;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.I18N_TITLE_MAIN;
 
 
 public class SudokuApp extends Application {

@@ -3,7 +3,7 @@ package se.pbt.sudokusolver.game.model;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.localization.Localization;
 
-import static se.pbt.sudokusolver.core.constants.CoreConstants.*;
+import static se.pbt.sudokusolver.game.constants.GameConstants.*;
 
 /**
  * Represents the difficulty levels of a Sudoku puzzle.
