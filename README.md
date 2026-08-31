@@ -8,12 +8,18 @@ The project is structured into independent Maven modules to clearly separate UI,
 
 ## Features
 
-- Supports board sizes 4x4, 6x6, and 9x9.  
-- Enforces Sudoku rules for valid number placement.
+- Supports board sizes 4x4, 6x6, and 9x9.
+- Enforces Sudoku rules for valid number placement, live as the player plays.
 - Difficulty levels Easy, Medium, Hard.
-- Cheat Mode: optional mode where users can:
-   - Reveal one correct cell at a time.
-   - Instantly solve the entire puzzle.
+- Optional, configurable reaction to a rule-breaking move:
+   - Cheat Mode: reverts the move so the player can retry, and unlocks hints —
+     revealing one cell at a time or instantly solving the rest of the board.
+     Both draw from a solution computed live in the background against the
+     board's current state, so they stay consistent with the player's own
+     valid moves even when the puzzle admits more than one solution.
+   - End Game on Mistake: ends the game on a rule-breaking move, permanently
+     marking the offending cell and framing the row and/or subgrid causing
+     the conflict in red.
 - Internationalization (i18n) with switchable language files.
 
 ## Technologies Used
@@ -33,19 +39,20 @@ The project is designed as a multi-module Maven structure, separating UI, game l
      |
      ├─ app/          -->   JavaFX startup & main application class
      |
-     ├─ core/         -->    SudokuBoard: core domain model
+     ├─ core/         -->    SudokuBoard (domain model) and its generation package
+     |                       (SudokuBuilder, SolutionGenerator) for puzzle creation
      |
-     ├─ game/         -->    GameService: central gameplay coordinator
-     |
-     ├─ generation/   -->    SudokuBuilder, SolutionGenerator
-     |                       Full puzzle creation logic
+     ├─ game/         -->    GameService: central gameplay coordinator.
+     |                       LiveSolutionTracker keeps a valid completion of the
+     |                       current board ready in the background for hints/solve
      |
      ├─ shared/       -->    Cross-module interfaces, listeners, and shared constants/helpers
      |
      ├─ ui/           -->    Controllers, FXML, ViewModels, UI factories & event handlers
      |                       Observes game updates via CellViewListener
      |
-     └─ validation/   -->    Validator: ensures final solution correctness
+     └─ validation/   -->    Validator: checks rows, columns and subgrids against
+                              Sudoku rules, both per move and on a finished board
      
 ```
 
