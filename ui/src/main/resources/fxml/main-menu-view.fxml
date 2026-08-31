@@ -33,6 +33,9 @@
     <!-- Checkbox for cheating -->
     <CheckBox fx:id="cheatModeCheckbox"/>
 
+    <!-- Checkbox for ending the game immediately on the first rule-breaking move -->
+    <CheckBox fx:id="endGameOnMistakeCheckbox"/>
+
     <!-- Buttons -->
     <HBox spacing="20"
           alignment="CENTER">

@@ -1,7 +1,9 @@
 package se.pbt.sudokusolver.ui.view;
 
+import javafx.animation.PauseTransition;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
@@ -83,11 +85,61 @@ public class BoardGrid implements CellViewListener {
     }
 
 
+    /**
+     * Reflects a value change from {@link se.pbt.sudokusolver.game.service.GameService} in the UI.
+     * A non-empty value locks and styles the cell as filled. An empty value (a cheat-mode revert
+     * of a rule-breaking move) instead makes the cell editable again so the player can retry,
+     * clearing any leftover "filled" styling.
+     */
     @Override
     public void onCellUpdated(int row, int col, int newValue) {
         TextField cell = cellFields[row][col];
-        cell.setText(newValue == EMPTY_CELL ? "" : String.valueOf(newValue));
-        cell.setEditable(false);
-        cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
+        boolean isEmpty = newValue == EMPTY_CELL;
+
+        cell.setText(isEmpty ? "" : String.valueOf(newValue));
+        cell.setEditable(isEmpty);
+        cell.getStyleClass().remove(CSS_CLASS_FILLED_CELL);
+        if (!isEmpty) {
+            cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
+        }
+    }
+
+    /**
+     * Briefly highlights a cell that just broke Sudoku rules (cheat mode), then removes the
+     * highlight so the player can see and retry the mistake without a permanent visual mark.
+     */
+    public void flagInvalidMove(int row, int col) {
+        TextField cell = cellFields[row][col];
+        cell.getStyleClass().add(CSS_CLASS_INVALID_CELL);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(event -> cell.getStyleClass().remove(CSS_CLASS_INVALID_CELL));
+        pause.play();
+    }
+
+    /**
+     * Permanently marks the cell that ended the game (end-on-mistake mode) so the player can
+     * see exactly which move was the mistake. Unlike {@link #flagInvalidMove}, this highlight
+     * does not fade, since the board is locked afterward and there is no "retry" to clear it for.
+     */
+    public void markMistake(int row, int col) {
+        TextField cell = cellFields[row][col];
+        cell.getStyleClass().remove(CSS_CLASS_FILLED_CELL);
+        cell.getStyleClass().add(CSS_CLASS_INVALID_CELL);
+    }
+
+    /**
+     * Locks every editable cell on the board. Used when the game ends (end-on-mistake mode)
+     * to prevent further input even though {@link se.pbt.sudokusolver.game.service.GameService}
+     * already rejects moves once the game is over.
+     */
+    public void disableAllCells() {
+        for (TextField[] row : cellFields) {
+            for (TextField cell : row) {
+                if (cell != null) {
+                    cell.setEditable(false);
+                }
+            }
+        }
     }
 }

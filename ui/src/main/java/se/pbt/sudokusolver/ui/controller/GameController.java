@@ -1,8 +1,10 @@
 package se.pbt.sudokusolver.ui.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -22,8 +24,7 @@ import se.pbt.sudokusolver.validation.Validator;
 
 import java.io.IOException;
 
-import static se.pbt.sudokusolver.ui.constants.UIConstants.I18N_TITLE_MAIN;
-import static se.pbt.sudokusolver.ui.constants.UIConstants.MAIN_MENU_VIEW;
+import static se.pbt.sudokusolver.ui.constants.UIConstants.*;
 
 /**
  * Acts as the main UI controller for the Sudoku game screen.
@@ -41,6 +42,7 @@ public class GameController {
     @FXML private Button solveBoardButton;
 
     private SudokuViewModel viewModel;
+    private BoardGrid boardGrid;
 
     /**
      * Initializes static UI elements defined in the FXML, including the home button
@@ -61,26 +63,61 @@ public class GameController {
     }
 
     /**
-     * Builds and displays a new Sudoku board using the specified board size and difficulty.
+     * Builds and displays a new Sudoku board using the specified board size and difficulty,
+     * configuring how the game reacts to moves that break Sudoku rules during play.
      * Creates all dependencies required by the ViewModel and connects the UI to the
      * GameService through a {@link BoardGrid} cell listener.
      */
-    public void initializeBoard(int size, PuzzleDifficulty difficulty) {
-        logger.info("Initializing board (size: {}, difficulty: {})", size, difficulty);
+    public void initializeBoard(int size, PuzzleDifficulty difficulty,
+                                boolean cheatModeEnabled, boolean endGameOnMistake) {
+        logger.info("Initializing board (size: {}, difficulty: {}, cheatMode: {}, endGameOnMistake: {})",
+                size, difficulty, cheatModeEnabled, endGameOnMistake);
 
         GameService gameService = createGameService();
-        viewModel = createViewModel(gameService);
+        gameService.configureRules(cheatModeEnabled, endGameOnMistake);
 
+        viewModel = createViewModel(gameService);
         viewModel.createSudokuGame(size, difficulty);
 
-        BoardGrid boardGrid = new BoardGrid(size, viewModel);
+        boardGrid = new BoardGrid(size, viewModel);
         boardGrid.setupGrid();
 
         gameService.setCellViewListener(boardGrid);
+        gameService.setRuleViolationListener(this::handleRuleViolation);
 
         gridPane.getChildren().setAll(boardGrid.getGridPane());
 
         logger.debug("BoardGrid created and added to UI");
+    }
+
+    /**
+     * Reacts to a move that broke Sudoku rules. In end-on-mistake mode the offending cell is
+     * permanently marked, the board is locked and a game-over dialog is shown; otherwise
+     * (cheat mode) the offending cell is briefly highlighted so the player notices and can retry it.
+     */
+    private void handleRuleViolation(int row, int col, boolean gameOver) {
+        if (gameOver) {
+            logger.info("Game over: move at ({},{}) broke Sudoku rules", row, col);
+            boardGrid.markMistake(row, col);
+            boardGrid.disableAllCells();
+            // Defer the modal dialog to the next pulse so the board has actually
+            // re-rendered (mistake highlighted, cells locked) before it takes over.
+            Platform.runLater(this::showGameOverDialog);
+        } else {
+            logger.debug("Invalid move at ({},{}), flagging for retry", row, col);
+            boardGrid.flagInvalidMove(row, col);
+        }
+    }
+
+    /**
+     * Shows a localized dialog informing the player that the game has ended.
+     */
+    private void showGameOverDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(Localization.get(I18N_GAME_OVER_TITLE));
+        alert.setHeaderText(null);
+        alert.setContentText(Localization.get(I18N_GAME_OVER_BODY));
+        alert.showAndWait();
     }
 
     /**

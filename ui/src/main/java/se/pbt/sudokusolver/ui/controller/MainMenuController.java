@@ -31,6 +31,7 @@ public class MainMenuController {
     @FXML private ComboBox<Difficulty> difficultyDropdown;
     @FXML private ComboBox<String> sizeDropdown;
     @FXML private CheckBox cheatModeCheckbox;
+    @FXML private CheckBox endGameOnMistakeCheckbox;
     @FXML private Button playButton;
     @FXML private Button rulesButton;
     @FXML private Menu languageMenu;
@@ -67,6 +68,7 @@ public class MainMenuController {
         boardSizeLabel.setText(Localization.get(I18N_LABEL_BOARD_SIZE));
         difficultyLabel.setText(Localization.get(I18N_LABEL_DIFFICULTY));
         cheatModeCheckbox.setText(Localization.get(I18N_CHECKBOX_CHEAT_MODE));
+        endGameOnMistakeCheckbox.setText(Localization.get(I18N_CHECKBOX_END_ON_MISTAKE));
         playButton.setText(Localization.get(I18N_BUTTON_PLAY));
         rulesButton.setText(Localization.get(I18N_BUTTON_RULES));
         languageMenu.setText(Localization.get(I18N_MENU_LANGUAGE));
@@ -97,6 +99,7 @@ public class MainMenuController {
         }
 
         boolean cheatModeEnabled = cheatModeCheckbox.isSelected();
+        boolean endGameOnMistakeEnabled = endGameOnMistakeCheckbox.isSelected();
         int size = Integer.parseInt(sizeDropdown.getValue().split("x")[0]);
         PuzzleDifficulty difficulty = difficultyDropdown.getValue();
 
@@ -107,7 +110,7 @@ public class MainMenuController {
 
             GameController controller = loader.getController();
             controller.setCheatMode(cheatModeEnabled);
-            controller.initializeBoard(size, difficulty);
+            controller.initializeBoard(size, difficulty, cheatModeEnabled, endGameOnMistakeEnabled);
 
             stage.setTitle(Localization.get(I18N_TITLE_BOARD, size));
             stage.setScene(scene);

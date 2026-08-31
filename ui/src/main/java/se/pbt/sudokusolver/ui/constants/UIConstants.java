@@ -15,6 +15,7 @@ public class UIConstants {
 
     // Functional cell values
     public static final double CELL_SIZE = 40.0;
+    public static final String CSS_CLASS_INVALID_CELL = "invalid-cell";
 
 
     //  CSS
@@ -35,4 +36,7 @@ public class UIConstants {
     public static final String I18N_RULES_BODY = "ui.rules.body";
     public static final String I18N_CHECKBOX_CHEAT_MODE = "ui.checkbox.cheatMode";
     public static final String I18N_MENU_LANGUAGE = "ui.menu.language";
+    public static final String I18N_CHECKBOX_END_ON_MISTAKE = "ui.checkbox.endOnMistake";
+    public static final String I18N_GAME_OVER_TITLE = "ui.gameOver.title";
+    public static final String I18N_GAME_OVER_BODY = "ui.gameOver.body";
 }

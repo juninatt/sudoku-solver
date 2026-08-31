@@ -31,6 +31,13 @@
     -fx-font-weight: bold;
 }
 
+/* Briefly highlights a cell that broke Sudoku rules and was reverted (cheat mode) */
+.invalid-cell {
+    -fx-background-color: #ffb3b3;
+    -fx-border-color: red;
+    -fx-border-width: 2px;
+}
+
 /* ====== TOOLBAR & BUTTON STYLING ====== */
 
 /* Home button styling */

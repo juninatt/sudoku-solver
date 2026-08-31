@@ -44,12 +44,11 @@ public class CellEventHandler {
 
         try {
             int newValue = Integer.parseInt(trimmed);
-            boolean success = viewModel.setValue(row, col, newValue);
+            boolean accepted = viewModel.setValue(row, col, newValue);
 
-            if (success) {
-                logger.debug("Cell ({},{}) updated to {}", row, col, newValue);
-                cell.setEditable(false);
-                cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
+            if (accepted) {
+                logger.debug("Cell ({},{}) move accepted, syncing UI with model state", row, col);
+                syncCellWithModel(cell, row, col, viewModel);
             } else {
                 logger.debug("Rejected cell update at ({},{}): invalid move", row, col);
                 resetToModelValue(cell, row, col, viewModel);
@@ -58,6 +57,25 @@ public class CellEventHandler {
         } catch (NumberFormatException e) {
             logger.debug("Invalid input '{}' at ({},{}), reverting", trimmed, row, col);
             resetToModelValue(cell, row, col, viewModel);
+        }
+    }
+
+    /**
+     * Reflects the cell's actual current value from the model.
+     * A structurally accepted move ({@code setValue() == true}) does not guarantee the cell
+     * ended up filled: cheat mode may have reverted a rule-breaking move back to empty, in
+     * which case {@link se.pbt.sudokusolver.ui.view.BoardGrid} has already restored the cell
+     * to an editable, empty state and this must not override that with a locked "filled" look.
+     */
+    private void syncCellWithModel(TextField cell, int row, int col, SudokuViewModel viewModel) {
+        int actualValue = viewModel.getCellValue(row, col);
+        boolean isEmpty = actualValue == EMPTY_CELL;
+
+        cell.setText(isEmpty ? "" : String.valueOf(actualValue));
+        cell.setEditable(isEmpty);
+        cell.getStyleClass().remove(CSS_CLASS_FILLED_CELL);
+        if (!isEmpty) {
+            cell.getStyleClass().add(CSS_CLASS_FILLED_CELL);
         }
     }
 
