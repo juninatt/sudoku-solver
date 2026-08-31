@@ -195,6 +195,170 @@ public class GameServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("Rule enforcement during play")
+    class RuleEnforcementTests {
+
+        private GameService service;
+        private SudokuBoard board;
+        private int[] ruleViolationCall;
+        private int ruleViolationCallCount;
+
+        @BeforeEach
+        void setUp() {
+            service = new GameService(new Validator());
+            service.buildPlayableGame(9, Difficulty.EASY);
+            board = service.getGameBoard();
+            clearBoard(board);
+
+            service.setCellViewListener((r, c, v) -> {});
+            ruleViolationCallCount = 0;
+            ruleViolationCall = new int[3];
+            service.setRuleViolationListener((r, c, gameOver) -> {
+                ruleViolationCallCount++;
+                ruleViolationCall[0] = r;
+                ruleViolationCall[1] = c;
+                ruleViolationCall[2] = gameOver ? 1 : 0;
+            });
+        }
+
+        /**
+         * Finds two empty cells in the same row so a rule-breaking move can be constructed deterministically.
+         */
+        private int[] findTwoEmptyCellsInSameRow(SudokuBoard board) {
+            int size = board.getRowLength();
+            for (int r = 0; r < size; r++) {
+                int firstEmptyCol = -1;
+                for (int c = 0; c < size; c++) {
+                    if (board.getCellValue(r, c) == EMPTY_CELL) {
+                        if (firstEmptyCol == -1) {
+                            firstEmptyCol = c;
+                        } else {
+                            return new int[]{r, firstEmptyCol, c};
+                        }
+                    }
+                }
+            }
+            throw new IllegalStateException("No row with two empty cells found");
+        }
+
+        @Test
+        @DisplayName("keeps a rule-breaking move when neither cheat mode nor end-on-mistake is enabled")
+        void keepsInvalidMove_whenNoRuleEnforcementConfigured() {
+            int[] cells = findTwoEmptyCellsInSameRow(board);
+            int row = cells[0], colA = cells[1], colB = cells[2];
+
+            service.setValue(row, colA, 7);
+            boolean accepted = service.setValue(row, colB, 7); // same value, same row -> breaks rules
+
+            assertTrue(accepted, "Move must still be reported as structurally accepted");
+            assertEquals(7, board.getCellValue(row, colB),
+                    "Without rule enforcement configured, the rule-breaking value must be kept");
+            assertEquals(0, ruleViolationCallCount, "Listener must not fire when rule enforcement is off");
+            assertFalse(service.isGameOver());
+        }
+
+        @Test
+        @DisplayName("reverts a rule-breaking move in cheat mode so the player can retry")
+        void revertsInvalidMove_inCheatMode() {
+            service.configureRules(true, false);
+
+            int[] cells = findTwoEmptyCellsInSameRow(board);
+            int row = cells[0], colA = cells[1], colB = cells[2];
+
+            service.setValue(row, colA, 7);
+            boolean accepted = service.setValue(row, colB, 7);
+
+            assertTrue(accepted, "Move must still be reported as structurally accepted");
+            assertEquals(EMPTY_CELL, board.getCellValue(row, colB),
+                    "Cheat mode must revert the rule-breaking move so the cell is empty again");
+            assertEquals(1, ruleViolationCallCount);
+            assertEquals(row, ruleViolationCall[0]);
+            assertEquals(colB, ruleViolationCall[1]);
+            assertEquals(0, ruleViolationCall[2], "gameOver flag must be false in cheat mode");
+            assertFalse(service.isGameOver());
+        }
+
+        @Test
+        @DisplayName("ends the game on a rule-breaking move in end-on-mistake mode")
+        void endsGame_inEndOnMistakeMode() {
+            service.configureRules(false, true);
+
+            int[] cells = findTwoEmptyCellsInSameRow(board);
+            int row = cells[0], colA = cells[1], colB = cells[2];
+
+            service.setValue(row, colA, 7);
+            boolean accepted = service.setValue(row, colB, 7);
+
+            assertTrue(accepted, "Move must still be reported as structurally accepted");
+            assertEquals(7, board.getCellValue(row, colB),
+                    "End-on-mistake mode keeps the offending value visible instead of reverting it");
+            assertEquals(1, ruleViolationCallCount);
+            assertEquals(1, ruleViolationCall[2], "gameOver flag must be true in end-on-mistake mode");
+            assertTrue(service.isGameOver());
+        }
+
+        @Test
+        @DisplayName("rejects further moves once the game has ended")
+        void rejectsMoves_afterGameOver() {
+            service.configureRules(false, true);
+
+            int[] cells = findTwoEmptyCellsInSameRow(board);
+            int row = cells[0], colA = cells[1], colB = cells[2];
+
+            service.setValue(row, colA, 7);
+            service.setValue(row, colB, 7); // triggers game over
+
+            Cell anotherEmpty = findEmptyCell(board);
+            boolean accepted = service.setValue(anotherEmpty.row(), anotherEmpty.col(), 1);
+
+            assertFalse(accepted, "No further moves should be accepted after the game has ended");
+        }
+
+        @Test
+        @DisplayName("end-on-mistake takes priority when both modes are enabled")
+        void endOnMistakeTakesPriority_whenBothEnabled() {
+            service.configureRules(true, true);
+
+            int[] cells = findTwoEmptyCellsInSameRow(board);
+            int row = cells[0], colA = cells[1], colB = cells[2];
+
+            service.setValue(row, colA, 7);
+            service.setValue(row, colB, 7);
+
+            assertTrue(service.isGameOver(), "end-on-mistake must win when both modes are enabled");
+            assertEquals(7, board.getCellValue(row, colB), "Value must not be reverted when the game ends");
+        }
+
+        @Test
+        @DisplayName("revealed hints are never treated as rule violations, even if they conflict with the player's own entries")
+        void revealedHints_neverTriggerRuleViolation() {
+            service.configureRules(true, true); // most aggressive settings: should still never fire for hints
+
+            SudokuBoard solution = service.getSolutionBoard();
+            Cell target = findEmptyCell(board);
+
+            int otherCol = -1;
+            int size = board.getRowLength();
+            for (int c = 0; c < size; c++) {
+                if (c != target.col() && board.getCellValue(target.row(), c) == EMPTY_CELL) {
+                    otherCol = c;
+                    break;
+                }
+            }
+            assertTrue(otherCol != -1, "Test setup requires a second empty cell in the target row");
+
+            int collidingValue = solution.getCellValue(target.row(), target.col());
+            board.setValue(target.row(), otherCol, collidingValue); // bypasses GameService on purpose
+
+            service.revealSolutionCellValue();
+
+            assertEquals(0, ruleViolationCallCount,
+                    "Revealing a hint must never be reported as a rule violation");
+            assertFalse(service.isGameOver(), "Revealing a hint must never end the game");
+        }
+    }
+
 
 
     @Nested

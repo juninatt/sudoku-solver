@@ -8,6 +8,7 @@ import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.core.generation.helpers.UniquenessChecker;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
+import se.pbt.sudokusolver.shared.listeners.RuleViolationListener;
 import se.pbt.sudokusolver.validation.Validator;
 
 import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
@@ -26,7 +27,12 @@ public class GameService {
     private SudokuBoard gameBoard;
     private SudokuBoard solutionBoard;
 
+    private boolean cheatModeEnabled;
+    private boolean endGameOnMistake;
+    private boolean gameOver;
+
     private CellViewListener cellViewListener = (r, c, v) -> {};
+    private RuleViolationListener ruleViolationListener = (r, c, gameOver) -> {};
 
     /**
      * Constructs a GameService with required dependencies for validation and puzzle generation.
@@ -46,14 +52,36 @@ public class GameService {
         logger.info("Building new playable game (size: {}, difficulty: {})", size, difficulty);
         gameBoard = sudokuBuilder.buildPlayableBoard(size, difficulty.getClueFraction());
         solutionBoard = sudokuBuilder.getSolutionBoard();
+        gameOver = false;
         logger.debug("New game constructed successfully");
     }
 
     /**
+     * Configures how the game reacts to moves that break Sudoku rules during play.
+     * Must be called before the player starts making moves; defaults to both disabled,
+     * which preserves the original behavior of accepting any structurally legal move.
+     *
+     * @param cheatModeEnabled if a move breaks the rules, revert it so the player can retry
+     * @param endGameOnMistake if a move breaks the rules, end the game immediately.
+     *                         Takes priority over {@code cheatModeEnabled} when both are enabled.
+     */
+    public void configureRules(boolean cheatModeEnabled, boolean endGameOnMistake) {
+        this.cheatModeEnabled = cheatModeEnabled;
+        this.endGameOnMistake = endGameOnMistake;
+    }
+
+    /**
      * Attempts to set a value in the playable board.
-     * Returns false if the move is illegal or violates board boundaries.
+     * Returns false if the move is illegal, violates board boundaries, or the game has ended.
+     * A move that is placed but breaks Sudoku rules is still reported as {@code true} here;
+     * how it's then handled (kept, reverted, or ending the game) depends on {@link #configureRules}
+     * and is reported separately via {@link #setRuleViolationListener}.
      */
     public boolean setValue(int row, int col, int value) {
+        if (gameOver) {
+            logger.debug("Rejected setValue request: game is already over");
+            return false;
+        }
         if (outOfBounds(row, col, value)) {
             logger.warn("Rejected setValue request: out of bounds (row={}, col={}, value={})", row, col, value);
             return false;
@@ -63,17 +91,30 @@ public class GameService {
             return false;
         }
 
-        gameBoard.setValue(row, col, value);
-        cellViewListener.onCellUpdated(row, col, value);
+        placeValue(row, col, value);
 
-        int rowLength = gameBoard.getRowLength();
-        int gridSize =  rowLength * rowLength;
-        if (gameBoard.getFilledCells() == gridSize) {
-            logger.info("Board is full, triggering validation");
-            validator.validateBoard(gameBoard);
+        if (!validator.validateCell(gameBoard, row, col)) {
+            handleRuleViolation(row, col);
         }
 
         return true;
+    }
+
+    /**
+     * Reacts to a move that broke Sudoku rules, according to the configured rule-enforcement mode.
+     * If neither mode is enabled, the move is silently kept — matching the original, permissive behavior.
+     */
+    private void handleRuleViolation(int row, int col) {
+        if (endGameOnMistake) {
+            gameOver = true;
+            logger.info("Move at ({},{}) broke Sudoku rules — ending game", row, col);
+            ruleViolationListener.onRuleViolation(row, col, true);
+        } else if (cheatModeEnabled) {
+            logger.debug("Move at ({},{}) broke Sudoku rules — reverting for retry", row, col);
+            gameBoard.setValue(row, col, EMPTY_CELL);
+            cellViewListener.onCellUpdated(row, col, EMPTY_CELL);
+            ruleViolationListener.onRuleViolation(row, col, false);
+        }
     }
 
     /**
@@ -106,6 +147,9 @@ public class GameService {
 
     /**
      * Reveals up to maxCells missing values from the solution board.
+     * Places values directly via {@link #placeValue}, bypassing rule enforcement:
+     * a revealed value always matches {@code solutionBoard} and must never be treated
+     * as a mistake, even if it conflicts with a player's own (rule-valid but diverging) entries.
      */
     private void revealCells(int maxCells) {
         int revealed = 0;
@@ -114,7 +158,7 @@ public class GameService {
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 if (gameBoard.getCellValue(r, c) == EMPTY_CELL) {
-                    setValue(r, c, solutionBoard.getCellValue(r, c));
+                    placeValue(r, c, solutionBoard.getCellValue(r, c));
                     if (++revealed >= maxCells) {
                         logger.debug("Revealed {} cell(s)", revealed);
                         return;
@@ -123,6 +167,22 @@ public class GameService {
             }
         }
         logger.debug("Reveal completed with {} cells updated", revealed);
+    }
+
+    /**
+     * Writes a value directly to the board and notifies listeners, without any rule enforcement.
+     * Shared by {@link #setValue} (after its own legality checks) and {@link #revealCells}.
+     */
+    private void placeValue(int row, int col, int value) {
+        gameBoard.setValue(row, col, value);
+        cellViewListener.onCellUpdated(row, col, value);
+
+        int rowLength = gameBoard.getRowLength();
+        int gridSize = rowLength * rowLength;
+        if (gameBoard.getFilledCells() == gridSize) {
+            logger.info("Board is full, triggering validation");
+            validator.validateBoard(gameBoard);
+        }
     }
 
     /**
@@ -140,11 +200,26 @@ public class GameService {
     }
 
     /**
+     * Returns whether the game has ended due to a rule-breaking move under end-on-mistake mode.
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    /**
      * Assigns the listener responsible for reacting to cell updates.
      * If {@code null} is provided, a no-op listener is applied to ensure safe calls without null checks.
      */
     public void setCellViewListener(CellViewListener listener) {
         this.cellViewListener = listener != null ? listener : (r, c, v) -> {};
+    }
+
+    /**
+     * Assigns the listener notified when a move breaks Sudoku rules during play.
+     * If {@code null} is provided, a no-op listener is applied to ensure safe calls without null checks.
+     */
+    public void setRuleViolationListener(RuleViolationListener listener) {
+        this.ruleViolationListener = listener != null ? listener : (r, c, gameOver) -> {};
     }
 
     /**
