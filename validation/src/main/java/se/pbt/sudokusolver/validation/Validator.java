@@ -42,27 +42,48 @@ public class Validator {
 
 
     /**
-     * Validates that the cell at {@code (row, col)} does not violate Sudoku rules,
-     * i.e. that its value does not already appear elsewhere in the same row, column,
-     * or subgrid. Unlike {@link #validateBoard}, this does not require the board to be full —
-     * it is intended for checking a single move during gameplay rather than a finished puzzle.
+     * Checks the cell at {@code (row, col)} against Sudoku rules and reports which specific
+     * constraint group(s) — row, column, and/or subgrid — it conflicts with. Like
+     * {@link #validateCell}, this does not require the board to be full; it is intended for
+     * checking a single move during gameplay rather than a finished puzzle.
      */
-    public boolean validateCell(SudokuBoard board, int row, int col) {
+    public CellViolation checkCell(SudokuBoard board, int row, int col) {
         int rowLength = board.getRowLength();
         int[] subgridSize = board.getSubgridSize();
 
         int subgridStartRow = row - row % subgridSize[0];
         int subgridStartCol = col - col % subgridSize[1];
 
-        boolean valid = isValidRow(board, rowLength, row)
-                && isValidColumn(board, rowLength, col)
-                && isValidSubgrid(board, subgridStartRow, subgridStartCol, subgridSize[0], subgridSize[1]);
+        CellViolation violation = new CellViolation(
+                isValidRow(board, rowLength, row),
+                isValidColumn(board, rowLength, col),
+                isValidSubgrid(board, subgridStartRow, subgridStartCol, subgridSize[0], subgridSize[1])
+        );
 
-        if (!valid) {
-            logger.debug("Cell ({},{}) violates Sudoku rules", row, col);
+        if (!violation.isValid()) {
+            logger.debug("Cell ({},{}) violates Sudoku rules: {}", row, col, violation);
         }
 
-        return valid;
+        return violation;
+    }
+
+    /**
+     * Validates that the cell at {@code (row, col)} does not violate Sudoku rules,
+     * i.e. that its value does not already appear elsewhere in the same row, column,
+     * or subgrid. Unlike {@link #validateBoard}, this does not require the board to be full —
+     * it is intended for checking a single move during gameplay rather than a finished puzzle.
+     */
+    public boolean validateCell(SudokuBoard board, int row, int col) {
+        return checkCell(board, row, col).isValid();
+    }
+
+    /**
+     * Reports which Sudoku constraint group(s) a single cell conflicts with.
+     */
+    public record CellViolation(boolean rowValid, boolean columnValid, boolean subgridValid) {
+        public boolean isValid() {
+            return rowValid && columnValid && subgridValid;
+        }
     }
 
 

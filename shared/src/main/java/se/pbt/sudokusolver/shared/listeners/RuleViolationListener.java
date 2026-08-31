@@ -15,6 +15,7 @@ public interface RuleViolationListener {
      * @param col      the column of the offending cell
      * @param gameOver {@code true} if the violation ended the game (end-on-mistake mode),
      *                 {@code false} if the move was instead reverted so the player can retry (cheat mode)
+     * @param scope    which constraint group(s) — row and/or subgrid — the move conflicted with
      */
-    void onRuleViolation(int row, int col, boolean gameOver);
+    void onRuleViolation(int row, int col, boolean gameOver, RuleViolationScope scope);
 }

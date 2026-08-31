@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.pbt.sudokusolver.game.service.GameService;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
+import se.pbt.sudokusolver.shared.listeners.RuleViolationScope;
 import se.pbt.sudokusolver.shared.localization.Localization;
 import se.pbt.sudokusolver.ui.interaction.CellEventHandler;
 import se.pbt.sudokusolver.ui.view.BoardGrid;
@@ -92,13 +93,15 @@ public class GameController {
 
     /**
      * Reacts to a move that broke Sudoku rules. In end-on-mistake mode the offending cell is
-     * permanently marked, the board is locked and a game-over dialog is shown; otherwise
-     * (cheat mode) the offending cell is briefly highlighted so the player notices and can retry it.
+     * permanently marked, the row and/or subgrid causing the conflict is framed, the board is
+     * locked and a game-over dialog is shown; otherwise (cheat mode) the offending cell is
+     * briefly highlighted so the player notices and can retry it.
      */
-    private void handleRuleViolation(int row, int col, boolean gameOver) {
+    private void handleRuleViolation(int row, int col, boolean gameOver, RuleViolationScope scope) {
         if (gameOver) {
             logger.info("Game over: move at ({},{}) broke Sudoku rules", row, col);
             boardGrid.markMistake(row, col);
+            boardGrid.frameViolatedUnits(row, col, scope);
             boardGrid.disableAllCells();
             // Defer the modal dialog to the next pulse so the board has actually
             // re-rendered (mistake highlighted, cells locked) before it takes over.

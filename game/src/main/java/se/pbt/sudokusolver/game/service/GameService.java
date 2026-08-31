@@ -8,6 +8,7 @@ import se.pbt.sudokusolver.core.generation.helpers.SolutionGenerator;
 import se.pbt.sudokusolver.shared.game.PuzzleDifficulty;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
 import se.pbt.sudokusolver.shared.listeners.RuleViolationListener;
+import se.pbt.sudokusolver.shared.listeners.RuleViolationScope;
 import se.pbt.sudokusolver.validation.Validator;
 
 import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
@@ -31,7 +32,7 @@ public class GameService {
     private boolean gameOver;
 
     private CellViewListener cellViewListener = (r, c, v) -> {};
-    private RuleViolationListener ruleViolationListener = (r, c, gameOver) -> {};
+    private RuleViolationListener ruleViolationListener = (r, c, gameOver, scope) -> {};
 
     /**
      * Constructs a GameService with required dependencies for validation and puzzle generation.
@@ -107,13 +108,23 @@ public class GameService {
         if (endGameOnMistake) {
             gameOver = true;
             logger.info("Move at ({},{}) broke Sudoku rules — ending game", row, col);
-            ruleViolationListener.onRuleViolation(row, col, true);
+            ruleViolationListener.onRuleViolation(row, col, true, scopeOf(row, col));
         } else if (cheatModeEnabled) {
             logger.debug("Move at ({},{}) broke Sudoku rules — reverting for retry", row, col);
+            RuleViolationScope scope = scopeOf(row, col);
             gameBoard.setValue(row, col, EMPTY_CELL);
             cellViewListener.onCellUpdated(row, col, EMPTY_CELL);
-            ruleViolationListener.onRuleViolation(row, col, false);
+            ruleViolationListener.onRuleViolation(row, col, false, scope);
         }
+    }
+
+    /**
+     * Reports which constraint group(s) the value currently at {@code (row, col)} conflicts with.
+     * Must be called while the offending value is still on the board, before any revert.
+     */
+    private RuleViolationScope scopeOf(int row, int col) {
+        Validator.CellViolation violation = validator.checkCell(gameBoard, row, col);
+        return new RuleViolationScope(!violation.rowValid(), !violation.subgridValid());
     }
 
     /**
@@ -222,7 +233,7 @@ public class GameService {
      * If {@code null} is provided, a no-op listener is applied to ensure safe calls without null checks.
      */
     public void setRuleViolationListener(RuleViolationListener listener) {
-        this.ruleViolationListener = listener != null ? listener : (r, c, gameOver) -> {};
+        this.ruleViolationListener = listener != null ? listener : (r, c, gameOver, scope) -> {};
     }
 
     /**

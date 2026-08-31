@@ -21,6 +21,10 @@ public class UIConstants {
     //  CSS
     public static final String CSS_CLASS_SUBGRID = "subgrid";
     public static final String CSS_CLASS_FILLED_CELL = "filled-cell";
+    public static final String CSS_CLASS_SUBGRID_VIOLATION = "subgrid-violation";
+    public static final String CSS_CLASS_ROW_VIOLATION_START = "row-violation-start";
+    public static final String CSS_CLASS_ROW_VIOLATION_MIDDLE = "row-violation-middle";
+    public static final String CSS_CLASS_ROW_VIOLATION_END = "row-violation-end";
 
 
     // Localization

@@ -5,6 +5,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 import se.pbt.sudokusolver.shared.listeners.CellViewListener;
+import se.pbt.sudokusolver.shared.listeners.RuleViolationScope;
 import se.pbt.sudokusolver.ui.viewmodel.SudokuViewModel;
 
 import static se.pbt.sudokusolver.shared.constants.SharedConstants.EMPTY_CELL;
@@ -22,6 +23,7 @@ public class BoardGrid implements CellViewListener {
     private final GridPane gridPane;
     private final int[] subGrid;
     private final TextField[][] cellFields;
+    private final GridPane[][] subgridPanes;
     private final int size;
 
     private final SudokuViewModel viewModel;
@@ -38,6 +40,7 @@ public class BoardGrid implements CellViewListener {
         this.subGrid = viewModel.getSubGridDimensions();
         this.gridPane = new GridPane();
         this.cellFields = new TextField[size][size];
+        this.subgridPanes = new GridPane[size / subGrid[0]][size / subGrid[1]];
     }
 
     /**
@@ -56,6 +59,7 @@ public class BoardGrid implements CellViewListener {
 
                 populateSubgridWithCells(subgridPane, subgridRow, subgridCol, subgridRows, subgridCols);
 
+                subgridPanes[subgridRow][subgridCol] = subgridPane;
                 gridPane.add(subgridPane, subgridCol, subgridRow);
             }
         }
@@ -126,6 +130,46 @@ public class BoardGrid implements CellViewListener {
         TextField cell = cellFields[row][col];
         cell.getStyleClass().remove(CSS_CLASS_FILLED_CELL);
         cell.getStyleClass().add(CSS_CLASS_INVALID_CELL);
+    }
+
+    /**
+     * Frames the row and/or subgrid that caused an end-on-mistake violation with a red border
+     * around their cells, alongside the individually marked offending cell from {@link #markMistake}.
+     * Unlike that cell's solid highlight, this only outlines the group so the rest of its values
+     * stay legible.
+     */
+    public void frameViolatedUnits(int row, int col, RuleViolationScope scope) {
+        if (scope.rowViolated()) {
+            frameRow(row);
+        }
+        if (scope.subgridViolated()) {
+            frameSubgrid(row, col);
+        }
+    }
+
+    /**
+     * Outlines an entire row with a red border by giving each of its cells the matching top/bottom
+     * (and, for the first/last cell, left/right) edge so the row reads as one framed rectangle even
+     * though its cells belong to different subgrid panes.
+     */
+    private void frameRow(int row) {
+        for (int col = 0; col < size; col++) {
+            TextField cell = cellFields[row][col];
+            String edgeStyleClass = (col == 0) ? CSS_CLASS_ROW_VIOLATION_START
+                    : (col == size - 1) ? CSS_CLASS_ROW_VIOLATION_END
+                    : CSS_CLASS_ROW_VIOLATION_MIDDLE;
+            cell.getStyleClass().add(edgeStyleClass);
+        }
+    }
+
+    /**
+     * Outlines the subgrid containing {@code (row, col)}. Unlike a row, a subgrid is already a
+     * single container node, so it can be framed directly instead of styling individual cells.
+     */
+    private void frameSubgrid(int row, int col) {
+        int subgridRows = subGrid[0];
+        int subgridCols = subGrid[1];
+        subgridPanes[row / subgridRows][col / subgridCols].getStyleClass().add(CSS_CLASS_SUBGRID_VIOLATION);
     }
 
     /**

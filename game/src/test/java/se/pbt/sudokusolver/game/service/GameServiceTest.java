@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import se.pbt.sudokusolver.core.models.SudokuBoard;
 import se.pbt.sudokusolver.game.model.Difficulty;
+import se.pbt.sudokusolver.shared.listeners.RuleViolationScope;
 import se.pbt.sudokusolver.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -203,6 +204,7 @@ public class GameServiceTest {
         private SudokuBoard board;
         private int[] ruleViolationCall;
         private int ruleViolationCallCount;
+        private RuleViolationScope lastScope;
 
         @BeforeEach
         void setUp() {
@@ -214,11 +216,12 @@ public class GameServiceTest {
             service.setCellViewListener((r, c, v) -> {});
             ruleViolationCallCount = 0;
             ruleViolationCall = new int[3];
-            service.setRuleViolationListener((r, c, gameOver) -> {
+            service.setRuleViolationListener((r, c, gameOver, scope) -> {
                 ruleViolationCallCount++;
                 ruleViolationCall[0] = r;
                 ruleViolationCall[1] = c;
                 ruleViolationCall[2] = gameOver ? 1 : 0;
+                lastScope = scope;
             });
         }
 
@@ -296,6 +299,30 @@ public class GameServiceTest {
             assertEquals(1, ruleViolationCallCount);
             assertEquals(1, ruleViolationCall[2], "gameOver flag must be true in end-on-mistake mode");
             assertTrue(service.isGameOver());
+        }
+
+        @Test
+        @DisplayName("reports a row-only scope when the conflict is in the same row but a different subgrid")
+        void reportsRowOnlyScope_forRowConflictOutsideSubgrid() {
+            service.configureRules(false, true);
+
+            service.setValue(0, 0, 7);
+            service.setValue(0, 4, 7); // same row, different 3x3 subgrid -> row conflict only
+
+            assertTrue(lastScope.rowViolated(), "Row must be reported as violated");
+            assertFalse(lastScope.subgridViolated(), "Subgrid must not be reported as violated");
+        }
+
+        @Test
+        @DisplayName("reports a subgrid-only scope when the conflict is in the same subgrid but a different row/column")
+        void reportsSubgridOnlyScope_forSubgridConflictOutsideRow() {
+            service.configureRules(false, true);
+
+            service.setValue(0, 0, 7);
+            service.setValue(1, 1, 7); // same 3x3 subgrid, different row and column -> subgrid conflict only
+
+            assertFalse(lastScope.rowViolated(), "Row must not be reported as violated");
+            assertTrue(lastScope.subgridViolated(), "Subgrid must be reported as violated");
         }
 
         @Test

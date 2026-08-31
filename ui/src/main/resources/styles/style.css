@@ -13,6 +13,12 @@
     -fx-border-width: 1px;
 }
 
+/* Frames the subgrid that caused an end-on-mistake violation, overriding the plain .subgrid border */
+.subgrid-violation {
+    -fx-border-color: red;
+    -fx-border-width: 3px;
+}
+
 /* ====== SUDOKU CELL STYLING ====== */
 
 /* General styling for each Sudoku cell */
@@ -31,7 +37,27 @@
     -fx-font-weight: bold;
 }
 
-/* Briefly highlights a cell that broke Sudoku rules and was reverted (cheat mode) */
+/*
+ * Frames the row that caused an end-on-mistake violation. Every cell in the row gets a red
+ * top/bottom edge; the first and last cell additionally get the matching outer side, so the
+ * whole row reads as one framed rectangle even though it spans multiple subgrid panes.
+ * Declared before .invalid-cell so that class's full border still wins on the offending cell itself.
+ */
+.row-violation-start {
+    -fx-border-color: red;
+    -fx-border-width: 2 0 2 2;
+}
+.row-violation-middle {
+    -fx-border-color: red;
+    -fx-border-width: 2 0 2 0;
+}
+.row-violation-end {
+    -fx-border-color: red;
+    -fx-border-width: 2 2 2 0;
+}
+
+/* Briefly highlights a cell that broke Sudoku rules and was reverted (cheat mode);
+   also used to permanently mark the offending cell in end-on-mistake mode. */
 .invalid-cell {
     -fx-background-color: #ffb3b3;
     -fx-border-color: red;
